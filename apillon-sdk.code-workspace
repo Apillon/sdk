@@ -1,0 +1,47 @@
+{
+  "folders": [
+    {
+      "name": "💻@apillon/cli",
+      "path": "packages/cli"
+    },
+    {
+      "name": "📦@apillon/sdk",
+      "path": "packages/sdk"
+    },
+    {
+      "name": "🔨_tsconfig",
+      "path": "packages/tsconfig"
+    },
+    {
+      "name": "🔨_eslint",
+      "path": "packages/eslint-config-common"
+    },
+    {
+      "name": "🥕+Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "cSpell.words": [
+      "Apillon",
+      "Authtrail",
+      "LMAS"
+    ],
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/.serverless": true,
+      "**/.turbo": true,
+      "**/node_modules": false
+    }
+  }
+}

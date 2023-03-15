@@ -1,0 +1,43 @@
+{
+  "name": "@apillon/cli",
+  "description": "Apillon CLI tools",
+  "version": "0.1.0",
+  "author": "Apillon",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "tsc && npm i -g && apillon hosting deploy-website ./test/hosting/www --uuid 213-4567-www --preview --key testkey --secret testSecret --api-url https://api-dev.apillon.io",
+    "prebuild": "rimraf dist",
+    "build": "tsc --declarationMap && npm i -g",
+    "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix"
+  },
+  "bin": {
+    "apillon": "./dist/index.js"
+  },
+  "keywords": [
+    "CLI",
+    "Apillon",
+    "web3",
+    "development",
+    "blockchain",
+    "ipfs",
+    "polkadot",
+    "moonbeam",
+    "kilt",
+    "phala",
+    "decentralized"
+  ],
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "eslint-config-common": "*",
+    "tsconfig": "*"
+  },
+  "dependencies": {
+    "axios": "^1.3.4",
+    "chalk": "^4.1.2",
+    "commander": "^10.0.0",
+    "dotenv": "^16.0.3",
+    "@apillon/sdk": "*"
+  }
+}

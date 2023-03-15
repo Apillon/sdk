@@ -1,0 +1,26 @@
+{
+  "name": "apillon-web3-tools",
+  "version": "0.1.0",
+  "description": "Monorepo for Apillon tools",
+  "author": "Apillon",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npx turbo run test",
+    "build": "npx turbo run build",
+    "lint": "npx turbo run lint"
+  },
+  "engines": {
+    "npm": ">=8.4.0",
+    "node": ">=16.17.0"
+  },
+  "packageManager": "npm@8.4.0",
+  "devDependencies": {
+    "eslint-config-common": "*",
+    "prettier": "latest",
+    "rimraf": "^4.4.0",
+    "turbo": "latest"
+  }
+}
