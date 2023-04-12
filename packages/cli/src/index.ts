@@ -34,6 +34,13 @@ cli.addOption(
     .env('APILLON_API_URL')
     .default('https://api.apillon.io', 'Production API url'),
 );
+cli.configureHelp({
+  showGlobalOptions: true,
+  sortOptions: true,
+  sortSubcommands: true,
+});
+
+cli.showHelpAfterError('Run with --help for additional information!');
 
 const hosting = createHostingCommands(cli);
 const storage = createStorageCommands(cli);
