@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "test": "npx turbo run test",
+    "cli-install": "npx turbo run cli-install",
     "build": "npx turbo run build",
     "lint": "npx turbo run lint"
   },

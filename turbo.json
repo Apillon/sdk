@@ -9,6 +9,12 @@
         "dist/**"
       ]
     },
+    "cli-install": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },
