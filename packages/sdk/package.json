@@ -1,12 +1,14 @@
 {
   "name": "@apillon/sdk",
-  "description": "Apillon SDK for NodeJS",
+  "description": "▶◀ Apillon SDK for NodeJS ▶◀",
   "version": "0.1.0",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
+  "repository": "https://github.com/Apillon-web3/sdk",
+  "homepage": "https://wiki.apillon.io",
   "files": [
     "dist/**"
   ],

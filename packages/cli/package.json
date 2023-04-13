@@ -1,10 +1,12 @@
 {
   "name": "@apillon/cli",
-  "description": "Apillon CLI tools",
+  "description": "▶◀ Apillon CLI tools ▶◀",
   "version": "0.1.0",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
+  "repository": "https://github.com/Apillon-web3/sdk",
+  "homepage": "https://wiki.apillon.io",
   "scripts": {
     "test": "tsc && npm i -g && apillon hosting deploy-website ./test/hosting/www --uuid 213-4567-www --preview --key testkey --secret testSecret --api-url https://api-dev.apillon.io",
     "prebuild": "rimraf dist",
@@ -13,7 +15,8 @@
     "cli-install": "tsc && npm i -g"
   },
   "bin": {
-    "apillon": "./dist/index.js"
+    "apillon": "./dist/index.js",
+    "@apillon/cli": "./dist/index.js"
   },
   "keywords": [
     "CLI",

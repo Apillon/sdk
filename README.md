@@ -12,6 +12,8 @@ To get started with the Apillon Web3 Development Platform, you can install eithe
 
 ### CLI
 
+[![npm version](https://badge.fury.io/js/@apillon%2Fcli.svg)](https://badge.fury.io/js/@apillon%2Fcli)
+
 To install the CLI, run the following command:
 
 ```sh
@@ -19,6 +21,8 @@ npm install -g @apillon/cli
 ```
 
 ### SDK
+
+[![npm version](https://badge.fury.io/js/@apillon%2Fsdk.svg)](https://badge.fury.io/js/@apillon%2Fsdk)
 
 To install the SDK, run the following command:
 
@@ -28,50 +32,9 @@ npm install @apillon/sdk
 
 ## Usage
 
-### CLI
+Please see [CLI Documentation](/packages/cli/README.md) and [SDK Documentation](/packages/sdk/README.md) for more information.
 
-To use the CLI, simply run the `apillon` command followed by the action you want to perform. For example, to create a new project, run:
-
-```sh
-apillon create my-project
-```
-
-For a full list of available commands and options, run:
-
-```sh
-apillon --help
-# or
-apillon -h
-```
-
-For a full list of subcommands and options, run:
-
-```sh
-apillon [command] --help
-# or
-apillon [command] -h
-```
-
-### SDK
-
-To use the SDK in your project, first import appropriate module:
-
-```typescript
-import { Hosting } from '@apillon/sdk';
-```
-
-Then, create a new instance of the module class:
-
-```typescript
-const hosting = new Hosting({
-    key: 'yourApiKey',
-    secret:'yourApiSecret'
-  });
-```
-
-You can then use the methods on the module instance to interact with the Apillon APIs.
-
-For more information on using the SDK, see the [Apillon documentation](https://wiki.apillon.io//docs).
+Find more resources at [wiki.apillon.io](https://wiki.apillon.io).
 
 ## Contributing
 
