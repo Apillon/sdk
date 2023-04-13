@@ -36,4 +36,4 @@ const hosting = new Hosting({
 
 You can then use the methods on the module instance to interact with the Apillon APIs.
 
-For more information on using the SDK, see the [Apillon documentation](https://wiki.apillon.io//docs).
+For more information on using the SDK, see the [Apillon documentation](https://wiki.apillon.io).
