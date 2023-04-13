@@ -43,7 +43,7 @@ cli.configureHelp({
 cli.showHelpAfterError('Run with --help for additional information!');
 
 const hosting = createHostingCommands(cli);
-const storage = createStorageCommands(cli);
-const nfts = createNftsCommands(cli);
+// const storage = createStorageCommands(cli);
+// const nfts = createNftsCommands(cli);
 
 cli.parse();

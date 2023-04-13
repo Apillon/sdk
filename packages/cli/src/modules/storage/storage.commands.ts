@@ -21,9 +21,12 @@ export function createStorageCommands(cli: Command) {
 function uploadFolder(path: string) {
   console.log(path);
   console.log(this.opts().preview);
+  throw Error('Command not implemented!');
 }
 
+// eslint-disable-next-line sonarjs/no-identical-functions
 function uploadFiles(path: string) {
   console.log(path);
   console.log(this.opts().preview);
+  throw Error('Command not implemented!');
 }

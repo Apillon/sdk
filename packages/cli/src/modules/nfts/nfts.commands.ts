@@ -24,8 +24,10 @@ export function createNftsCommands(cli: Command) {
 function deployContract(path: string) {
   console.log(path);
   console.log(this.opts().preview);
+  throw Error('Command not implemented!');
 }
 
 function mintNfts() {
   console.log(this.opts().preview);
+  throw Error('Command not implemented!');
 }
