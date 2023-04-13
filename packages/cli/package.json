@@ -1,7 +1,7 @@
 {
   "name": "@apillon/cli",
   "description": "▶◀ Apillon CLI tools ▶◀",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -12,7 +12,8 @@
     "prebuild": "rimraf dist",
     "build": "tsc --declarationMap && npm i -g",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
-    "cli-install": "tsc && npm i -g"
+    "cli-install": "tsc && npm i -g",
+    "publish-package": "npm publish"
   },
   "bin": {
     "apillon": "./dist/index.js",

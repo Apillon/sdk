@@ -15,6 +15,12 @@
       ],
       "outputs": []
     },
+    "publish-package": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },

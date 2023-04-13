@@ -10,6 +10,7 @@
   "scripts": {
     "test": "npx turbo run test",
     "cli-install": "npx turbo run cli-install",
+    "publish-all": "npx turbo run publish-package",
     "build": "npx turbo run build",
     "lint": "npx turbo run lint"
   },

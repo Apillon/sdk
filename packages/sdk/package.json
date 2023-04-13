@@ -1,7 +1,7 @@
 {
   "name": "@apillon/sdk",
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -16,7 +16,8 @@
     "test": "echo TODO!",
     "prebuild": "rimraf dist",
     "build": "tsc --declarationMap",
-    "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix"
+    "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
+    "publish-package": "npm publish"
   },
   "keywords": [
     "SDK",

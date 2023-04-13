@@ -1,5 +1,7 @@
 # Apillon Web3 Development tools
 
+![Twitter Follow](https://img.shields.io/twitter/follow/Apillon?style=social)
+
 Welcome to the Apillon Web3 Development Platform! This repository contains the source code for both the CLI and SDK libraries for the platform.
 
 ## Overview
