@@ -7,13 +7,20 @@
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
-  "repository": "https://github.com/Apillon-web3/sdk",
+  "bugs": {
+    "url": "https://github.com/Apillon-web3/sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Apillon-web3/sdk"
+  },
   "homepage": "https://wiki.apillon.io",
+  "declaration": true,
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "test": "echo TODO!",
+    "prepare": "npm run build",
     "prebuild": "rimraf dist",
     "build": "tsc --declarationMap",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",

@@ -5,12 +5,23 @@
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
-  "repository": "https://github.com/Apillon-web3/sdk",
+  "bugs": {
+    "url": "https://github.com/Apillon-web3/sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Apillon-web3/sdk"
+  },
   "homepage": "https://wiki.apillon.io",
+  "declaration": true,
+  "files": [
+    "dist/**/*"
+  ],
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "tsc && npm i -g && apillon hosting deploy-website ./test/hosting/www --uuid 213-4567-www --preview --key testkey --secret testSecret --api-url https://api-dev.apillon.io",
+    "prepare": "npm run build",
     "prebuild": "rimraf dist",
-    "build": "tsc --declarationMap && npm i -g",
+    "build": "tsc --declarationMap",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
     "cli-install": "tsc && npm i -g",
     "publish-package": "npm publish"
