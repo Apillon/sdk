@@ -1,7 +1,7 @@
 # Apillon SDK for NodeJS
 
 [![npm version](https://badge.fury.io/js/@apillon%2Fsdk.svg)](https://badge.fury.io/js/@apillon%2Fsdk)
-![Twitter Follow](https://img.shields.io/twitter/follow/Apillon?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Apillon?style=social)](https://twitter.com/intent/follow?screen_name=Apillon)
 
 Apillon SDK is a NodeJS library written in Typescript for using Apillon Web3 services.
 

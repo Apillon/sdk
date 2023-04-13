@@ -1,7 +1,7 @@
 # Apillon CLI
 
 [![npm version](https://badge.fury.io/js/@apillon%2Fcli.svg)](https://badge.fury.io/js/@apillon%2Fcli)
-![Twitter Follow](https://img.shields.io/twitter/follow/Apillon?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Apillon?style=social)](https://twitter.com/intent/follow?screen_name=Apillon)
 
 Apillon CLI is a command-line interface for using Apillon Web3 services.
 
