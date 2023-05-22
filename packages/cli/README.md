@@ -7,7 +7,7 @@ Apillon CLI is a command-line interface for using Apillon Web3 services.
 
 ## Requirements
 
-To be able to use Apillon CLI, you must register an account at [Apillon.io](https://app.apillon.io), create a project and generate an API key with appropriate permissions.
+To be able to use Apillon CLI, you must register an account at [Apillon.io](https://app.apillon.io), create a project and generate an API key with appropriate permissions. Also Node.js (version 16 or later) is required.
 
 ## Installation
 
@@ -95,3 +95,73 @@ apillon -h
 apillon hosting -h
 npx @apillon/cli hosting deploy-website --help
 ```
+
+## Using in CI/CD tools
+
+CLI is particularly useful for CI/CD builds and pipelines.
+
+### Deploying websites
+
+Here's an example of how you can use the CLI tool in a CI/CD tool like GitHub Actions:
+
+```yml
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      
+      - name: Create dist folder
+        run: mkdir -p dist
+          
+      - name: Copy files
+        run: |
+          cp *.html dist/
+          cp -r images dist/
+          cp -r style dist/
+          cp -r js dist/
+
+####
+## if you are using a framework for building web app, you can replace previous two step with the 
+## appropriate command for generating static webpage, like an example bellow.
+## Find the correct command in your framework documentation. You may need to to change the 
+## name of the source folder in the last step (CLI call)
+####
+
+      # - name: Build app
+      #   run: npm run build
+
+
+      - name: Deploy website
+        env:
+          APILLON_API_KEY: ${{ secrets.APILLON_API_KEY }}
+          APILLON_API_SECRET: ${{ secrets.APILLON_API_SECRET }}
+          WEBSITE_UUID: ${{ secrets.WEBSITE_UUID }}
+        run: npx --yes @apillon/cli hosting deploy-website ./dist --uuid $WEBSITE_UUID --key $APILLON_API_KEY --secret $APILLON_API_SECRET
+```
+
+In this example, the GitHub Actions workflow is triggered when a push event occurs on the master branch. The workflow performs the following steps:
+
+1. Checks out the repository.
+2. Sets up Node.js with version 16.
+3. Creates a dist folder to store the website files.
+4. Copies the necessary files (HTML, images, styles, and JavaScript) to the dist folder.
+5. Deploys the website using the CLI tool. The required environment variables (APILLON_API_KEY, APILLON_API_SECRET, and WEBSITE_UUID) are provided as secrets. The npx command ensures that the latest version of the CLI tool is used.
+
+Make sure to setup secret variables with the values from Apillon platform.
+
+That's it! You can now use this example as a starting point to deploy your website using the CLI tool in a CI/CD pipeline with GitHub Actions.
