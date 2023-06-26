@@ -22,6 +22,7 @@
     "prepare": "npm run build",
     "prebuild": "rimraf dist",
     "build": "tsc --declarationMap",
+    "dev": "tsc --declarationMap --watch",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
     "cli-install": "tsc && npm i -g",
     "publish-package": "npm publish"

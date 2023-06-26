@@ -3,6 +3,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
+export function constructUrlWithQueryParams(url: string, params: any) {
+  const queryParams = new URLSearchParams(params).toString();
+  return queryParams ? `${url}?${queryParams}` : url;
+}
+
 export function listFilesRecursive(
   folderPath,
   fileList = [],

@@ -19,8 +19,6 @@ export class ApillonModule {
 
     this.config = { ...defaultOptions, ...config };
 
-    console.log(this.config);
-
     let auth = undefined;
     if (this.config.key && this.config.secret) {
       auth = {

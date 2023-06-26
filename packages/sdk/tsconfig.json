@@ -4,9 +4,12 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
+  "files": [
+    "src/modules/nfts.d.ts"
+  ],
   "include": [
     "**/*.ts",
-    "**/*.tsx",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules",
