@@ -21,11 +21,11 @@ Find more help at wiki.apillon.io!
 );
 
 cli.addOption(
-  new Option('--key <api key>', 'Apillon API key').env('APILLON_KEY'),
+  new Option('--key <api key>', 'Apillon API key').env('APILLON_API_KEY'),
 );
 cli.addOption(
   new Option('--secret <api secret>', 'Apillon API secret').env(
-    'APILLON_SECRET',
+    'APILLON_API_SECRET',
   ),
 );
 cli.addOption(

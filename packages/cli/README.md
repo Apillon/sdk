@@ -55,9 +55,10 @@ Deploy your website to with Apillon Web3 platform to decentralized storage (IPFS
 
 #### Global Options
 
-- `--api-url <api url>`: Apillon API URL (default: Production API URL, can be set via the `APILLON_API_URL` environment variable).
-- `--key <api key>`: Apillon API key (can be set via the `APILLON_KEY` environment variable).
-- `--secret <api secret>`: Apillon API secret (can be set via the `APILLON_SECRET` environment variable).
+- `--api-url <api url>`: Apillon API URL (default: Production API URL, can be set via the `APILLON_API_URL` environment
+  variable).
+- `--key <api key>`: Apillon API key (can be set via the `APILLON_API_KEY` environment variable).
+- `--secret <api secret>`: Apillon API secret (can be set via the `APILLON_API_SECRET` environment variable).
 - `-V`, `--version`: Output the version number.
 
 #### Example
@@ -83,8 +84,8 @@ npx @apillon/cli hosting deploy-website ./dist --uuid your-website-uuid --key yo
 You can use environment variables to set the API URL, API key, and API secret:
 
 - `APILLON_API_URL`: Apillon API URL.
-- `APILLON_KEY`: Apillon API key.
-- `APILLON_SECRET`: Apillon API secret.
+- `APILLON_API_KEY`: Apillon API key.
+- `APILLON_API_SECRET`: Apillon API secret.
 
 ## Help
 

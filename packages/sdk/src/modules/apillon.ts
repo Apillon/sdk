@@ -12,8 +12,8 @@ export class ApillonModule {
 
   public constructor(config?: ApillonConfig) {
     const defaultOptions: ApillonConfig = {
-      key: process.env.APILLON_KEY,
-      secret: process.env.APILLON_SECRET,
+      key: process.env.APILLON_API_KEY,
+      secret: process.env.APILLON_API_SECRET,
       apiUrl: process.env.APILLON_API_URL || 'https://api.apillon.io',
     };
 
