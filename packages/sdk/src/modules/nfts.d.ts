@@ -45,14 +45,14 @@ interface CollectionInput {
   baseUri: string;
   baseExtension: string;
   maxSupply: number;
-  mintPrice: number;
-  isDrop: boolean;
-  dropStart: number;
-  reserve: number;
   isRevokable: boolean;
   isSoulbound: boolean;
   royaltiesAddress: string;
   royaltiesFees: number;
+  drop: boolean;
+  dropStart: number;
+  dropPrice: number;
+  dropReserve: number;
 }
 
 interface Collection {
@@ -65,14 +65,14 @@ interface Collection {
   baseUri: string;
   baseExtension: string;
   maxSupply: number;
-  mintPrice: number;
-  isDrop: boolean;
-  dropStart: number;
-  reserve: number;
   isRevokable: boolean;
   isSoulbound: boolean;
   royaltiesAddress: string;
   royaltiesFees: number;
+  drop: boolean;
+  dropStart: number;
+  dropPrice: number;
+  dropReserve: number;
 }
 
 interface Transaction {
