@@ -14,12 +14,8 @@ export function createNftsCommands(cli: Command) {
   const nfts = cli.command('nfts');
 
   // COLLECTIONS
-  const collections = nfts
-    .command('collections')
-    .description('NFT collections resource.');
-
-  collections
-    .command('list')
+  nfts
+    .command('list-collections')
     .description('List NFT collections owned by project related to API key.')
     .addOption(COMMON_OPTIONS.page)
     .addOption(COMMON_OPTIONS.limit)
@@ -29,22 +25,22 @@ export function createNftsCommands(cli: Command) {
       await listCollections(options, this.optsWithGlobals());
     });
 
-  collections
-    .command('get')
+  nfts
+    .command('get-collection')
     .description('Get NFT collection for specific UUID.')
     .argument('<collection-uuid>', 'Collection UUID')
     .action(async function (uuid: string) {
       await getCollection(uuid, this.optsWithGlobals());
     });
 
-  collections
-    .command('create')
+  nfts
+    .command('create-collection')
     .argument('<file-path>', 'path to JSON data file')
     .action(async function (filePath: string) {
       await createCollection(filePath, this.optsWithGlobals());
     });
 
-  collections
+  nfts
     .command('mint-nft')
     .description('Mint NFT for collection with UUID.')
     .argument('<collection-uuid>', 'Collection UUID')
@@ -57,7 +53,7 @@ export function createNftsCommands(cli: Command) {
       await mintCollectionNft(uuid, options, this.optsWithGlobals());
     });
 
-  collections
+  nfts
     .command('burn-nft')
     .description('Burn NFT for collection with UUID.')
     .argument('<collection-uuid>', 'Collection UUID')
@@ -66,8 +62,8 @@ export function createNftsCommands(cli: Command) {
       await burnCollectionNft(uuid, options, this.optsWithGlobals());
     });
 
-  collections
-    .command('transfer')
+  nfts
+    .command('transfer-collection')
     .description('Transfer NFT collection ownership to a new wallet address.')
     .argument('<collection-uuid>', 'Collection UUID')
     .requiredOption(
@@ -79,12 +75,8 @@ export function createNftsCommands(cli: Command) {
     });
 
   // TRANSACTIONS
-  const collectionTransactions = collections
-    .command('transactions')
-    .description('NFT collection transactions resource.');
-
-  collectionTransactions
-    .command('list')
+  nfts
+    .command('list-transactions')
     .description('List NFT transactions for specific collection UUID.')
     .argument('<collection-uuid>', 'Collection UUID')
     .addOption(COMMON_OPTIONS.page)
