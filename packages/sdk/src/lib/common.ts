@@ -3,8 +3,44 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
-export function constructUrlWithQueryParams(url: string, params: any) {
-  const queryParams = new URLSearchParams(params).toString();
+/**
+ * Convert value to boolean if defined, else return undefined.
+ * @param value value converted
+ */
+export function toBoolean(value?: string) {
+  if (!value === undefined) {
+    return undefined;
+  }
+  return value === 'true' || value === '1';
+}
+
+/**
+ * Convert value to integer if defined, else return undefined.
+ * @param value value converted
+ */
+export function toInteger(value: string) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return parseInt(value);
+}
+
+/**
+ * Construct full URL from base URL and query parameters object.
+ * @param url url without query parameters
+ * @param parameters query parameters
+ */
+export function constructUrlWithQueryParams(url: string, parameters: any) {
+  const cleanParams = {};
+  for (const key in parameters) {
+    const value = parameters[key];
+    if (value !== undefined && value !== null && value !== '') {
+      cleanParams[key] = value;
+    }
+  }
+  const queryParams = new URLSearchParams(cleanParams).toString();
+
   return queryParams ? `${url}?${queryParams}` : url;
 }
 

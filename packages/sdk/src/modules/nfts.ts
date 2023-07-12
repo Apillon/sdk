@@ -1,5 +1,12 @@
 import { ApillonModule } from './apillon';
 import { constructUrlWithQueryParams } from '../lib/common';
+import { ApillonPaginationInput } from '../types/generic';
+import {
+  BurnCollectionNft,
+  CollectionInput,
+  MintCollectionNft,
+  TransferCollectionOwnership,
+} from '../types/nfts';
 
 const COLLECTIONS_ROUTE = '/nfts/collections';
 
@@ -32,7 +39,7 @@ export class Nfts extends ApillonModule {
     return resp.data.data;
   }
 
-  public async mintCollectionNft(uuid: string, data: MintCollectionNftInput) {
+  public async mintCollectionNft(uuid: string, data: MintCollectionNft) {
     const resp = await this.api.post<ApillonResponse<ApillonStatus>>(
       `${COLLECTIONS_ROUTE}/${uuid}/mint`,
       data,
@@ -41,7 +48,7 @@ export class Nfts extends ApillonModule {
     return resp.data.data;
   }
 
-  public async burnCollectionNft(uuid: string, data: BurnCollectionNftInput) {
+  public async burnCollectionNft(uuid: string, data: BurnCollectionNft) {
     const resp = await this.api.post<ApillonResponse<ApillonStatus>>(
       `${COLLECTIONS_ROUTE}/${uuid}/burn`,
       data,
@@ -52,7 +59,7 @@ export class Nfts extends ApillonModule {
 
   public async transferCollectionOwnership(
     uuid: string,
-    data: TransferCollectionOwnershipInput,
+    data: TransferCollectionOwnership,
   ) {
     const resp = await this.api.post<ApillonResponse<Collection>>(
       `${COLLECTIONS_ROUTE}/${uuid}/transfer`,
