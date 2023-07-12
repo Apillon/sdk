@@ -7,7 +7,7 @@ export function readAndParseJson(filePath: string) {
     fileContent = fs.readFileSync(filePath);
   } catch (e) {
     if (e.code === 'ENOENT') {
-      console.log(`File not found (${filePath}).`);
+      console.error(`Error: File not found (${filePath}).`);
       return;
     } else {
       throw e;
@@ -17,7 +17,7 @@ export function readAndParseJson(filePath: string) {
   try {
     return JSON.parse(fileContent.toString());
   } catch (e) {
-    console.error(`Failed to parse JSON file (${filePath}).`);
+    console.error(`Error: Failed to parse JSON file (${filePath}).`);
     return;
   }
 }

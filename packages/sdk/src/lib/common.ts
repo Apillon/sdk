@@ -2,6 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
+import { ApillonApiError, ApillonNetworkError } from '../modules/apillon';
 
 /**
  * Convert value to boolean if defined, else return undefined.
@@ -91,4 +92,18 @@ export async function uploadFilesToS3(uploadLinks: any[], files: any[]) {
   }
 
   await Promise.all(uploadWorkers);
+}
+
+/**
+ * Exception handler for requests sent by CLI service.
+ * @param e exception
+ */
+export function exceptionHandler(e: any) {
+  if (e instanceof ApillonApiError) {
+    console.error(`Apillon API error:\n${e.message}`);
+  } else if (e instanceof ApillonNetworkError) {
+    console.error(`Error: ${e.message}`);
+  } else {
+    console.error(e);
+  }
 }
