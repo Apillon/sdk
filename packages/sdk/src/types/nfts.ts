@@ -77,3 +77,34 @@ export class BurnCollectionNft {
 
   tokenId: number;
 }
+
+//OUTPUTS
+export interface Collection {
+  projectUuid: string;
+  collectionUuid: string;
+  chain: number;
+  name: string;
+  symbol: string;
+  description: string;
+  baseUri: string;
+  baseExtension: string;
+  maxSupply: number;
+  isRevokable: boolean;
+  isSoulbound: boolean;
+  royaltiesAddress: string;
+  royaltiesFees: number;
+  drop: boolean;
+  dropStart: number;
+  dropPrice: number;
+  dropReserve: number;
+}
+
+export interface Transaction {
+  id: number;
+  status: number;
+  chainId: number;
+  transactionType: number;
+  transactionStatus: number;
+  transactionHash: string;
+  updatedTime: string;
+}

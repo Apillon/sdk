@@ -3,8 +3,10 @@ import { constructUrlWithQueryParams } from '../lib/common';
 import { ApillonPaginationInput } from '../types/generic';
 import {
   BurnCollectionNft,
+  Collection,
   CollectionInput,
   MintCollectionNft,
+  Transaction,
   TransferCollectionOwnership,
 } from '../types/nfts';
 
