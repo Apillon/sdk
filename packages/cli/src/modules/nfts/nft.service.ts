@@ -1,6 +1,6 @@
 import {
-  CollectionInput,
   exceptionHandler,
+  ICreateCollection,
   Nfts,
   toBoolean,
   toInteger,
@@ -50,7 +50,7 @@ export async function createCollection(
   filePath: string,
   optsWithGlobals: Globals,
 ) {
-  const createCollectionData = readAndParseJson(filePath) as CollectionInput;
+  const createCollectionData = readAndParseJson(filePath) as ICreateCollection;
   if (!createCollectionData) {
     return;
   }

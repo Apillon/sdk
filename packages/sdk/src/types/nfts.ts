@@ -1,40 +1,6 @@
 import { EvmChain } from '../constants/nfts';
 
-export class CollectionInput {
-  constructor(
-    chain: EvmChain,
-    name: string,
-    symbol: string,
-    baseUri: string,
-    baseExtension: string,
-    maxSupply: number,
-    isRevokable: boolean,
-    isSoulbound: boolean,
-    royaltiesAddress: string,
-    royaltiesFees: number,
-    drop: boolean,
-    dropStart: number,
-    dropPrice: number,
-    dropReserve: number,
-    description?: string,
-  ) {
-    this.chain = chain;
-    this.symbol = symbol;
-    this.name = name;
-    this.description = description;
-    this.baseUri = baseUri;
-    this.baseExtension = baseExtension;
-    this.maxSupply = maxSupply;
-    this.isRevokable = isRevokable;
-    this.isSoulbound = isSoulbound;
-    this.royaltiesAddress = royaltiesAddress;
-    this.royaltiesFees = royaltiesFees;
-    this.drop = drop;
-    this.dropStart = dropStart;
-    this.dropPrice = dropPrice;
-    this.dropReserve = dropReserve;
-  }
-
+export interface ICreateCollection {
   chain: EvmChain;
   name: string;
   symbol: string;
@@ -52,34 +18,21 @@ export class CollectionInput {
   dropReserve: number;
 }
 
-export class TransferCollectionOwnership {
-  constructor(address: string) {
-    this.address = address;
-  }
-
+export interface ITransferCollectionOwnership {
   address: string;
 }
 
-export class MintCollectionNft {
-  constructor(receivingAddress: string, quantity: number) {
-    this.receivingAddress = receivingAddress;
-    this.quantity = quantity;
-  }
-
+export interface IMintCollectionNft {
   receivingAddress: string;
   quantity: number;
 }
 
-export class BurnCollectionNft {
-  constructor(tokenId: number) {
-    this.tokenId = tokenId;
-  }
-
+export interface IBurnCollectionNft {
   tokenId: number;
 }
 
 //OUTPUTS
-export interface Collection {
+export interface ICollection {
   projectUuid: string;
   collectionUuid: string;
   chain: number;
@@ -99,7 +52,7 @@ export interface Collection {
   dropReserve: number;
 }
 
-export interface Transaction {
+export interface ITransaction {
   id: number;
   status: number;
   chainId: number;

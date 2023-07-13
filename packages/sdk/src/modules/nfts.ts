@@ -1,39 +1,44 @@
 import { ApillonModule } from './apillon';
 import { constructUrlWithQueryParams } from '../lib/common';
-import { ApillonPaginationInput } from '../types/generic';
+import { IApillonPagination } from '../types/generic';
 import {
-  BurnCollectionNft,
-  Collection,
-  CollectionInput,
-  MintCollectionNft,
-  Transaction,
-  TransferCollectionOwnership,
+  IBurnCollectionNft,
+  ICollection,
+  ICreateCollection,
+  IMintCollectionNft,
+  ITransaction,
+  ITransferCollectionOwnership,
 } from '../types/nfts';
+import {
+  IApillonList,
+  IApillonResponse,
+  IApillonStatus,
+} from '../types/apillon';
 
 const COLLECTIONS_ROUTE = '/nfts/collections';
 
 export class Nfts extends ApillonModule {
   // COLLECTIONS
-  public async listNftCollections(params: ApillonPaginationInput) {
+  public async listNftCollections(params: IApillonPagination) {
     const url = constructUrlWithQueryParams(COLLECTIONS_ROUTE, params);
 
-    const resp = await this.api.get<ApillonResponse<ApillonList<Collection>>>(
-      url,
-    );
+    const resp = await this.api.get<
+      IApillonResponse<IApillonList<ICollection>>
+    >(url);
 
     return resp.data.data;
   }
 
   public async getCollection(uuid: string) {
-    const resp = await this.api.get<ApillonResponse<Collection>>(
+    const resp = await this.api.get<IApillonResponse<ICollection>>(
       `${COLLECTIONS_ROUTE}/${uuid}`,
     );
 
     return resp.data.data;
   }
 
-  public async createCollection(data: CollectionInput) {
-    const resp = await this.api.post<ApillonResponse<Collection>>(
+  public async createCollection(data: ICreateCollection) {
+    const resp = await this.api.post<IApillonResponse<ICollection>>(
       COLLECTIONS_ROUTE,
       data,
     );
@@ -41,8 +46,8 @@ export class Nfts extends ApillonModule {
     return resp.data.data;
   }
 
-  public async mintCollectionNft(uuid: string, data: MintCollectionNft) {
-    const resp = await this.api.post<ApillonResponse<ApillonStatus>>(
+  public async mintCollectionNft(uuid: string, data: IMintCollectionNft) {
+    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${COLLECTIONS_ROUTE}/${uuid}/mint`,
       data,
     );
@@ -50,8 +55,8 @@ export class Nfts extends ApillonModule {
     return resp.data.data;
   }
 
-  public async burnCollectionNft(uuid: string, data: BurnCollectionNft) {
-    const resp = await this.api.post<ApillonResponse<ApillonStatus>>(
+  public async burnCollectionNft(uuid: string, data: IBurnCollectionNft) {
+    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${COLLECTIONS_ROUTE}/${uuid}/burn`,
       data,
     );
@@ -61,9 +66,9 @@ export class Nfts extends ApillonModule {
 
   public async transferCollectionOwnership(
     uuid: string,
-    data: TransferCollectionOwnership,
+    data: ITransferCollectionOwnership,
   ) {
-    const resp = await this.api.post<ApillonResponse<Collection>>(
+    const resp = await this.api.post<IApillonResponse<ICollection>>(
       `${COLLECTIONS_ROUTE}/${uuid}/transfer`,
       data,
     );
@@ -74,16 +79,16 @@ export class Nfts extends ApillonModule {
   // TRANSACTIONS
   public async listCollectionTransactions(
     uuid: string,
-    params: ApillonPaginationInput,
+    params: IApillonPagination,
   ) {
     const url = constructUrlWithQueryParams(
       `${COLLECTIONS_ROUTE}/${uuid}/transactions`,
       params,
     );
 
-    const resp = await this.api.get<ApillonResponse<ApillonList<Transaction>>>(
-      url,
-    );
+    const resp = await this.api.get<
+      IApillonResponse<IApillonList<ITransaction>>
+    >(url);
 
     return resp.data.data.items;
   }
