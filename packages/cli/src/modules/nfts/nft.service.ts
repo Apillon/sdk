@@ -83,6 +83,25 @@ export async function mintCollectionNft(
   }
 }
 
+export async function nestMintCollectionNft(
+  uuid: string,
+  options: Params,
+  optsWithGlobals: Globals,
+) {
+  const nftService = initNftService(optsWithGlobals);
+
+  try {
+    const data = await nftService.nestMintCollectionNft(uuid, {
+      parentCollectionUuid: options.parentCollectionUuid,
+      parentNftId: toInteger(options.parentNftId),
+      quantity: toInteger(options.quantity),
+    });
+    console.log(data);
+  } catch (e: any) {
+    exceptionHandler(e);
+  }
+}
+
 export async function burnCollectionNft(
   uuid: string,
   options: Params,

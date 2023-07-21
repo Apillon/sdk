@@ -27,6 +27,12 @@ export interface IMintCollectionNft {
   quantity: number;
 }
 
+export interface INestMintCollectionNft {
+  parentCollectionUuid: string;
+  parentNftId: number;
+  quantity: number;
+}
+
 export interface IBurnCollectionNft {
   tokenId: number;
 }

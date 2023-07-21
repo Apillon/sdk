@@ -6,6 +6,7 @@ import {
   listCollections,
   listCollectionTransactions,
   mintCollectionNft,
+  nestMintCollectionNft,
   transferCollectionOwnership,
 } from './nft.service';
 import * as COMMON_OPTIONS from '../common/options';
@@ -51,6 +52,25 @@ export function createNftsCommands(cli: Command) {
     .requiredOption('-q, --quantity <integer>', 'Number of NFTs to mint.')
     .action(async function (uuid: string, options: Params) {
       await mintCollectionNft(uuid, options, this.optsWithGlobals());
+    });
+
+  nfts
+    .command('nest-mint-nft')
+    .description(
+      'Nest mint NFT child collection to parent collection with UUID and NFT with id.',
+    )
+    .argument('<collection-uuid>', 'Child collection UUID')
+    .requiredOption(
+      '-c, --parent-collection-uuid <string>',
+      'Parent collection UUID to which child NFTs will be minted to.',
+    )
+    .requiredOption(
+      '-n, --parent-nft-id <string>',
+      'Parent collection NFT id to which child NFTs will be minted to.',
+    )
+    .requiredOption('-q, --quantity <integer>', 'Number of child NFTs to mint.')
+    .action(async function (uuid: string, options: Params) {
+      await nestMintCollectionNft(uuid, options, this.optsWithGlobals());
     });
 
   nfts

@@ -6,6 +6,7 @@ import {
   ICollection,
   ICreateCollection,
   IMintCollectionNft,
+  INestMintCollectionNft,
   ITransaction,
   ITransferCollectionOwnership,
 } from '../types/nfts';
@@ -49,6 +50,18 @@ export class Nfts extends ApillonModule {
   public async mintCollectionNft(uuid: string, data: IMintCollectionNft) {
     const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${COLLECTIONS_ROUTE}/${uuid}/mint`,
+      data,
+    );
+
+    return resp.data.data;
+  }
+
+  public async nestMintCollectionNft(
+    uuid: string,
+    data: INestMintCollectionNft,
+  ) {
+    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+      `${COLLECTIONS_ROUTE}/${uuid}/nest-mint`,
       data,
     );
 
