@@ -4,9 +4,6 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "files": [
-    "src/modules/apillon.d.ts"
-  ],
   "include": [
     "**/*.ts",
     "**/*.tsx"
