@@ -5,7 +5,8 @@ import {
   toBoolean,
   toInteger,
 } from '@apillon/sdk';
-import { readAndParseJson } from '../common/files';
+import { readAndParseJson } from '../../lib/files';
+import { Globals, Params } from '../../lib/types';
 
 function initNftService(options: Globals) {
   return new Nfts({

@@ -9,7 +9,8 @@ import {
   nestMintCollectionNft,
   transferCollectionOwnership,
 } from './nft.service';
-import * as COMMON_OPTIONS from '../common/options';
+import * as COMMON_OPTIONS from '../../lib/options';
+import { Params } from '../../lib/types';
 
 export function createNftsCommands(cli: Command) {
   const nfts = cli.command('nfts');

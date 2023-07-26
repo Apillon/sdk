@@ -1,8 +1,8 @@
-interface Params {
+export interface Params {
   [Key: string]: string;
 }
 
-interface Globals {
+export interface Globals {
   key: string;
   secret: string;
   apiUrl?: string;

@@ -4,9 +4,6 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "files": [
-    "src/types.d.ts"
-  ],
   "include": [
     "**/*.ts",
     "**/*.tsx"
