@@ -6,9 +6,9 @@ import {
   toInteger,
 } from '@apillon/sdk';
 import { readAndParseJson } from '../../lib/files';
-import { Globals, Params } from '../../lib/types';
+import { GlobalParams, Params } from '../../lib/types';
 
-function initNftService(options: Globals) {
+function initNftService(options: GlobalParams) {
   return new Nfts({
     key: options.key,
     secret: options.secret,
@@ -19,7 +19,7 @@ function initNftService(options: Globals) {
 // COLLECTIONS
 export async function listCollections(
   options: Params,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const nftService = initNftService(optsWithGlobals);
 
@@ -50,7 +50,7 @@ export async function getCollection(uuid: string, optsWithGlobals) {
 
 export async function createCollection(
   filePath: string,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const createCollectionData = readAndParseJson(filePath) as ICreateCollection;
   if (!createCollectionData) {
@@ -70,7 +70,7 @@ export async function createCollection(
 export async function mintCollectionNft(
   uuid: string,
   options: Params,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const nftService = initNftService(optsWithGlobals);
 
@@ -88,7 +88,7 @@ export async function mintCollectionNft(
 export async function nestMintCollectionNft(
   uuid: string,
   options: Params,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const nftService = initNftService(optsWithGlobals);
 
@@ -107,7 +107,7 @@ export async function nestMintCollectionNft(
 export async function burnCollectionNft(
   uuid: string,
   options: Params,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const nftService = initNftService(optsWithGlobals);
 
@@ -124,7 +124,7 @@ export async function burnCollectionNft(
 export async function transferCollectionOwnership(
   uuid: string,
   options: Params,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const nftService = initNftService(optsWithGlobals);
 
@@ -142,7 +142,7 @@ export async function transferCollectionOwnership(
 export async function listCollectionTransactions(
   uuid: string,
   options: Params,
-  optsWithGlobals: Globals,
+  optsWithGlobals: GlobalParams,
 ) {
   const nftService = initNftService(optsWithGlobals);
 

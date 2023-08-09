@@ -9,24 +9,21 @@ import {
   nestMintCollectionNft,
   transferCollectionOwnership,
 } from './nft.service';
-import * as COMMON_OPTIONS from '../../lib/options';
 import { Params } from '../../lib/types';
+import { addPaginationOptions } from '../../lib/options';
 
 export function createNftsCommands(cli: Command) {
   const nfts = cli.command('nfts');
 
   // COLLECTIONS
-  nfts
+  const listCollectionsCommand = nfts
     .command('list-collections')
     .description('List NFT collections owned by project related to API key.')
     .addOption(new Option('-s, --status <integer>', 'Collection status'))
-    .addOption(COMMON_OPTIONS.page)
-    .addOption(COMMON_OPTIONS.limit)
-    .addOption(COMMON_OPTIONS.orderBy)
-    .addOption(COMMON_OPTIONS.descending)
     .action(async function (options: Params) {
       await listCollections(options, this.optsWithGlobals());
     });
+  addPaginationOptions(listCollectionsCommand);
 
   nfts
     .command('get-collection')
@@ -51,7 +48,7 @@ export function createNftsCommands(cli: Command) {
       '-a, --address <string>',
       'Address which will receive minted NFTs.',
     )
-    .requiredOption('-q, --quantity <integer>', 'Number of NFTs to mint.')
+    .requiredOption('-n, --number <integer>', 'Number of NFTs to mint.')
     .action(async function (uuid: string, options: Params) {
       await mintCollectionNft(uuid, options, this.optsWithGlobals());
     });
@@ -67,10 +64,10 @@ export function createNftsCommands(cli: Command) {
       'Parent collection UUID to which child NFTs will be minted to.',
     )
     .requiredOption(
-      '-n, --parent-nft-id <string>',
+      '-i, --parent-nft-id <string>',
       'Parent collection NFT id to which child NFTs will be minted to.',
     )
-    .requiredOption('-q, --quantity <integer>', 'Number of child NFTs to mint.')
+    .requiredOption('-n, --number <integer>', 'Number of child NFTs to mint.')
     .action(async function (uuid: string, options: Params) {
       await nestMintCollectionNft(uuid, options, this.optsWithGlobals());
     });
@@ -97,17 +94,14 @@ export function createNftsCommands(cli: Command) {
     });
 
   // TRANSACTIONS
-  nfts
+  const listCollectionTransactionsCommand = nfts
     .command('list-transactions')
     .description('List NFT transactions for specific collection UUID.')
     .argument('<collection-uuid>', 'Collection UUID')
     .addOption(new Option('-s, --status <integer>', 'Transaction status'))
     .addOption(new Option('-t, --type <integer>', 'Transaction type'))
-    .addOption(COMMON_OPTIONS.page)
-    .addOption(COMMON_OPTIONS.limit)
-    .addOption(COMMON_OPTIONS.orderBy)
-    .addOption(COMMON_OPTIONS.descending)
     .action(async function (uuid: string, options: Params) {
       await listCollectionTransactions(uuid, options, this.optsWithGlobals());
     });
+  addPaginationOptions(listCollectionTransactionsCommand);
 }

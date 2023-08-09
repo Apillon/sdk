@@ -9,10 +9,10 @@ import { ApillonApiError, ApillonNetworkError } from '../modules/apillon';
  * @param value value converted
  */
 export function toBoolean(value?: string) {
-  if (!value === undefined) {
+  if (value === undefined) {
     return undefined;
   }
-  return value === 'true' || value === '1';
+  return value === 'true' || value === '1' || !!value;
 }
 
 /**

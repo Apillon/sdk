@@ -2,7 +2,7 @@ export interface Params {
   [Key: string]: string;
 }
 
-export interface Globals {
+export interface GlobalParams {
   key: string;
   secret: string;
   apiUrl?: string;
