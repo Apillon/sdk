@@ -16,6 +16,11 @@ export enum CollectionStatus {
   FAILED = 5,
 }
 
+export enum CollectionType {
+  GENERIC = 1,
+  NESTABLE = 2,
+}
+
 export enum TransactionStatus {
   PENDING = 1,
   CONFIRMED = 2,
@@ -33,6 +38,7 @@ export enum TransactionType {
 }
 
 export interface ICreateCollection {
+  collectionType: CollectionType;
   chain: EvmChain;
   name: string;
   symbol: string;
@@ -72,10 +78,16 @@ export interface IBurnCollectionNft {
 //OUTPUTS
 export interface ICollection {
   collectionUuid: string;
+  contractAddress: string;
+  deployerAddress: string;
+  transactionHash: string;
+  collectionStatus: number;
+  collectionType: number;
   chain: number;
   name: string;
   symbol: string;
   description: string;
+  bucketUuid: string;
   baseUri: string;
   baseExtension: string;
   maxSupply: number;
@@ -97,6 +109,7 @@ export interface ITransaction {
   transactionStatus: number;
   transactionHash: string;
   updateTime: string;
+  createTime: string;
 }
 
 export interface ICollectionFilters extends IApillonPagination {
