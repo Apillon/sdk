@@ -25,6 +25,7 @@ export async function listCollections(
 
   try {
     const data = await nftService.listNftCollections({
+      collectionStatus: toInteger(options.status),
       page: toInteger(options.page),
       limit: toInteger(options.limit),
       orderBy: options.orderBy,
@@ -147,6 +148,8 @@ export async function listCollectionTransactions(
 
   try {
     const data = await nftService.listCollectionTransactions(uuid, {
+      transactionStatus: toInteger(options.status),
+      transactionType: toInteger(options.type),
       page: toInteger(options.page),
       limit: toInteger(options.limit),
       orderBy: options.orderBy,

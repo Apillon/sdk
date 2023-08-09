@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import {
   burnCollectionNft,
   createCollection,
@@ -19,6 +19,7 @@ export function createNftsCommands(cli: Command) {
   nfts
     .command('list-collections')
     .description('List NFT collections owned by project related to API key.')
+    .addOption(new Option('-s, --status <integer>', 'Collection status'))
     .addOption(COMMON_OPTIONS.page)
     .addOption(COMMON_OPTIONS.limit)
     .addOption(COMMON_OPTIONS.orderBy)
@@ -100,6 +101,8 @@ export function createNftsCommands(cli: Command) {
     .command('list-transactions')
     .description('List NFT transactions for specific collection UUID.')
     .argument('<collection-uuid>', 'Collection UUID')
+    .addOption(new Option('-s, --status <integer>', 'Transaction status'))
+    .addOption(new Option('-t, --type <integer>', 'Transaction type'))
     .addOption(COMMON_OPTIONS.page)
     .addOption(COMMON_OPTIONS.limit)
     .addOption(COMMON_OPTIONS.orderBy)

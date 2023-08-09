@@ -1,13 +1,14 @@
 import { ApillonModule } from './apillon';
 import { constructUrlWithQueryParams } from '../lib/common';
-import { IApillonPagination } from '../types/generic';
 import {
   IBurnCollectionNft,
   ICollection,
+  ICollectionFilters,
   ICreateCollection,
   IMintCollectionNft,
   INestMintCollectionNft,
   ITransaction,
+  ITransactionFilters,
   ITransferCollectionOwnership,
 } from '../types/nfts';
 import {
@@ -20,7 +21,7 @@ const COLLECTIONS_ROUTE = '/nfts/collections';
 
 export class Nfts extends ApillonModule {
   // COLLECTIONS
-  public async listNftCollections(params: IApillonPagination) {
+  public async listNftCollections(params: ICollectionFilters) {
     const url = constructUrlWithQueryParams(COLLECTIONS_ROUTE, params);
 
     const resp = await this.api.get<
@@ -92,7 +93,7 @@ export class Nfts extends ApillonModule {
   // TRANSACTIONS
   public async listCollectionTransactions(
     uuid: string,
-    params: IApillonPagination,
+    params: ITransactionFilters,
   ) {
     const url = constructUrlWithQueryParams(
       `${COLLECTIONS_ROUTE}/${uuid}/transactions`,
