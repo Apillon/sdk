@@ -6,20 +6,22 @@ export interface ApillonConfig {
   apiUrl?: string;
 }
 
+export class ApillonApiError extends Error {}
+export class ApillonRequestError extends Error {}
+export class ApillonNetworkError extends Error {}
+
 export class ApillonModule {
   protected api: AxiosInstance;
   private config: ApillonConfig;
 
   public constructor(config?: ApillonConfig) {
     const defaultOptions: ApillonConfig = {
-      key: process.env.APILLON_KEY,
-      secret: process.env.APILLON_SECRET,
+      key: process.env.APILLON_API_KEY,
+      secret: process.env.APILLON_API_SECRET,
       apiUrl: process.env.APILLON_API_URL || 'https://api.apillon.io',
     };
 
     this.config = { ...defaultOptions, ...config };
-
-    console.log(this.config);
 
     let auth = undefined;
     if (this.config.key && this.config.secret) {
@@ -42,7 +44,7 @@ export class ApillonModule {
         return config;
       },
       (error) => {
-        throw new Error(error.request);
+        throw new ApillonRequestError(error.request);
       },
     );
 
@@ -51,7 +53,13 @@ export class ApillonModule {
         return response;
       },
       (error) => {
-        throw new Error(JSON.stringify(error.response.data, null, 2));
+        if (error.response?.data) {
+          throw new ApillonApiError(
+            JSON.stringify(error.response.data, null, 2),
+          );
+        } else {
+          throw new ApillonNetworkError(error.message);
+        }
       },
     );
   }

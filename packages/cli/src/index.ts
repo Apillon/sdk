@@ -5,13 +5,12 @@ import { Command, Option } from 'commander';
 import config from './config';
 import { createHostingCommands } from './modules/hosting/hosting.commands';
 import { createNftsCommands } from './modules/nfts/nfts.commands';
-import { createStorageCommands } from './modules/storage/storage.commands';
 
 const cli = new Command('apillon').version(config.VERSION);
 cli.addHelpText(
   'beforeAll',
   chalk.black.bgYellow(`
- ▶◀ Apillon CLI v${config.VERSION} ▶◀ 
+ ▶◀ Apillon CLI v${config.VERSION} ▶◀
 `),
 );
 cli.addHelpText(
@@ -22,11 +21,11 @@ Find more help at wiki.apillon.io!
 );
 
 cli.addOption(
-  new Option('--key <api key>', 'Apillon API key').env('APILLON_KEY'),
+  new Option('--key <api key>', 'Apillon API key').env('APILLON_API_KEY'),
 );
 cli.addOption(
   new Option('--secret <api secret>', 'Apillon API secret').env(
-    'APILLON_SECRET',
+    'APILLON_API_SECRET',
   ),
 );
 cli.addOption(
@@ -42,8 +41,8 @@ cli.configureHelp({
 
 cli.showHelpAfterError('Run with --help for additional information!');
 
-const hosting = createHostingCommands(cli);
+createHostingCommands(cli);
 // const storage = createStorageCommands(cli);
-// const nfts = createNftsCommands(cli);
+createNftsCommands(cli);
 
 cli.parse();
