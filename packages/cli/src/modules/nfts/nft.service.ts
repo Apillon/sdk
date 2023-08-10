@@ -52,7 +52,24 @@ export async function createCollection(
   filePath: string,
   optsWithGlobals: GlobalParams,
 ) {
-  const createCollectionData = readAndParseJson(filePath) as ICreateCollection;
+  let createCollectionData;
+  try {
+    createCollectionData = readAndParseJson(filePath) as ICreateCollection;
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      console.error(`Error: File not found (${filePath}).`);
+      return;
+    } else if (
+      e.name === 'SyntaxError' &&
+      e.message.includes('Unexpected end of JSON input')
+    ) {
+      console.error(`Error: Failed to parse JSON file (${filePath}).`);
+      return;
+    } else {
+      console.error(e);
+      return;
+    }
+  }
   if (!createCollectionData) {
     return;
   }

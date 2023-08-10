@@ -2,22 +2,7 @@
 import fs from 'fs';
 
 export function readAndParseJson(filePath: string) {
-  let fileContent;
-  try {
-    fileContent = fs.readFileSync(filePath);
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      console.error(`Error: File not found (${filePath}).`);
-      return;
-    } else {
-      throw e;
-    }
-  }
+  const fileContent = fs.readFileSync(filePath);
 
-  try {
-    return JSON.parse(fileContent.toString());
-  } catch (e) {
-    console.error(`Error: Failed to parse JSON file (${filePath}).`);
-    return;
-  }
+  return JSON.parse(fileContent.toString());
 }
