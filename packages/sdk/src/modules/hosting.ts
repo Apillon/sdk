@@ -21,9 +21,8 @@ export class Hosting extends ApillonModule {
   }
 
   public async uploadFromFolder(websiteUuid: string, folderPath: string) {
-    //
     console.log(
-      `Prepairing to upload files from ${folderPath} to website ${websiteUuid} ...`,
+      `Preparing to upload files from ${folderPath} to website ${websiteUuid} ...`,
     );
     let files;
     try {

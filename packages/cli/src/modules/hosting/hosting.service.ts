@@ -10,8 +10,6 @@ export async function deployWebsite(
     apiUrl?: string;
   },
 ) {
-  console.log(options);
-
   const hosting = new Hosting({
     key: options.key,
     secret: options.secret,
