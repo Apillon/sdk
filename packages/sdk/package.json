@@ -20,7 +20,7 @@
     "dist/**"
   ],
   "scripts": {
-    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "prebuild": "rimraf dist",
     "build": "tsc --declarationMap",
     "dev": "tsc --declarationMap --watch",
@@ -44,9 +44,10 @@
     "axios": "^1.3.4"
   },
   "devDependencies": {
+    "eslint-config-common": "*",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
-    "eslint-config-common": "*",
-    "tsconfig": "*"
+    "tsconfig": "*",
+    "rimraf": "^5.0.5"
   }
 }
