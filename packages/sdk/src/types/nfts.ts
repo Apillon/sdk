@@ -113,10 +113,10 @@ export interface ITransaction {
 }
 
 export interface ICollectionFilters extends IApillonPagination {
-  collectionStatus: CollectionStatus
+  collectionStatus: CollectionStatus;
 }
 
 export interface ITransactionFilters extends IApillonPagination {
-  transactionStatus: TransactionStatus
-  transactionType: TransactionType
+  transactionStatus: TransactionStatus;
+  transactionType: TransactionType;
 }

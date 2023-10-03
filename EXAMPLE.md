@@ -16,13 +16,13 @@ export async function test() {
   await webpage1.getDeployment(id);
   await webpage1.getDeployments();
   await webpage1.deployFromFolder('path', 'environment'); // can go directly to production
-  await webpage1.updateDeployment(from stg -> production); // tu me moti še na api levelu, kr lahko dobiš in pogledaš detajle specifičnega deploymenta, ampak deploy klic pa dela samo na zadnjem  
+  await webpage1.updateDeployment(from stg -> production); // tu me moti še na api levelu, kr lahko dobiš in pogledaš detajle specifičnega deploymenta, ampak deploy klic pa dela samo na zadnjem
 
   // or
   await hosting.website('uuid').getInfo();
 
 
-  //Naming hosting -> webpage? 
+  //Naming hosting -> webpage?
 
   const storage = new Storage({ apillonConfig });
   await storage.listBuckets();
@@ -36,7 +36,6 @@ export async function test() {
 
   const nft = new Nft({ apillonConfig });
   await nft.listCollections();
-  await nft.createCollection();
 
   const collection = nft.collection('uuid');
   const info = collection.getInfo(); //.info?

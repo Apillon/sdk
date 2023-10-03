@@ -1,25 +1,32 @@
-import { ApillonModule } from './apillon';
-import { constructUrlWithQueryParams } from '../lib/common';
+import { AxiosInstance } from 'axios';
+import { constructUrlWithQueryParams } from '../../lib/common';
 import {
-  IBurnCollectionNft,
-  ICollection,
+  IApillonResponse,
+  IApillonList,
+  IApillonStatus,
+} from '../../types/apillon';
+import {
   ICollectionFilters,
+  ICollection,
   ICreateCollection,
   IMintCollectionNft,
   INestMintCollectionNft,
-  ITransaction,
-  ITransactionFilters,
+  IBurnCollectionNft,
   ITransferCollectionOwnership,
-} from '../types/nfts';
-import {
-  IApillonList,
-  IApillonResponse,
-  IApillonStatus,
-} from '../types/apillon';
+  ITransactionFilters,
+  ITransaction,
+} from '../../types/nfts';
 
 const COLLECTIONS_ROUTE = '/nfts/collections';
 
-export class Nfts extends ApillonModule {
+export class NftCollection {
+  protected api: AxiosInstance;
+  private uuid;
+
+  constructor(uuid: string, api: AxiosInstance) {
+    this.api = api;
+    this.uuid = uuid;
+  }
   // COLLECTIONS
   public async listNftCollections(params: ICollectionFilters) {
     const url = constructUrlWithQueryParams(COLLECTIONS_ROUTE, params);
