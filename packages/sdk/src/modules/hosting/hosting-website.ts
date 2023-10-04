@@ -11,7 +11,7 @@ export class HostingWebsite {
   /**
    * @dev API url prefix for this class.
    */
-  private API_PREFIX = '/hosting/websites';
+  private API_PREFIX: string = null;
 
   /**
    * @dev Unique identifier of the website.
@@ -56,6 +56,7 @@ export class HostingWebsite {
   constructor(uuid: string, api: AxiosInstance) {
     this.api = api;
     this.uuid = uuid;
+    this.API_PREFIX = `/hosting/websites/${uuid}`;
   }
 
   /**
@@ -63,7 +64,7 @@ export class HostingWebsite {
    * @returns An instance of HostingWebsite class with filled properties.
    */
   public async get(): Promise<HostingWebsite> {
-    const data = (await this.api.get(`${this.API_PREFIX}/${this.uuid}`)).data;
+    const data = (await this.api.get(this.API_PREFIX)).data;
     this.name = data.data?.name;
     this.description = data.data?.description;
     this.domain = data.data?.domain;
@@ -93,10 +94,7 @@ export class HostingWebsite {
     console.log(`Files to upload: ${data.files.length}`);
 
     console.time('Got upload links');
-    const resp = await this.api.post(
-      `${this.API_PREFIX}/${this.uuid}/upload`,
-      data,
-    );
+    const resp = await this.api.post(`${this.API_PREFIX}/upload`, data);
 
     console.timeEnd('Got upload links');
 
@@ -109,7 +107,7 @@ export class HostingWebsite {
 
     console.log('Closing session...');
     const respEndSession = await this.api.post(
-      `${this.API_PREFIX}/${this.uuid}/upload/${sessionUuid}/end`,
+      `${this.API_PREFIX}/upload/${sessionUuid}/end`,
     );
     console.log('Session ended.');
 
@@ -129,7 +127,7 @@ export class HostingWebsite {
     );
 
     console.time('Deploy complete');
-    const resp = await this.api.post(`${this.API_PREFIX}/${this.uuid}/deploy`, {
+    const resp = await this.api.post(`${this.API_PREFIX}/deploy`, {
       environment: toEnvironment,
     });
 
@@ -142,9 +140,7 @@ export class HostingWebsite {
     //
     console.log('Get deployments for website ', this.uuid);
     return (
-      await this.api.get(
-        `${this.API_PREFIX}/${this.uuid}/deployments/${deploymentId}`,
-      )
+      await this.api.get(`${this.API_PREFIX}/deployments/${deploymentId}`)
     ).data;
   }
 }
