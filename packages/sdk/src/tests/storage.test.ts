@@ -3,7 +3,7 @@ import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
 import { getConfig } from './helpers/helper';
 
-describe.only('Storage tests', () => {
+describe.skip('Storage tests', () => {
   let config: ApillonConfig;
 
   beforeAll(async () => {

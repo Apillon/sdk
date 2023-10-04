@@ -6,9 +6,7 @@ import {
   IApillonStatus,
 } from '../../types/apillon';
 import {
-  ICollectionFilters,
   ICollection,
-  ICreateCollection,
   IMintCollectionNft,
   INestMintCollectionNft,
   IBurnCollectionNft,
@@ -17,93 +15,76 @@ import {
   ITransaction,
 } from '../../types/nfts';
 
-const COLLECTIONS_ROUTE = '/nfts/collections';
-
 export class NftCollection {
+  /**
+   * Axios instance set to correct rootUrl with correct error handling.
+   */
   protected api: AxiosInstance;
+
+  /**
+   * @dev Unique identifier of the collection.
+   */
   private uuid;
+
+  /**
+   * @dev API url prefix for this class.
+   */
+  private API_PREFIX: string = null;
 
   constructor(uuid: string, api: AxiosInstance) {
     this.api = api;
     this.uuid = uuid;
-  }
-  // COLLECTIONS
-  public async listNftCollections(params: ICollectionFilters) {
-    const url = constructUrlWithQueryParams(COLLECTIONS_ROUTE, params);
-
-    const resp = await this.api.get<
-      IApillonResponse<IApillonList<ICollection>>
-    >(url);
-
-    return resp.data.data;
+    this.API_PREFIX = `/nfts/collections/${this.uuid}`;
   }
 
-  public async getCollection(uuid: string) {
+  public async get() {
     const resp = await this.api.get<IApillonResponse<ICollection>>(
-      `${COLLECTIONS_ROUTE}/${uuid}`,
+      this.API_PREFIX,
     );
 
-    return resp.data.data;
+    return resp.data?.data;
   }
 
-  public async createCollection(data: ICreateCollection) {
+  public async mint(data: IMintCollectionNft) {
+    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+      `${this.API_PREFIX}/mint`,
+      data,
+    );
+
+    return resp.data?.data;
+  }
+
+  public async nestMintNft(data: INestMintCollectionNft) {
+    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+      `${this.API_PREFIX}/nest-mint`,
+      data,
+    );
+
+    return resp.data?.data;
+  }
+
+  public async burnNft(data: IBurnCollectionNft) {
+    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+      `${this.API_PREFIX}/burn`,
+      data,
+    );
+
+    return resp.data?.data;
+  }
+
+  public async transferOwnership(data: ITransferCollectionOwnership) {
     const resp = await this.api.post<IApillonResponse<ICollection>>(
-      COLLECTIONS_ROUTE,
+      `${this.API_PREFIX}/transfer`,
       data,
     );
 
-    return resp.data.data;
-  }
-
-  public async mintCollectionNft(uuid: string, data: IMintCollectionNft) {
-    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
-      `${COLLECTIONS_ROUTE}/${uuid}/mint`,
-      data,
-    );
-
-    return resp.data.data;
-  }
-
-  public async nestMintCollectionNft(
-    uuid: string,
-    data: INestMintCollectionNft,
-  ) {
-    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
-      `${COLLECTIONS_ROUTE}/${uuid}/nest-mint`,
-      data,
-    );
-
-    return resp.data.data;
-  }
-
-  public async burnCollectionNft(uuid: string, data: IBurnCollectionNft) {
-    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
-      `${COLLECTIONS_ROUTE}/${uuid}/burn`,
-      data,
-    );
-
-    return resp.data.data;
-  }
-
-  public async transferCollectionOwnership(
-    uuid: string,
-    data: ITransferCollectionOwnership,
-  ) {
-    const resp = await this.api.post<IApillonResponse<ICollection>>(
-      `${COLLECTIONS_ROUTE}/${uuid}/transfer`,
-      data,
-    );
-
-    return resp.data.data;
+    return resp.data?.data;
   }
 
   // TRANSACTIONS
-  public async listCollectionTransactions(
-    uuid: string,
-    params: ITransactionFilters,
-  ) {
+  public async listTransactions(uuid: string, params: ITransactionFilters) {
     const url = constructUrlWithQueryParams(
-      `${COLLECTIONS_ROUTE}/${uuid}/transactions`,
+      `${this.API_PREFIX}/transactions`,
       params,
     );
 
@@ -111,6 +92,6 @@ export class NftCollection {
       IApillonResponse<IApillonList<ITransaction>>
     >(url);
 
-    return resp.data.data.items;
+    return resp.data?.data.items;
   }
 }
