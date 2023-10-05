@@ -26,7 +26,8 @@
     "dev": "tsc --declarationMap --watch",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
     "publish-package": "npm publish",
-    "test": "npx jest"
+    "test": "npx jest",
+    "docs": "npx typedoc src/docs-index.ts"
   },
   "keywords": [
     "SDK",
@@ -50,7 +51,8 @@
     "ts-node": "^10.9.1",
     "tsconfig": "*",
     "rimraf": "^5.0.5",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "typedoc": "^0.25.1"
   },
   "jest": {
     "testTimeout": 1800000,
