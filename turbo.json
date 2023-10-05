@@ -2,17 +2,11 @@
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
     },
     "cli-install": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "dev": {
@@ -20,18 +14,15 @@
       "outputs": []
     },
     "publish-package": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {
       "outputs": []
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "cache": false,
+      "dependsOn": ["^build"],
       "outputs": []
     }
   }
