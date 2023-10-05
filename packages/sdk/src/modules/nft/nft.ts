@@ -16,25 +16,46 @@ export class Nft extends ApillonModule {
    * @returns An instance of NFT Collection
    */
   public collection(uuid: string): NftCollection {
-    return new NftCollection(uuid, this.api);
+    return new NftCollection(this.api, uuid, null);
   }
 
-  public async list(params: ICollectionFilters) {
+  /**
+   * Lists all nft collections available.
+   * @param params
+   * @returns Array of NftCollection.
+   */
+  public async list(params?: ICollectionFilters): Promise<NftCollection[]> {
+    const items: NftCollection[] = [];
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
     const resp = await this.api.get<
       IApillonResponse<IApillonList<ICollection>>
     >(url);
 
-    return resp.data?.data;
+    if (resp.data?.data && resp.data?.data.items) {
+      for (const item of resp.data?.data.items) {
+        items.push(new NftCollection(this.api, item.collectionUuid, item));
+      }
+    }
+
+    return items;
   }
 
+  /**
+   * Deploys a new NftCollection smart contract.
+   * @param data NFT collection data.
+   * @returns A NftCollection instance.
+   */
   public async create(data: ICreateCollection) {
     const resp = await this.api.post<IApillonResponse<ICollection>>(
       this.API_PREFIX,
       data,
     );
 
-    return resp.data?.data;
+    return new NftCollection(
+      this.api,
+      resp.data?.data.collectionUuid,
+      resp.data?.data,
+    );
   }
 }
