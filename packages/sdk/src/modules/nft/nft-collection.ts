@@ -7,10 +7,6 @@ import {
 } from '../../types/apillon';
 import {
   ICollection,
-  IMintCollectionNft,
-  INestMintCollectionNft,
-  IBurnCollectionNft,
-  ITransferCollectionOwnership,
   ITransactionFilters,
   ITransaction,
   CollectionType,
@@ -153,7 +149,11 @@ export class NftCollection {
     }
   }
 
-  public async get() {
+  /**
+   * Gets and populates collection information.
+   * @returns Collection instance.
+   */
+  public async get(): Promise<NftCollection> {
     const resp = await this.api.get<IApillonResponse<ICollection>>(
       this.API_PREFIX,
     );
@@ -162,44 +162,92 @@ export class NftCollection {
     return this;
   }
 
-  public async mint(data: IMintCollectionNft) {
+  /**
+   * Mints new nfts to a receiver.
+   * @param receiver Address of the receiver.
+   * @param quantity Amount of nfts to mint.
+   * @returns Call status.
+   */
+  public async mint(receiver: string, quantity: number) {
     const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/mint`,
-      data,
+      { receivingAddress: receiver, quantity },
     );
 
     return resp.data?.data;
   }
 
-  public async nestMintNft(data: INestMintCollectionNft) {
+  /**
+   * Mints new nfts directly to an existing nft.
+   * @warn This method is only available for nestable collections.
+   * @param parentCollectionUuid UUID of the collection we want to nest mint to.
+   * @param parentNftId ID of the nft in the collection we want to nest mint to.
+   * @param quantity Amount of nfts we want to mint.
+   * @returns Call status.
+   */
+  public async nestMintNft(
+    parentCollectionUuid: string,
+    parentNftId: number,
+    quantity: number,
+  ): Promise<IApillonStatus> {
+    if (
+      this.collectionType != null &&
+      this.collectionType != CollectionType.NESTABLE
+    ) {
+      throw new Error('This method is only available on nestable collections.');
+    }
     const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/nest-mint`,
-      data,
+      { parentCollectionUuid, parentNftId, quantity },
     );
 
     return resp.data?.data;
   }
 
-  public async burnNft(data: IBurnCollectionNft) {
+  /**
+   * Burns a nft.
+   * @warn Can only burn NFTs if the collection is revokable.
+   * @param id Id of the NFT we want to burn.
+   * @returns Status.
+   */
+  public async burnNft(id: string): Promise<IApillonStatus> {
+    if (this.isRevokable != null && !this.isRevokable) {
+      throw new Error('Collection is not revokable');
+    }
     const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/burn`,
-      data,
+      { tokenId: id },
     );
 
     return resp.data?.data;
   }
 
-  public async transferOwnership(data: ITransferCollectionOwnership) {
+  /**
+   * Transfers ownership of this collection.
+   * @warn Once ownership is transferred you cannot call mint methods anymore since you are the
+   * owner and you need to the smart contracts call directly on chain.
+   * @param address Address to which the ownership will be transferred.
+   * @returns Collection data.
+   */
+  public async transferOwnership(address: string): Promise<NftCollection> {
     const resp = await this.api.post<IApillonResponse<ICollection>>(
       `${this.API_PREFIX}/transfer`,
-      data,
+      { address },
     );
 
-    return resp.data?.data;
+    this.populate(resp.data?.data);
+
+    return this;
   }
 
-  // TRANSACTIONS
-  public async listTransactions(params?: ITransactionFilters) {
+  /**
+   * Gets list of transactions that occurred on this collection through Apillon.
+   * @param params Filters.
+   * @returns List of transactions.
+   */
+  public async listTransactions(
+    params?: ITransactionFilters,
+  ): Promise<ITransaction[]> {
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/transactions`,
       params,

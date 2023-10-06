@@ -9,7 +9,11 @@ import {
 import { NftCollection } from './nft-collection';
 
 export class Nft extends ApillonModule {
-  API_PREFIX = '/nfts/collections';
+  /**
+   * @dev API url for collections.
+   */
+  private API_PREFIX = '/nfts/collections';
+
   /**
    * @dev Returns a collection instance.
    * @param uuid Unique collection identifier.
@@ -21,7 +25,7 @@ export class Nft extends ApillonModule {
 
   /**
    * Lists all nft collections available.
-   * @param params
+   * @param params Filter for listing collections.
    * @returns Array of NftCollection.
    */
   public async list(params?: ICollectionFilters): Promise<NftCollection[]> {

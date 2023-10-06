@@ -56,23 +56,10 @@ export interface ICreateCollection {
   dropReserve: number;
 }
 
-export interface ITransferCollectionOwnership {
-  address: string;
-}
-
-export interface IMintCollectionNft {
-  receivingAddress: string;
-  quantity: number;
-}
-
 export interface INestMintCollectionNft {
   parentCollectionUuid: string;
   parentNftId: number;
   quantity: number;
-}
-
-export interface IBurnCollectionNft {
-  tokenId: number;
 }
 
 //OUTPUTS
