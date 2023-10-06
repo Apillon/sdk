@@ -3,12 +3,18 @@ import { Directory } from './directory';
 import { StorageContentType } from '../../types/storage';
 import { File } from './file';
 import { listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
+import { ApillonLogger } from '../../docs-index';
 
 export class StorageBucket {
   /**
    * Axios instance set to correct rootUrl with correct error handling.
    */
   protected api: AxiosInstance;
+
+  /**
+   * Logger.
+   */
+  protected logger: ApillonLogger;
 
   /**
    * @dev API url prefix for this class.
@@ -30,8 +36,9 @@ export class StorageBucket {
    * @param uuid Unique identifier of the bucket.
    * @param api Axios instance set to correct rootUrl with correct error handling.
    */
-  constructor(uuid: string, api: AxiosInstance) {
+  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string) {
     this.api = api;
+    this.logger = logger;
     this.uuid = uuid;
     this.API_PREFIX = `/storage/${uuid}`;
   }
@@ -40,7 +47,7 @@ export class StorageBucket {
    * TODO: How to handle search etc.?
    * @dev Gets contents of a bucket.
    */
-  async getContent(data?: any) {
+  async getObjects(data?: any) {
     this.content = [];
     let postfix = '';
     if (data?.directoryId) {
@@ -49,7 +56,9 @@ export class StorageBucket {
     const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
-        this.content.push(new File(this.api, this.uuid, item.id, item));
+        this.content.push(
+          new File(this.api, this.logger, this.uuid, item.id, item),
+        );
       } else {
         this.content.push(new Directory(this.api, this.uuid, item.id, item));
       }
@@ -106,6 +115,6 @@ export class StorageBucket {
    * @returns Instance of file.
    */
   file(fileId: string): File {
-    return new File(this.api, this.uuid, fileId, null);
+    return new File(this.api, this.logger, this.uuid, fileId, null);
   }
 }

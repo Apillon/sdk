@@ -1,12 +1,19 @@
 import { AxiosInstance } from 'axios';
 import { listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
 import { DeployToEnvironment } from '../../types/hosting';
+import { ApillonLogger } from '../../index';
+import { LogLevel } from '../../types/apillon';
 
 export class HostingWebsite {
   /**
    * Axios instance set to correct rootUrl with correct error handling.
    */
   protected api: AxiosInstance;
+
+  /**
+   * Logger.
+   */
+  protected logger: ApillonLogger;
 
   /**
    * @dev API url prefix for this class.
@@ -53,9 +60,10 @@ export class HostingWebsite {
    * @param uuid Unique identifier of the website.
    * @param api Axios instance set to correct rootUrl with correct error handling.
    */
-  constructor(uuid: string, api: AxiosInstance) {
+  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string) {
     this.api = api;
     this.uuid = uuid;
+    this.logger = logger;
     this.API_PREFIX = `/hosting/websites/${uuid}`;
   }
 
@@ -79,37 +87,39 @@ export class HostingWebsite {
    * @param folderPath Path to the folder to upload.
    */
   public async uploadFromFolder(folderPath: string): Promise<void> {
-    console.log(
+    this.logger.log(
       `Preparing to upload files from ${folderPath} to website ${this.uuid} ...`,
+      LogLevel.VERBOSE,
     );
+
     let files;
     try {
       files = listFilesRecursive(folderPath);
     } catch (err) {
-      console.error(err);
+      this.logger.log(err, LogLevel.ERROR);
       throw new Error(`Error reading files in ${folderPath}`);
     }
 
     const data = { files };
-    console.log(`Files to upload: ${data.files.length}`);
+    this.logger.log(`Files to upload: ${data.files.length}`, LogLevel.VERBOSE);
 
-    console.time('Got upload links');
+    this.logger.logWithTime('Get upload links', LogLevel.VERBOSE);
     const resp = await this.api.post(`${this.API_PREFIX}/upload`, data);
 
-    console.timeEnd('Got upload links');
+    this.logger.logWithTime('Got upload links', LogLevel.VERBOSE);
 
     // console.log(resp);
     const sessionUuid = resp.data.data.sessionUuid;
 
-    console.time('File upload complete');
+    this.logger.logWithTime('File upload complete', LogLevel.VERBOSE);
     await uploadFilesToS3(resp.data.data.files, files);
-    console.timeEnd('File upload complete');
+    this.logger.logWithTime('File upload complete', LogLevel.VERBOSE);
 
-    console.log('Closing session...');
+    this.logger.log('Closing session...', LogLevel.VERBOSE);
     const respEndSession = await this.api.post(
       `${this.API_PREFIX}/upload/${sessionUuid}/end`,
     );
-    console.log('Session ended.');
+    this.logger.log('Session ended.', LogLevel.VERBOSE);
 
     if (!respEndSession.data?.data) {
       throw new Error();
@@ -118,29 +128,32 @@ export class HostingWebsite {
 
   public async deploy(toEnvironment: DeployToEnvironment): Promise<any> {
     //
-    console.log(
+    this.logger.log(
       `Deploying website ${this.uuid} to IPFS (${
         toEnvironment === DeployToEnvironment.TO_STAGING
           ? 'preview'
           : 'production'
       })`,
+      LogLevel.VERBOSE,
     );
 
-    console.time('Deploy complete');
+    this.logger.logWithTime('Deploy start', LogLevel.VERBOSE);
     const resp = await this.api.post(`${this.API_PREFIX}/deploy`, {
       environment: toEnvironment,
     });
 
-    console.timeEnd('Deploy complete');
+    this.logger.logWithTime('Deploy complete', LogLevel.VERBOSE);
 
     return resp.data?.data;
   }
 
   public async getDeployStatus(deploymentId: string) {
-    //
-    console.log('Get deployments for website ', this.uuid);
+    this.logger.log(
+      `Get deployments for website ${this.uuid}`,
+      LogLevel.VERBOSE,
+    );
     return (
       await this.api.get(`${this.API_PREFIX}/deployments/${deploymentId}`)
-    ).data;
+    ).data?.data;
   }
 }

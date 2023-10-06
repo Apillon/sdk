@@ -20,7 +20,7 @@ export class Nft extends ApillonModule {
    * @returns An instance of NFT Collection
    */
   public collection(uuid: string): NftCollection {
-    return new NftCollection(this.api, uuid, null);
+    return new NftCollection(this.api, this.logger, uuid, null);
   }
 
   /**
@@ -38,7 +38,9 @@ export class Nft extends ApillonModule {
 
     if (resp.data?.data && resp.data?.data.items) {
       for (const item of resp.data?.data.items) {
-        items.push(new NftCollection(this.api, item.collectionUuid, item));
+        items.push(
+          new NftCollection(this.api, this.logger, item.collectionUuid, item),
+        );
       }
     }
 
@@ -58,6 +60,7 @@ export class Nft extends ApillonModule {
 
     return new NftCollection(
       this.api,
+      this.logger,
       resp.data?.data.collectionUuid,
       resp.data?.data,
     );

@@ -13,12 +13,18 @@ import {
   CollectionStatus,
   EvmChain,
 } from '../../types/nfts';
+import { ApillonLogger } from '../../docs-index';
 
 export class NftCollection {
   /**
    * Axios instance set to correct rootUrl with correct error handling.
    */
   protected api: AxiosInstance;
+
+  /**
+   * Logger.
+   */
+  protected logger: ApillonLogger;
 
   /**
    * @dev Unique identifier of the collection.
@@ -127,8 +133,14 @@ export class NftCollection {
    */
   public chain: EvmChain = null;
 
-  constructor(api: AxiosInstance, uuid: string, data: any) {
+  constructor(
+    api: AxiosInstance,
+    logger: ApillonLogger,
+    uuid: string,
+    data: any,
+  ) {
     this.api = api;
+    this.logger = logger;
     this.uuid = uuid;
     this.API_PREFIX = `/nfts/collections/${this.uuid}`;
     this.populate(data);

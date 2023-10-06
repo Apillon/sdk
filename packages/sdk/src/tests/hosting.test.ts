@@ -1,5 +1,6 @@
 import { ApillonConfig } from '../lib/apillon';
 import { Hosting } from '../modules/hosting/hosting';
+import { LogLevel } from '../types/apillon';
 import { DeployToEnvironment } from '../types/hosting';
 import { getConfig, getWebsiteUUID } from './helpers/helper';
 
@@ -12,7 +13,7 @@ describe('Hosting tests', () => {
     websiteUUID = getWebsiteUUID();
   });
 
-  test.only('get website info', async () => {
+  test('get website info', async () => {
     const hosting = new Hosting(config);
     try {
       const website = await hosting.website(websiteUUID).get();
@@ -50,7 +51,7 @@ describe('Hosting tests', () => {
     const hosting = new Hosting(config);
     const website = hosting.website(websiteUUID);
 
-    const deployStatus = await website.getDeployStatus('208');
+    const deployStatus = await website.getDeployStatus('20');
     console.log(deployStatus);
   });
 });

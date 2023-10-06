@@ -8,6 +8,6 @@ export class Storage extends ApillonModule {
    * @returns An instance of Website.∂
    */
   public bucket(uuid: string): StorageBucket {
-    return new StorageBucket(uuid, this.api);
+    return new StorageBucket(this.api, this.logger, uuid);
   }
 }

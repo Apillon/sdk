@@ -1,11 +1,17 @@
 import { AxiosInstance } from 'axios';
 import { FileStatus, StorageContentType } from '../../types/storage';
+import { ApillonLogger } from '../../lib/apillon';
 
 export class File {
   /**
    * Axios instance set to correct rootUrl with correct error handling.
    */
   protected api: AxiosInstance;
+
+  /**
+   * Logger.
+   */
+  protected logger: ApillonLogger;
 
   /**
    * @dev API url prefix for this class.
@@ -54,11 +60,13 @@ export class File {
    */
   constructor(
     api: AxiosInstance,
+    logger: ApillonLogger,
     bucketUuid: string,
     fileId: string,
     data: any,
   ) {
     this.api = api;
+    this.logger = logger;
     this.bucketUuid = bucketUuid;
     this.id = fileId;
     this.API_PREFIX = `/storage/${bucketUuid}/file/${fileId}`;

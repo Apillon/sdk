@@ -56,12 +56,6 @@ export interface ICreateCollection {
   dropReserve: number;
 }
 
-export interface INestMintCollectionNft {
-  parentCollectionUuid: string;
-  parentNftId: number;
-  quantity: number;
-}
-
 //OUTPUTS
 export interface ICollection {
   collectionUuid: string;

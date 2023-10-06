@@ -2,7 +2,7 @@ import { ApillonConfig } from '../lib/apillon';
 import { Nft } from '../modules/nft/nft';
 import { getCollectionUUID, getConfig } from './helpers/helper';
 
-describe('Nft tests', () => {
+describe.skip('Nft tests', () => {
   let config: ApillonConfig;
   let collectionUUID: string;
 

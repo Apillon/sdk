@@ -12,6 +12,6 @@ export class Hosting extends ApillonModule {
    * @returns An instance of Website.∂
    */
   public website(uuid: string): HostingWebsite {
-    return new HostingWebsite(uuid, this.api);
+    return new HostingWebsite(this.api, this.logger, uuid);
   }
 }
