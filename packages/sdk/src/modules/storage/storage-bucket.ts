@@ -60,7 +60,9 @@ export class StorageBucket {
           new File(this.api, this.logger, this.uuid, item.id, item),
         );
       } else {
-        this.content.push(new Directory(this.api, this.uuid, item.id, item));
+        this.content.push(
+          new Directory(this.api, this.logger, this.uuid, item.id, item),
+        );
       }
     }
 

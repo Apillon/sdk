@@ -4,6 +4,7 @@ import {
   IApillonResponse,
   IApillonList,
   IApillonStatus,
+  IApillonBoolResponse,
 } from '../../types/apillon';
 import {
   ICollection,
@@ -27,14 +28,14 @@ export class NftCollection {
   protected logger: ApillonLogger;
 
   /**
-   * @dev Unique identifier of the collection.
-   */
-  private uuid;
-
-  /**
    * @dev API url prefix for this class.
    */
   private API_PREFIX: string = null;
+
+  /**
+   * @dev Unique identifier of the collection.
+   */
+  public uuid;
 
   /**
    * @dev collection symbol.
@@ -181,7 +182,7 @@ export class NftCollection {
    * @returns Call status.
    */
   public async mint(receiver: string, quantity: number) {
-    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+    const resp = await this.api.post<IApillonResponse<IApillonBoolResponse>>(
       `${this.API_PREFIX}/mint`,
       { receivingAddress: receiver, quantity },
     );
@@ -206,7 +207,7 @@ export class NftCollection {
       this.collectionType != null &&
       this.collectionType != CollectionType.NESTABLE
     ) {
-      throw new Error('This method is only available on nestable collections.');
+      throw new Error('Collection is not nestable.');
     }
     const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/nest-mint`,
@@ -224,7 +225,7 @@ export class NftCollection {
    */
   public async burnNft(id: string): Promise<IApillonStatus> {
     if (this.isRevokable != null && !this.isRevokable) {
-      throw new Error('Collection is not revokable');
+      throw new Error('Collection is not revokable.');
     }
     const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/burn`,

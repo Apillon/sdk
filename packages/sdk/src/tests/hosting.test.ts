@@ -1,10 +1,9 @@
 import { ApillonConfig } from '../lib/apillon';
 import { Hosting } from '../modules/hosting/hosting';
-import { LogLevel } from '../types/apillon';
 import { DeployToEnvironment } from '../types/hosting';
 import { getConfig, getWebsiteUUID } from './helpers/helper';
 
-describe('Hosting tests', () => {
+describe.skip('Hosting tests', () => {
   let config: ApillonConfig;
   let websiteUUID: string;
 

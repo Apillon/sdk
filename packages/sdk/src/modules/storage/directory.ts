@@ -1,12 +1,18 @@
 import { AxiosInstance } from 'axios';
 import { StorageContentType } from '../../types/storage';
 import { File } from './file';
+import { ApillonLogger } from '../../lib/apillon';
 
 export class Directory {
   /**
    * Axios instance set to correct rootUrl with correct error handling.
    */
   protected api: AxiosInstance;
+
+  /**
+   * Logger.
+   */
+  protected logger: ApillonLogger;
 
   /**
    * @dev API url prefix for this class.
@@ -51,11 +57,13 @@ export class Directory {
    */
   constructor(
     api: AxiosInstance,
+    logger: ApillonLogger,
     bucketUuid: string,
     directoryId: string,
     data: any,
   ) {
     this.api = api;
+    this.logger = logger;
     this.bucketUuid = bucketUuid;
     this.id = directoryId;
     this.API_PREFIX = `/storage/${bucketUuid}`;
@@ -86,10 +94,12 @@ export class Directory {
     const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
-        this.content.push(new File(this.api, this.bucketUuid, item.id, item));
+        this.content.push(
+          new File(this.api, this.logger, this.bucketUuid, item.id, item),
+        );
       } else {
         this.content.push(
-          new Directory(this.api, this.bucketUuid, item.id, item),
+          new Directory(this.api, this.logger, this.bucketUuid, item.id, item),
         );
       }
     }

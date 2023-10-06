@@ -21,3 +21,7 @@ export function getCollectionUUID() {
 export function getWebsiteUUID() {
   return process.env['WEBSITE_UUID'];
 }
+
+export function getMintAddress() {
+  return process.env['MINT_ADDRESS'];
+}
