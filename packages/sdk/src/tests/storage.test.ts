@@ -1,21 +1,21 @@
 import { ApillonConfig } from '../lib/apillon';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
-import { getConfig } from './helpers/helper';
+import { getBucketUUID, getConfig } from './helpers/helper';
 
 describe.skip('Storage tests', () => {
   let config: ApillonConfig;
+  let bucketUUID: string;
 
   beforeAll(async () => {
     config = getConfig();
+    bucketUUID = getBucketUUID();
   });
 
   test('get bucket content', async () => {
     const storage = new Storage(config);
     try {
-      const content = await storage
-        .bucket('f2df445a-ab8d-4248-b231-470cc8a18385')
-        .getContent();
+      const content = await storage.bucket(bucketUUID).getObjects();
       console.log(content);
     } catch (e) {
       console.log(e);
@@ -26,8 +26,8 @@ describe.skip('Storage tests', () => {
     const storage = new Storage(config);
     try {
       const content = await storage
-        .bucket('f2df445a-ab8d-4248-b231-470cc8a18385')
-        .getContent({ directoryId: '3160' });
+        .bucket(bucketUUID)
+        .getObjects({ directoryId: '3160' });
 
       for (let i = 0; i < content.length; i++) {
         if (content[i].type == StorageContentType.DIRECTORY) {
@@ -46,10 +46,7 @@ describe.skip('Storage tests', () => {
   test('get file details', async () => {
     const storage = new Storage(config);
     try {
-      const content = await storage
-        .bucket('f2df445a-ab8d-4248-b231-470cc8a18385')
-        .file('79961')
-        .get();
+      const content = await storage.bucket(bucketUUID).file('79961').get();
       console.log(content);
     } catch (e) {
       console.log(e);
@@ -60,7 +57,7 @@ describe.skip('Storage tests', () => {
     const storage = new Storage(config);
     try {
       await storage
-        .bucket('f2df445a-ab8d-4248-b231-470cc8a18385')
+        .bucket(bucketUUID)
         .uploadFromFolder('./src/tests/helpers/website/');
       // console.log(content);
     } catch (e) {

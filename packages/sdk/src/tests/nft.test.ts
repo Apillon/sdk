@@ -1,15 +1,17 @@
 import { ApillonConfig } from '../lib/apillon';
 import { Nft } from '../modules/nft/nft';
-import { getConfig } from './helpers/helper';
+import { getCollectionUUID, getConfig } from './helpers/helper';
 
 describe('Nft tests', () => {
   let config: ApillonConfig;
+  let collectionUUID: string;
 
   beforeAll(async () => {
     config = getConfig();
+    collectionUUID = getCollectionUUID();
   });
 
-  test.only('list nft collections', async () => {
+  test('list nft collections', async () => {
     const nft = new Nft(config);
     try {
       const collection = await nft.list();
@@ -23,7 +25,7 @@ describe('Nft tests', () => {
     const nft = new Nft(config);
     try {
       const collection = await nft
-        .collection('2ad03895-fd5d-40e7-af17-1d6daecf3b5a')
+        .collection(collectionUUID)
         .listTransactions();
       console.log(collection);
     } catch (e) {
@@ -34,9 +36,7 @@ describe('Nft tests', () => {
   test.only('get nft collection details', async () => {
     const nft = new Nft(config);
     try {
-      const collection = await nft
-        .collection('2ad03895-fd5d-40e7-af17-1d6daecf3b5a')
-        .get();
+      const collection = await nft.collection(collectionUUID).get();
       console.log(collection);
     } catch (e) {
       console.log(e);

@@ -1,21 +1,22 @@
 import { ApillonConfig } from '../lib/apillon';
 import { Hosting } from '../modules/hosting/hosting';
 import { DeployToEnvironment } from '../types/hosting';
-import { getConfig } from './helpers/helper';
+import { getConfig, getWebsiteUUID } from './helpers/helper';
 
-describe.skip('Hosting tests', () => {
+describe('Hosting tests', () => {
   let config: ApillonConfig;
+  let websiteUUID: string;
 
   beforeAll(async () => {
     config = getConfig();
+    websiteUUID = getWebsiteUUID();
   });
 
-  test('get website info', async () => {
+  test.only('get website info', async () => {
     const hosting = new Hosting(config);
     try {
-      const website = await hosting
-        .website('8e1a512d-5672-4c2f-ad5e-60333498cde2')
-        .get();
+      const website = await hosting.website(websiteUUID).get();
+      console.log(website);
       console.log(website.name);
       console.log(website.bucketUuid);
       console.log(website.ipnsProduction);
@@ -27,7 +28,7 @@ describe.skip('Hosting tests', () => {
 
   test('upload website from folder', async () => {
     const hosting = new Hosting(config);
-    const website = hosting.website('8e1a512d-5672-4c2f-ad5e-60333498cde2');
+    const website = hosting.website(websiteUUID);
     try {
       await website.uploadFromFolder('./src/tests/helpers/website/');
     } catch (e) {
@@ -39,7 +40,7 @@ describe.skip('Hosting tests', () => {
 
   // test('get deployment status', async () => {
   //   const hosting = new Hosting(config);
-  //   const website = hosting.website('8e1a512d-5672-4c2f-ad5e-60333498cde2');
+  //   const website = hosting.website(websiteUUID);
 
   //   const deployStatus = await website.deploy(DeployToEnvironment.TO_STAGING);
   //   console.log(deployStatus);
@@ -47,7 +48,7 @@ describe.skip('Hosting tests', () => {
 
   test.only('get deployment status', async () => {
     const hosting = new Hosting(config);
-    const website = hosting.website('8e1a512d-5672-4c2f-ad5e-60333498cde2');
+    const website = hosting.website(websiteUUID);
 
     const deployStatus = await website.getDeployStatus('208');
     console.log(deployStatus);

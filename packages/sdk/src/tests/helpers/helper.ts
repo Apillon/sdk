@@ -9,3 +9,15 @@ export function getConfig(): ApillonConfig {
     key: process.env['APILLON_API_KEY'],
   } as ApillonConfig;
 }
+
+export function getBucketUUID() {
+  return process.env['BUCKET_UUID'];
+}
+
+export function getCollectionUUID() {
+  return process.env['COLLECTION_UUID'];
+}
+
+export function getWebsiteUUID() {
+  return process.env['WEBSITE_UUID'];
+}
