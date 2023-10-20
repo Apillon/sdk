@@ -24,6 +24,34 @@
     "eslint-config-common": "*",
     "prettier": "latest",
     "rimraf": "^4.4.0",
-    "turbo": "latest"
+    "turbo": "latest",
+    "jest": "29.7.0",
+    "ts-jest": "29.1.1",
+    "@types/jest": "^29.5.5"
+  },
+  "jest": {
+    "testTimeout": 1800000,
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "rootDir": "src/tests",
+    "testPathIgnorePatterns": [
+      "dist/*"
+    ],
+    "testRegex": ".*\\.test\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "preset": "ts-jest",
+    "verbose": true
   }
 }

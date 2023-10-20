@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-import { ApillonApiError, ApillonNetworkError } from '../modules/apillon';
+import { ApillonApiError, ApillonNetworkError } from './apillon';
 
 /**
  * Convert value to boolean if defined, else return undefined.
