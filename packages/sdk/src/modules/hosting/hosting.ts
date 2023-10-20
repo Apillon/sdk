@@ -2,10 +2,6 @@ import { ApillonModule } from '../../lib/apillon';
 import { HostingWebsite } from './hosting-website';
 
 export class Hosting extends ApillonModule {
-  public createWebsite() {
-    throw Error('Not implemented');
-  }
-
   /**
    * @dev Returns an website instance.
    * @param uuid Unique website identifier.
