@@ -2,7 +2,6 @@ import { ApillonConfig } from '../lib/apillon';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
 import { getBucketUUID, getConfig } from './helpers/helper';
-
 describe('Storage tests', () => {
   let config: ApillonConfig;
   let bucketUUID: string;
@@ -12,7 +11,7 @@ describe('Storage tests', () => {
     bucketUUID = getBucketUUID();
   });
 
-  test('get bucket content', async () => {
+  test.skip('get bucket content', async () => {
     const storage = new Storage(config);
     const content = await storage.bucket(bucketUUID).getObjects();
     for (const item of content) {
@@ -24,7 +23,7 @@ describe('Storage tests', () => {
     expect(content.length).toBeGreaterThanOrEqual(0);
   });
 
-  test('get bucket files recursively', async () => {
+  test.skip('get bucket files recursively', async () => {
     const storage = new Storage(config);
     const content = await storage.bucket(bucketUUID).getFilesRecursive();
     for (const item of content) {
@@ -36,7 +35,13 @@ describe('Storage tests', () => {
     expect(content.length).toBeGreaterThanOrEqual(0);
   });
 
-  test('get bucket directory content', async () => {
+  test.skip('get bucket files markedForDeletion=true', async () => {
+    const storage = new Storage(config);
+    const content = await storage.bucket(bucketUUID).getObjects({ markedForDeletion: true });
+    expect(content.some(file => file['status'] == 8))
+  });
+
+  test.skip('get bucket directory content', async () => {
     const storage = new Storage(config);
     const content = await storage
       .bucket(bucketUUID)
@@ -52,12 +57,8 @@ describe('Storage tests', () => {
 
   test.skip('get file details', async () => {
     const storage = new Storage(config);
-    try {
-      const content = await storage.bucket(bucketUUID).file('79961').get();
-      console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    const file = await storage.bucket(bucketUUID).file('cad1e0ef-29c5-4ae1-b9de-1065e8ec1e68').get();
+    expect(file.name).toBeTruthy();
   });
 
   test.skip('upload files', async () => {

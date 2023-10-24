@@ -12,5 +12,5 @@ export enum FileStatus {
 
 export interface IStorageBucketContentRequest {
   directoryUuid?: string;
-  markedForDeletion?: string;
+  markedForDeletion?: boolean;
 }

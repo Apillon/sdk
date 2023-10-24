@@ -5,7 +5,7 @@ import {
   StorageContentType,
 } from '../../types/storage';
 import { File } from './file';
-import { listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
+import { constructUrlWithQueryParams, listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
 import { ApillonLogger } from '../../docs-index';
 
 export class StorageBucket {
@@ -52,11 +52,11 @@ export class StorageBucket {
    */
   async getObjects(data?: IStorageBucketContentRequest) {
     this.content = [];
-    const postfix = data?.directoryUuid
-      ? `?directoryUuid=${data.directoryUuid}`
-      : '';
-
-    const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/content`,
+      data,
+    );
+    const resp = await this.api.get(url);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
         this.content.push(
@@ -81,11 +81,11 @@ export class StorageBucket {
 
   async getFilesRecursive(data?: IStorageBucketContentRequest) {
     const content = [];
-    const postfix = data?.directoryUuid
-      ? `?directoryUuid=${data.directoryUuid}`
-      : '';
-
-    const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/content`,
+      data,
+    );
+    const resp = await this.api.get(url);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
         new File(

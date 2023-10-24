@@ -72,6 +72,7 @@ export class File {
     this.uuid = fileUuid;
     this.directoryUuid = directoryUuid;
     this.API_PREFIX = `/storage/${bucketUuid}/file/${fileUuid}`;
+    this.status = data.fileStatus;
     this.populate(data);
   }
 
@@ -94,9 +95,9 @@ export class File {
    * @dev Gets file details.
    */
   async get() {
-    const resp = await this.api.get(`${this.API_PREFIX}/detail`);
-    this.status = resp.data?.data?.fileStatus;
-    this.populate(resp.data?.data?.file);
+    const { data } = await this.api.get(`${this.API_PREFIX}/detail`);
+    this.status = data.data.fileStatus;
+    this.populate(data.data);
     return this;
   }
 }

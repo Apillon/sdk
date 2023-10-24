@@ -32,7 +32,7 @@ export function toInteger(value: string) {
  * @param url url without query parameters
  * @param parameters query parameters
  */
-export function constructUrlWithQueryParams(url: string, parameters: any) {
+export function constructUrlWithQueryParams(url: string, parameters: object) {
   const cleanParams = {};
   for (const key in parameters) {
     const value = parameters[key];
