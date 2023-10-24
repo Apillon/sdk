@@ -3,6 +3,7 @@
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
   "version": "0.1.2",
   "author": "Apillon",
+  "type": "module",
   "license": "MIT",
   "main": "./dist/index.js",
   "source": "./src/index.ts",

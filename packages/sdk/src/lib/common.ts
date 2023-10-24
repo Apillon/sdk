@@ -36,7 +36,7 @@ export function constructUrlWithQueryParams(url: string, parameters: any) {
   const cleanParams = {};
   for (const key in parameters) {
     const value = parameters[key];
-    if (value !== undefined && value !== null && value !== '') {
+    if (value != null && value !== '') {
       cleanParams[key] = value;
     }
   }
@@ -54,7 +54,7 @@ export function listFilesRecursive(
   for (const file of files) {
     const fullPath = path.join(folderPath, file);
     if (fs.statSync(fullPath).isDirectory()) {
-      listFilesRecursive(fullPath, fileList, relativePath + file + '/');
+      listFilesRecursive(fullPath, fileList, `${relativePath + file}/`);
     } else {
       fileList.push({ fileName: file, path: relativePath, index: fullPath });
     }
