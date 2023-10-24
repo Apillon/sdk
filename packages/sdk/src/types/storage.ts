@@ -9,3 +9,8 @@ export enum FileStatus {
   AVAILABLE_ON_IPFS = 3,
   AVAILABLE_ON_IPFS_AND_REPLICATED = 4,
 }
+
+export interface IStorageBucketContentRequest {
+  directoryUuid?: string;
+  markedForDeletion?: string;
+}

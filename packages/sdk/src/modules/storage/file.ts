@@ -26,7 +26,7 @@ export class File {
   /**
    * @dev Unique identifier of the file.
    */
-  public id: string;
+  public uuid: string;
 
   /**
    * File name.
@@ -46,7 +46,7 @@ export class File {
   /**
    * Id of the directory in which the file resides.
    */
-  public parentDirectoryId: string = null;
+  public directoryUuid: string = null;
 
   /**
    * Type of content.
@@ -62,14 +62,16 @@ export class File {
     api: AxiosInstance,
     logger: ApillonLogger,
     bucketUuid: string,
-    fileId: string,
+    fileUuid: string,
+    directoryUuid: string,
     data: any,
   ) {
     this.api = api;
     this.logger = logger;
     this.bucketUuid = bucketUuid;
-    this.id = fileId;
-    this.API_PREFIX = `/storage/${bucketUuid}/file/${fileId}`;
+    this.uuid = fileUuid;
+    this.directoryUuid = directoryUuid;
+    this.API_PREFIX = `/storage/${bucketUuid}/file/${fileUuid}`;
     this.populate(data);
   }
 

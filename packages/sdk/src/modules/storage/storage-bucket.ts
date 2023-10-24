@@ -1,6 +1,9 @@
 import { AxiosInstance } from 'axios';
 import { Directory } from './directory';
-import { StorageContentType } from '../../types/storage';
+import {
+  IStorageBucketContentRequest,
+  StorageContentType,
+} from '../../types/storage';
 import { File } from './file';
 import { listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
 import { ApillonLogger } from '../../docs-index';
@@ -47,26 +50,61 @@ export class StorageBucket {
    * TODO: How to handle search etc.?
    * @dev Gets contents of a bucket.
    */
-  async getObjects(data?: any) {
+  async getObjects(data?: IStorageBucketContentRequest) {
     this.content = [];
-    let postfix = '';
-    if (data?.directoryId) {
-      postfix = `?directoryId=${data.directoryId}`;
-    }
+    const postfix = data?.directoryUuid
+      ? `?directoryUuid=${data.directoryUuid}`
+      : '';
+
     const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
         this.content.push(
-          new File(this.api, this.logger, this.uuid, item.id, item),
+          new File(
+            this.api,
+            this.logger,
+            this.uuid,
+            item.uuid,
+            item.directoryUuid,
+            item,
+          ),
         );
       } else {
         this.content.push(
-          new Directory(this.api, this.logger, this.uuid, item.id, item),
+          new Directory(this.api, this.logger, this.uuid, item.uuid, item),
         );
       }
     }
 
     return this.content;
+  }
+
+  async getFilesRecursive(data?: IStorageBucketContentRequest) {
+    const content = [];
+    const postfix = data?.directoryUuid
+      ? `?directoryUuid=${data.directoryUuid}`
+      : '';
+
+    const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
+    for (const item of resp.data?.data?.items) {
+      if (item.type == StorageContentType.FILE) {
+        new File(
+          this.api,
+          this.logger,
+          this.uuid,
+          item.uuid,
+          item.directoryUuid,
+          item,
+        );
+      } else {
+        const files = await this.getFilesRecursive({
+          directoryUuid: item.uuid,
+        });
+        content.push(...files);
+      }
+    }
+
+    return (this.content = [...content]);
   }
 
   /**
@@ -113,10 +151,10 @@ export class StorageBucket {
 
   /**
    * Gets file instance.
-   * @param fileId Id of the file.
+   * @param fileUuid Uuid of the file.
    * @returns Instance of file.
    */
-  file(fileId: string): File {
-    return new File(this.api, this.logger, this.uuid, fileId, null);
+  file(fileUuid: string): File {
+    return new File(this.api, this.logger, this.uuid, fileUuid, null, null);
   }
 }

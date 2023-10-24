@@ -27,7 +27,7 @@ export class Directory {
   /**
    * @dev Unique identifier of the directory.
    */
-  public id;
+  public uuid;
 
   /**
    * Directory name.
@@ -42,7 +42,7 @@ export class Directory {
   /**
    * Id of the directory in which the file resides.
    */
-  public parentDirectoryId: string = null;
+  public parentDirectoryUuid: string = null;
 
   /**
    * Type of content.
@@ -59,13 +59,13 @@ export class Directory {
     api: AxiosInstance,
     logger: ApillonLogger,
     bucketUuid: string,
-    directoryId: string,
+    directoryUuid: string,
     data: any,
   ) {
     this.api = api;
     this.logger = logger;
     this.bucketUuid = bucketUuid;
-    this.id = directoryId;
+    this.uuid = directoryUuid;
     this.API_PREFIX = `/storage/${bucketUuid}`;
     this.populate(data);
   }
@@ -90,16 +90,29 @@ export class Directory {
    */
   async get() {
     this.content = [];
-    const postfix = `?directoryId=${this.id}`;
+    const postfix = `?directoryUuid=${this.uuid}`;
     const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
         this.content.push(
-          new File(this.api, this.logger, this.bucketUuid, item.id, item),
+          new File(
+            this.api,
+            this.logger,
+            this.bucketUuid,
+            item.uuid,
+            item.directoryUuid,
+            item,
+          ),
         );
       } else {
         this.content.push(
-          new Directory(this.api, this.logger, this.bucketUuid, item.id, item),
+          new Directory(
+            this.api,
+            this.logger,
+            this.bucketUuid,
+            item.uuid,
+            item,
+          ),
         );
       }
     }
