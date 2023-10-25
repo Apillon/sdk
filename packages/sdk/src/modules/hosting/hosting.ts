@@ -1,7 +1,7 @@
 import { IWebsiteFilters } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList, IApillonResponse } from '../../types/apillon';
+import { IApillonListResponse } from '../../types/apillon';
 import { HostingWebsite } from './hosting-website';
 
 export class Hosting extends ApillonModule {
@@ -18,7 +18,7 @@ export class Hosting extends ApillonModule {
   public async listWebsites(params?: IWebsiteFilters): Promise<HostingWebsite[]> {
     const url = constructUrlWithQueryParams(`${this.API_PREFIX}/websites`, params);
 
-    const { data } = await this.api.get<IApillonResponse<IApillonList<HostingWebsite>>>(url);
+    const { data } = await this.api.get<IApillonListResponse<HostingWebsite>>(url);
 
     return data.data.items.map(website => new HostingWebsite(this.api, this.logger, website['websiteUuid'], website));
   }

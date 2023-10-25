@@ -45,12 +45,12 @@ describe('Nft tests', () => {
 
   test.skip('mints a new nft', async () => {
     const nft = new Nft(config);
-    const collection = await nft.collection(collectionUUID);
+    const collection = nft.collection(collectionUUID);
     const res = await collection.mint(receiverAddress, 1);
     expect(res.success).toBe(true);
   });
 
-  test.only('get nft collection transactions', async () => {
+  test('get nft collection transactions', async () => {
     const nft = new Nft(config);
     const transactions = await nft
       .collection(collectionUUID)
@@ -77,7 +77,7 @@ describe('Nft tests', () => {
   // TODO: unhandled error in api
   test('should fail nest minting', async () => {
     const nft = new Nft(config);
-    const collection = await nft.collection(collectionUUID);
+    const collection = nft.collection(collectionUUID);
     await collection.nestMintNft('2ad03895-fd5d-40e7-af17-1d6daecf3b5a', 1, 1);
   });
 

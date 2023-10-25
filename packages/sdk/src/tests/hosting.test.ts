@@ -3,6 +3,7 @@ import { ApillonConfig } from '../lib/apillon';
 import { Hosting } from '../modules/hosting/hosting';
 import { DeployToEnvironment } from '../types/hosting';
 import { getConfig, getWebsiteUUID } from './helpers/helper';
+import { HostingWebsite } from '../modules/hosting/hosting-website';
 
 describe('Hosting tests', () => {
   let config: ApillonConfig;
@@ -17,12 +18,14 @@ describe('Hosting tests', () => {
     const hosting = new Hosting(config);
     const websites = await hosting.listWebsites();
     expect(websites.length).toBeGreaterThan(0);
+    expect(websites[0]).toBeInstanceOf(HostingWebsite);
     expect(websites[0].name).toBeTruthy();
   });
 
   test('get website info', async () => {
     const hosting = new Hosting(config);
     const website = await hosting.website(websiteUUID).get();
+    expect(website).toBeInstanceOf(HostingWebsite);
     expect(website.name).toBeTruthy();
     expect(website.uuid).toBeTruthy();
   });

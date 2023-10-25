@@ -1,6 +1,6 @@
 import { ApillonModule } from '../../lib/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonResponse, IApillonList } from '../../types/apillon';
+import { IApillonResponse, IApillonList, IApillonListResponse } from '../../types/apillon';
 import {
   ICollectionFilters,
   ICollection,
@@ -25,26 +25,15 @@ export class Nft extends ApillonModule {
 
   /**
    * Lists all nft collections available.
-   * @param params Filter for listing collections.
+   * @param {ICollectionFilters} params Filter for listing collections.
    * @returns Array of NftCollection.
    */
   public async list(params?: ICollectionFilters): Promise<NftCollection[]> {
-    const items: NftCollection[] = [];
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const resp = await this.api.get<
-      IApillonResponse<IApillonList<ICollection>>
-    >(url);
+    const { data } = await this.api.get<IApillonListResponse<ICollection>>(url);
 
-    if (resp.data?.data && resp.data?.data.items) {
-      for (const item of resp.data?.data.items) {
-        items.push(
-          new NftCollection(this.api, this.logger, item.collectionUuid, item),
-        );
-      }
-    }
-
-    return items;
+    return data.data.items.map(nft => new NftCollection(this.api, this.logger, nft.collectionUuid, nft));
   }
 
   /**
@@ -53,7 +42,7 @@ export class Nft extends ApillonModule {
    * @returns A NftCollection instance.
    */
   public async create(data: ICreateCollection) {
-    const resp = await this.api.post<IApillonResponse<ICollection>>(
+    const { data: response } = await this.api.post<IApillonResponse<ICollection>>(
       this.API_PREFIX,
       data,
     );
@@ -61,8 +50,8 @@ export class Nft extends ApillonModule {
     return new NftCollection(
       this.api,
       this.logger,
-      resp.data?.data.collectionUuid,
-      resp.data?.data,
+      response?.data.collectionUuid,
+      response?.data,
     );
   }
 }

@@ -13,6 +13,8 @@ export interface IApillonStatus {
   status: number;
 }
 
+export interface IApillonListResponse<T> extends IApillonResponse<IApillonList<T>> { }
+
 export interface IApillonBoolResponse {
   success: boolean;
 }
