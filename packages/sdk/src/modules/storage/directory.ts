@@ -27,7 +27,7 @@ export class Directory {
   /**
    * @dev Unique identifier of the directory.
    */
-  public uuid;
+  public uuid: string;
 
   /**
    * Directory name.

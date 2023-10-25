@@ -59,7 +59,7 @@ export function listFilesRecursive(
       fileList.push({ fileName: file, path: relativePath, index: fullPath });
     }
   }
-  return fileList;
+  return fileList.sort((a, b) => a.fileName.localeCompare(b.fileName));
 }
 
 export async function uploadFilesToS3(uploadLinks: any[], files: any[]) {

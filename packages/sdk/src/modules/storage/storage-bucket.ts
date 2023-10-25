@@ -27,7 +27,7 @@ export class StorageBucket {
   /**
    * @dev Unique identifier of the bucket.
    */
-  public uuid;
+  public uuid: string;
 
   /**
    * @dev Bucket content which are files and directories.
@@ -123,29 +123,31 @@ export class StorageBucket {
       throw new Error(`Error reading files in ${folderPath}`);
     }
 
-    const data = { files };
-    console.log(`Files to upload: ${data.files.length}`);
+    console.log(`Files to upload: ${files.length}`);
 
     console.time('Got upload links');
-    const resp = await this.api.post(`${this.API_PREFIX}/upload`, data);
-
+    const { data } = await this.api.post(`${this.API_PREFIX}/upload`, { files });
     console.timeEnd('Got upload links');
 
-    // console.log(resp);
-    const sessionUuid = resp.data.data.sessionUuid;
-
-    console.time('File upload complete');
-    await uploadFilesToS3(resp.data.data.files, files);
-    console.timeEnd('File upload complete');
+    const uploadLinks = data.data.files.sort((a, b) => a.fileName.localeCompare(b.fileName));
+    // Divide files into chunks for parallel processing and uploading
+    const chunkSize = 10;
+    const fileChunks = [];
+    for (let i = 0; i < files.length; i += chunkSize) {
+      const chunkFiles = files.slice(i, i + chunkSize);
+      const chunkLinks = uploadLinks.slice(i, i + chunkSize);
+      fileChunks.push({ chunkFiles, chunkLinks });
+    }
+    await Promise.all(fileChunks.map(({ chunkFiles, chunkLinks }) => uploadFilesToS3(chunkLinks, chunkFiles)));
 
     console.log('Closing session...');
     const respEndSession = await this.api.post(
-      `${this.API_PREFIX}/upload/${sessionUuid}/end`,
+      `${this.API_PREFIX}/upload/${data.data.sessionUuid}/end`,
     );
     console.log('Session ended.');
 
     if (!respEndSession.data?.data) {
-      throw new Error();
+      throw new Error('Failure when trying to end file upload session');
     }
   }
 
@@ -155,6 +157,6 @@ export class StorageBucket {
    * @returns Instance of file.
    */
   file(fileUuid: string): File {
-    return new File(this.api, this.logger, this.uuid, fileUuid, null, null);
+    return new File(this.api, this.logger, this.uuid, fileUuid, null, {});
   }
 }

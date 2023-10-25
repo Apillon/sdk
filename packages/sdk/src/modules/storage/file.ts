@@ -72,7 +72,7 @@ export class File {
     this.uuid = fileUuid;
     this.directoryUuid = directoryUuid;
     this.API_PREFIX = `/storage/${bucketUuid}/file/${fileUuid}`;
-    this.status = data.fileStatus;
+    this.status = data?.fileStatus;
     this.populate(data);
   }
 
