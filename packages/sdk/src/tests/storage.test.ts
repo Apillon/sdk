@@ -22,6 +22,7 @@ describe('Storage tests', () => {
       console.log(`${item.type}: ${item.name}`);
     }
     expect(content.length).toBeGreaterThanOrEqual(0);
+    content.forEach(item => expect(item.name).toBeTruthy());
   });
 
   test('get bucket files recursively', async () => {
@@ -34,6 +35,7 @@ describe('Storage tests', () => {
       console.log(`${item.type}: ${item.name}`);
     }
     expect(content.length).toBeGreaterThanOrEqual(0);
+    content.forEach(item => expect(item.name).toBeTruthy());
   });
 
   test('get bucket files markedForDeletion=true', async () => {
@@ -54,6 +56,7 @@ describe('Storage tests', () => {
       }
       console.log(`${item.type}: ${item.name}`);
     }
+    content.forEach(item => expect(item.name).toBeTruthy());
   });
 
   test('get file details', async () => {

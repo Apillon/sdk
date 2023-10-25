@@ -23,7 +23,7 @@ export class HostingWebsite {
   /**
    * @dev Unique identifier of the website.
    */
-  public uuid;
+  public uuid: string;
 
   /**
    * @dev User assigned name of the website.
@@ -60,11 +60,27 @@ export class HostingWebsite {
    * @param uuid Unique identifier of the website.
    * @param api Axios instance set to correct rootUrl with correct error handling.
    */
-  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string) {
+  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string, data?: Partial<HostingWebsite>) {
     this.api = api;
     this.uuid = uuid;
     this.logger = logger;
+    this.populate(data);
     this.API_PREFIX = `/hosting/websites/${uuid}`;
+  }
+
+  /**
+   * Populates class properties via data object.
+   * @param data Data object.
+   */
+  private populate(data: any) {
+    if (!data != null) {
+      Object.keys(data || {}).forEach((key) => {
+        const prop = this[key];
+        if (prop === null) {
+          this[key] = data[key];
+        }
+      });
+    }
   }
 
   /**
@@ -72,13 +88,8 @@ export class HostingWebsite {
    * @returns An instance of HostingWebsite class with filled properties.
    */
   public async get(): Promise<HostingWebsite> {
-    const data = (await this.api.get(this.API_PREFIX)).data;
-    this.name = data.data?.name;
-    this.description = data.data?.description;
-    this.domain = data.data?.domain;
-    this.bucketUuid = data.data?.bucketUuid;
-    this.ipnsStaging = data.data?.ipnsStaging;
-    this.ipnsProduction = data.data?.ipnsProduction;
+    const { data } = (await this.api.get(this.API_PREFIX)).data;
+    this.populate(data);
     return this;
   }
 
@@ -121,39 +132,37 @@ export class HostingWebsite {
     );
     this.logger.log('Session ended.', LogLevel.VERBOSE);
 
-    if (!respEndSession.data?.data) {
+    if (!respEndSession.data.data) {
       throw new Error();
     }
   }
 
   public async deploy(toEnvironment: DeployToEnvironment): Promise<any> {
-    //
     this.logger.log(
-      `Deploying website ${this.uuid} to IPFS (${
-        toEnvironment === DeployToEnvironment.TO_STAGING
-          ? 'preview'
-          : 'production'
+      `Deploying website ${this.uuid} to IPFS (${toEnvironment === DeployToEnvironment.TO_STAGING
+        ? 'preview'
+        : 'production'
       })`,
       LogLevel.VERBOSE,
     );
 
     this.logger.logWithTime('Deploy start', LogLevel.VERBOSE);
-    const resp = await this.api.post(`${this.API_PREFIX}/deploy`, {
+    const { data } = await this.api.post(`${this.API_PREFIX}/deploy`, {
       environment: toEnvironment,
     });
 
     this.logger.logWithTime('Deploy complete', LogLevel.VERBOSE);
 
-    return resp.data?.data;
+    return data.data;
   }
 
-  public async getDeployStatus(deploymentId: string) {
+  public async getDeployment(deploymentUuid: string) {
     this.logger.log(
-      `Get deployments for website ${this.uuid}`,
+      `Get deployment for website ${this.uuid}`,
       LogLevel.VERBOSE,
     );
     return (
-      await this.api.get(`${this.API_PREFIX}/deployments/${deploymentId}`)
-    ).data?.data;
+      await this.api.get(`${this.API_PREFIX}/deployments/${deploymentUuid}`)
+    ).data.data;
   }
 }
