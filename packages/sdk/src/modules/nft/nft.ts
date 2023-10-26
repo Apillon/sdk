@@ -1,6 +1,6 @@
 import { ApillonModule } from '../../lib/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonResponse, IApillonList, IApillonListResponse } from '../../types/apillon';
+import { IApillonResponse, IApillonListResponse } from '../../types/apillon';
 import {
   ICollectionFilters,
   ICollection,
@@ -33,7 +33,10 @@ export class Nft extends ApillonModule {
 
     const { data } = await this.api.get<IApillonListResponse<ICollection>>(url);
 
-    return data.data.items.map(nft => new NftCollection(this.api, this.logger, nft.collectionUuid, nft));
+    return data.data.items.map(
+      (nft) =>
+        new NftCollection(this.api, this.logger, nft.collectionUuid, nft),
+    );
   }
 
   /**
@@ -42,10 +45,9 @@ export class Nft extends ApillonModule {
    * @returns A NftCollection instance.
    */
   public async create(data: ICreateCollection) {
-    const { data: response } = await this.api.post<IApillonResponse<ICollection>>(
-      this.API_PREFIX,
-      data,
-    );
+    const { data: response } = await this.api.post<
+      IApillonResponse<ICollection>
+    >(this.API_PREFIX, data);
 
     return new NftCollection(
       this.api,

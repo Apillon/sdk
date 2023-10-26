@@ -6,7 +6,11 @@ import {
   StorageContentType,
 } from '../../types/storage';
 import { File } from './file';
-import { constructUrlWithQueryParams, listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
+import {
+  constructUrlWithQueryParams,
+  listFilesRecursive,
+  uploadFilesToS3,
+} from '../../lib/common';
 import { ApillonLogger } from '../../docs-index';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
 
@@ -57,7 +61,12 @@ export class StorageBucket {
    * @param api Axios instance set to correct rootUrl with correct error handling.
    * @param data Data to populate storage bucket
    */
-  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string, data?: Partial<StorageBucket>) {
+  constructor(
+    api: AxiosInstance,
+    logger: ApillonLogger,
+    uuid: string,
+    data?: Partial<StorageBucket>,
+  ) {
     this.api = api;
     this.logger = logger;
     this.uuid = uuid;
@@ -83,7 +92,9 @@ export class StorageBucket {
   /**
    * @dev Gets contents of a bucket.
    */
-  async getObjects(params?: IStorageBucketContentRequest): Promise<IApillonList<File | Directory>> {
+  async getObjects(
+    params?: IStorageBucketContentRequest,
+  ): Promise<IApillonList<File | Directory>> {
     const content = [];
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/content`,
@@ -100,10 +111,17 @@ export class StorageBucket {
             item.uuid,
             item.directoryUuid,
             item,
-          ));
+          ),
+        );
       } else {
-        const directory = new Directory(this.api, this.logger, this.uuid, item.uuid, item);
-        content.push(directory, ...await directory.get());
+        const directory = new Directory(
+          this.api,
+          this.logger,
+          this.uuid,
+          item.uuid,
+          item,
+        );
+        content.push(directory, ...(await directory.get()));
       }
     }
     this.content = content;
@@ -122,15 +140,18 @@ export class StorageBucket {
 
     return {
       total: data.data.total,
-      items: data.data.items.map(file => new File(
-        this.api,
-        this.logger,
-        this.uuid,
-        file.uuid,
-        file.directoryUuid,
-        file,
-      ))
-    }
+      items: data.data.items.map(
+        (file) =>
+          new File(
+            this.api,
+            this.logger,
+            this.uuid,
+            file.uuid,
+            file.directoryUuid,
+            file,
+          ),
+      ),
+    };
   }
 
   /**
@@ -152,10 +173,14 @@ export class StorageBucket {
     console.log(`Files to upload: ${files.length}`);
 
     console.time('Got upload links');
-    const { data } = await this.api.post(`${this.API_PREFIX}/upload`, { files });
+    const { data } = await this.api.post(`${this.API_PREFIX}/upload`, {
+      files,
+    });
     console.timeEnd('Got upload links');
 
-    const uploadLinks = data.data.files.sort((a, b) => a.fileName.localeCompare(b.fileName));
+    const uploadLinks = data.data.files.sort((a, b) =>
+      a.fileName.localeCompare(b.fileName),
+    );
     // Divide files into chunks for parallel processing and uploading
     const chunkSize = 10;
     const fileChunks = [];
@@ -164,7 +189,11 @@ export class StorageBucket {
       const chunkLinks = uploadLinks.slice(i, i + chunkSize);
       fileChunks.push({ chunkFiles, chunkLinks });
     }
-    await Promise.all(fileChunks.map(({ chunkFiles, chunkLinks }) => uploadFilesToS3(chunkLinks, chunkFiles)));
+    await Promise.all(
+      fileChunks.map(({ chunkFiles, chunkLinks }) =>
+        uploadFilesToS3(chunkLinks, chunkFiles),
+      ),
+    );
 
     console.log('Closing session...');
     const respEndSession = await this.api.post(

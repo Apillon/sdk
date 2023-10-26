@@ -6,8 +6,8 @@ import { StorageBucket } from './storage-bucket';
 
 export class Storage extends ApillonModule {
   /**
-     * @dev API url for storage.
-     */
+   * @dev API url for storage.
+   */
   private API_PREFIX = '/storage/buckets';
 
   /**
@@ -15,16 +15,19 @@ export class Storage extends ApillonModule {
    * @param {ICollectionFilters} params Filter for listing collections.
    * @returns Array of NftCollection.
    */
-  public async listBuckets(params?: IApillonPagination): Promise<IApillonList<StorageBucket>> {
+  public async listBuckets(
+    params?: IApillonPagination,
+  ): Promise<IApillonList<StorageBucket>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
     const { data } = await this.api.get<IApillonListResponse<any>>(url);
 
     return {
       items: data.data.items.map(
-        bucket => new StorageBucket(this.api, this.logger, bucket.bucketUuid, bucket)
+        (bucket) =>
+          new StorageBucket(this.api, this.logger, bucket.bucketUuid, bucket),
       ),
-      total: data.data.total
+      total: data.data.total,
     };
   }
 

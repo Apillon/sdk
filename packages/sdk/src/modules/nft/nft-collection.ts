@@ -181,10 +181,9 @@ export class NftCollection {
    * @returns Call status.
    */
   public async mint(receiver: string, quantity: number) {
-    const { data } = await this.api.post<IApillonResponse<IApillonBoolResponse>>(
-      `${this.API_PREFIX}/mint`,
-      { receivingAddress: receiver, quantity },
-    );
+    const { data } = await this.api.post<
+      IApillonResponse<IApillonBoolResponse>
+    >(`${this.API_PREFIX}/mint`, { receivingAddress: receiver, quantity });
 
     return data?.data;
   }

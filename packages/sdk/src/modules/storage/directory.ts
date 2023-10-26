@@ -1,5 +1,8 @@
 import { AxiosInstance } from 'axios';
-import { IStorageBucketContentRequest, StorageContentType } from '../../types/storage';
+import {
+  IStorageBucketContentRequest,
+  StorageContentType,
+} from '../../types/storage';
 import { File } from './file';
 import { ApillonLogger } from '../../lib/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
@@ -89,7 +92,9 @@ export class Directory {
   /**
    * @dev Gets contents of a directory.
    */
-  async get(params: IStorageBucketContentRequest = {}): Promise<(Directory | File)[]> {
+  async get(
+    params: IStorageBucketContentRequest = {},
+  ): Promise<(Directory | File)[]> {
     this.content = [];
     params.directoryUuid = this.uuid;
     const url = constructUrlWithQueryParams(

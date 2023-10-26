@@ -1,5 +1,9 @@
 import { AxiosInstance } from 'axios';
-import { constructUrlWithQueryParams, listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
+import {
+  constructUrlWithQueryParams,
+  listFilesRecursive,
+  uploadFilesToS3,
+} from '../../lib/common';
 import { DeployToEnvironment, IDeploymentFilters } from '../../types/hosting';
 import { ApillonLogger } from '../../index';
 import { IApillonList, LogLevel } from '../../types/apillon';
@@ -61,7 +65,12 @@ export class HostingWebsite {
    * @param uuid Unique identifier of the website.
    * @param api Axios instance set to correct rootUrl with correct error handling.
    */
-  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string, data?: Partial<HostingWebsite>) {
+  constructor(
+    api: AxiosInstance,
+    logger: ApillonLogger,
+    uuid: string,
+    data?: Partial<HostingWebsite>,
+  ) {
     this.api = api;
     this.uuid = uuid;
     this.logger = logger;
@@ -145,9 +154,10 @@ export class HostingWebsite {
    */
   public async deploy(toEnvironment: DeployToEnvironment): Promise<any> {
     this.logger.log(
-      `Deploying website ${this.uuid} to IPFS (${toEnvironment === DeployToEnvironment.TO_STAGING
-        ? 'preview'
-        : 'production'
+      `Deploying website ${this.uuid} to IPFS (${
+        toEnvironment === DeployToEnvironment.TO_STAGING
+          ? 'preview'
+          : 'production'
       })`,
       LogLevel.VERBOSE,
     );
@@ -167,17 +177,29 @@ export class HostingWebsite {
    * @param {IWebsiteFilters} params Query filters for listing websites
    * @returns A list of all deployments instances.
    */
-  public async listDeployments(params?: IDeploymentFilters): Promise<IApillonList<any>> {
-    const url = constructUrlWithQueryParams(`${this.API_PREFIX}/deployments`, params);
+  public async listDeployments(
+    params?: IDeploymentFilters,
+  ): Promise<IApillonList<any>> {
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/deployments`,
+      params,
+    );
 
     const { data } = await this.api.get(url);
 
     return {
       items: data.data.items.map(
-        item => new Deployment(this.api, this.logger, item.websiteUuid, item.deploymentUuid, item)
+        (item) =>
+          new Deployment(
+            this.api,
+            this.logger,
+            item.websiteUuid,
+            item.deploymentUuid,
+            item,
+          ),
       ),
-      total: data.data.total
-    }
+      total: data.data.total,
+    };
   }
 
   /**

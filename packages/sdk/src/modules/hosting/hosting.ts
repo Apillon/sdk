@@ -15,16 +15,26 @@ export class Hosting extends ApillonModule {
    * @param {IWebsiteFilters} params Query filters for listing websites
    * @returns A list of HostingWebsite instances.
    */
-  public async listWebsites(params?: IWebsiteFilters): Promise<IApillonList<HostingWebsite>> {
+  public async listWebsites(
+    params?: IWebsiteFilters,
+  ): Promise<IApillonList<HostingWebsite>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const { data } = await this.api.get<IApillonListResponse<HostingWebsite>>(url);
+    const { data } = await this.api.get<IApillonListResponse<HostingWebsite>>(
+      url,
+    );
 
     return {
       items: data.data.items.map(
-        website => new HostingWebsite(this.api, this.logger, website['websiteUuid'], website)
+        (website) =>
+          new HostingWebsite(
+            this.api,
+            this.logger,
+            website['websiteUuid'],
+            website,
+          ),
       ),
-      total: data.data.total
+      total: data.data.total,
     };
   }
 

@@ -45,8 +45,8 @@ export class Deployment {
   public environment: DeployToEnvironment = null;
 
   /**
-  * Status of the deployment
-  */
+   * Status of the deployment
+   */
   public deploymentStatus: DeploymentStatus = null;
 
   /**
@@ -58,7 +58,6 @@ export class Deployment {
    * Serial number of the deployment for this environment
    */
   public number: number = null;
-
 
   /**
    * @dev Constructor which should only be called via HostingWebsite class.
