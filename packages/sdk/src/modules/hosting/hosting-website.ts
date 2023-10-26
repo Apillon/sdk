@@ -1,8 +1,9 @@
 import { AxiosInstance } from 'axios';
-import { listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
-import { DeployToEnvironment } from '../../types/hosting';
+import { constructUrlWithQueryParams, listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
+import { DeployToEnvironment, IDeploymentFilters } from '../../types/hosting';
 import { ApillonLogger } from '../../index';
-import { LogLevel } from '../../types/apillon';
+import { IApillonList, LogLevel } from '../../types/apillon';
+import { Deployment } from './deployment';
 
 export class HostingWebsite {
   /**
@@ -81,6 +82,7 @@ export class HostingWebsite {
         }
       });
     }
+    return this;
   }
 
   /**
@@ -89,8 +91,7 @@ export class HostingWebsite {
    */
   public async get(): Promise<HostingWebsite> {
     const { data } = (await this.api.get(this.API_PREFIX)).data;
-    this.populate(data);
-    return this;
+    return this.populate(data);
   }
 
   /**
@@ -137,6 +138,11 @@ export class HostingWebsite {
     }
   }
 
+  /**
+   * @dev Deploy a website to a new environment.
+   * @param {DeployToEnvironment} toEnvironment The environment to deploy to
+   * @returns The new deployment instance
+   */
   public async deploy(toEnvironment: DeployToEnvironment): Promise<any> {
     this.logger.log(
       `Deploying website ${this.uuid} to IPFS (${toEnvironment === DeployToEnvironment.TO_STAGING
@@ -156,13 +162,30 @@ export class HostingWebsite {
     return data.data;
   }
 
-  public async getDeployment(deploymentUuid: string) {
-    this.logger.log(
-      `Get deployment for website ${this.uuid}`,
-      LogLevel.VERBOSE,
-    );
-    return (
-      await this.api.get(`${this.API_PREFIX}/deployments/${deploymentUuid}`)
-    ).data.data;
+  /**
+   * @dev Returns an list of websites.
+   * @param {IWebsiteFilters} params Query filters for listing websites
+   * @returns A list of all deployments instances.
+   */
+  public async listDeployments(params?: IDeploymentFilters): Promise<IApillonList<any>> {
+    const url = constructUrlWithQueryParams(`${this.API_PREFIX}/deployments`, params);
+
+    const { data } = await this.api.get(url);
+
+    return {
+      items: data.data.items.map(
+        item => new Deployment(this.api, this.logger, item.websiteUuid, item.deploymentUuid, item)
+      ),
+      total: data.data.total
+    }
+  }
+
+  /**
+   * Gets a deployment instance.
+   * @param deploymentUuid Uuid of the deployment.
+   * @returns Instance of a deployment.
+   */
+  deployment(deploymentUuid: string): Deployment {
+    return new Deployment(this.api, this.logger, this.uuid, deploymentUuid, {});
   }
 }

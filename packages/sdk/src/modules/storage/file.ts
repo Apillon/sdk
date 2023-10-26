@@ -55,7 +55,7 @@ export class File {
 
   /**
    * @dev Constructor which should only be called via Storage class.
-   * @param uuid Unique identifier of the bucket.
+   * @param uuid Unique identifier of the file.
    * @param api Axios instance set to correct rootUrl with correct error handling.
    */
   constructor(
@@ -89,6 +89,7 @@ export class File {
         }
       });
     }
+    return this;
   }
 
   /**
@@ -97,7 +98,6 @@ export class File {
   async get(): Promise<File> {
     const { data } = await this.api.get(`${this.API_PREFIX}/detail`);
     this.status = data.data.fileStatus;
-    this.populate(data.data);
-    return this;
+    return this.populate(data.data);
   }
 }

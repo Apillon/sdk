@@ -16,3 +16,8 @@ export enum DeploymentStatus {
 export interface IWebsiteFilters extends IApillonPagination {
   status?: number;
 }
+
+export interface IDeploymentFilters extends IApillonPagination {
+  deploymentStatus?: DeploymentStatus;
+  environment?: DeployToEnvironment;
+}

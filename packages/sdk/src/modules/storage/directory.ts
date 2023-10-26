@@ -53,7 +53,7 @@ export class Directory {
   public content: (File | Directory)[] = null;
   /**
    * @dev Constructor which should only be called via Storage class.
-   * @param uuid Unique identifier of the bucket.
+   * @param uuid Unique identifier of the directory.
    * @param api Axios instance set to correct rootUrl with correct error handling.
    */
   constructor(

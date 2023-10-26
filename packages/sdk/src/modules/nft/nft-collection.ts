@@ -160,6 +160,7 @@ export class NftCollection {
         }
       });
     }
+    return this;
   }
 
   /**
@@ -170,9 +171,7 @@ export class NftCollection {
     const { data } = await this.api.get<IApillonResponse<ICollection>>(
       this.API_PREFIX,
     );
-    this.populate(data?.data);
-
-    return this;
+    return this.populate(data.data);
   }
 
   /**
