@@ -94,7 +94,7 @@ export class File {
   /**
    * @dev Gets file details.
    */
-  async get() {
+  async get(): Promise<File> {
     const { data } = await this.api.get(`${this.API_PREFIX}/detail`);
     this.status = data.data.fileStatus;
     this.populate(data.data);

@@ -1,12 +1,14 @@
 import { AxiosInstance } from 'axios';
 import { Directory } from './directory';
 import {
+  IBucketFilesRequest,
   IStorageBucketContentRequest,
   StorageContentType,
 } from '../../types/storage';
 import { File } from './file';
 import { constructUrlWithQueryParams, listFilesRecursive, uploadFilesToS3 } from '../../lib/common';
 import { ApillonLogger } from '../../docs-index';
+import { IApillonList, IApillonListResponse } from '../../types/apillon';
 
 export class StorageBucket {
   /**
@@ -47,19 +49,18 @@ export class StorageBucket {
   }
 
   /**
-   * TODO: How to handle search etc.?
    * @dev Gets contents of a bucket.
    */
-  async getObjects(data?: IStorageBucketContentRequest) {
-    this.content = [];
+  async getObjects(params?: IStorageBucketContentRequest): Promise<IApillonList<File | Directory>> {
+    const content = [];
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/content`,
-      data,
+      params,
     );
-    const resp = await this.api.get(url);
-    for (const item of resp.data?.data?.items) {
+    const { data } = await this.api.get(url);
+    for (const item of data.data.items) {
       if (item.type == StorageContentType.FILE) {
-        this.content.push(
+        content.push(
           new File(
             this.api,
             this.logger,
@@ -67,44 +68,37 @@ export class StorageBucket {
             item.uuid,
             item.directoryUuid,
             item,
-          ),
-        );
+          ));
       } else {
-        this.content.push(
-          new Directory(this.api, this.logger, this.uuid, item.uuid, item),
-        );
+        const directory = new Directory(this.api, this.logger, this.uuid, item.uuid, item);
+        content.push(directory, ...await directory.get());
       }
     }
 
-    return this.content;
+    return { total: data.data.total, items: content };
   }
 
-  async getFilesRecursive(data?: IStorageBucketContentRequest) {
-    const content = [];
+  /**
+   * @dev Gets all files in a bucket.
+   */
+  async getFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(
-      `${this.API_PREFIX}/content`,
-      data,
+      `/storage/buckets/${this.uuid}/files`,
+      params,
     );
-    const resp = await this.api.get(url);
-    for (const item of resp.data?.data?.items) {
-      if (item.type == StorageContentType.FILE) {
-        new File(
-          this.api,
-          this.logger,
-          this.uuid,
-          item.uuid,
-          item.directoryUuid,
-          item,
-        );
-      } else {
-        const files = await this.getFilesRecursive({
-          directoryUuid: item.uuid,
-        });
-        content.push(...files);
-      }
-    }
+    const { data } = await this.api.get<IApillonListResponse<File>>(url);
 
-    return (this.content = [...content]);
+    return {
+      total: data.data.total,
+      items: data.data.items.map(file => new File(
+        this.api,
+        this.logger,
+        this.uuid,
+        file.uuid,
+        file.directoryUuid,
+        file,
+      ))
+    }
   }
 
   /**

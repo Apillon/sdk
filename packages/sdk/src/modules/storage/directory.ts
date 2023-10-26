@@ -1,7 +1,8 @@
 import { AxiosInstance } from 'axios';
-import { StorageContentType } from '../../types/storage';
+import { IStorageBucketContentRequest, StorageContentType } from '../../types/storage';
 import { File } from './file';
 import { ApillonLogger } from '../../lib/apillon';
+import { constructUrlWithQueryParams } from '../../lib/common';
 
 export class Directory {
   /**
@@ -88,10 +89,14 @@ export class Directory {
   /**
    * @dev Gets contents of a directory.
    */
-  async get() {
+  async get(params: IStorageBucketContentRequest = {}): Promise<(Directory | File)[]> {
     this.content = [];
-    const postfix = `?directoryUuid=${this.uuid}`;
-    const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
+    params.directoryUuid = this.uuid;
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/content`,
+      params,
+    );
+    const resp = await this.api.get(url);
     for (const item of resp.data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
         this.content.push(
