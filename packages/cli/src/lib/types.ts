@@ -1,8 +1,8 @@
-export interface Params {
+export interface Options {
   [Key: string]: string;
 }
 
-export interface GlobalParams {
+export interface GlobalOptions {
   key: string;
   secret: string;
   apiUrl?: string;

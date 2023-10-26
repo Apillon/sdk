@@ -4,16 +4,15 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 function getVersion(rollback: string) {
-  let ver = rollback;
   try {
-    ver = require('./package.json').version;
+    return require('./package.json').version;
   } catch (err) {
     try {
-      ver = require('../package.json').version;
+      return require('../package.json').version;
     } catch (e) {}
   }
 
-  return ver;
+  return rollback;
 }
 
 export default {
