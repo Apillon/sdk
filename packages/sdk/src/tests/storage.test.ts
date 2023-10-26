@@ -13,6 +13,12 @@ describe('Storage tests', () => {
     bucketUUID = getBucketUUID();
   });
 
+  test('List buckets', async () => {
+    const { items } = await new Storage(config).listBuckets({ limit: 1 });
+    expect(items.length).toBeGreaterThanOrEqual(0);
+    items.forEach(item => expect(item.name).toBeTruthy());
+  });
+
   test('get bucket content', async () => {
     const storage = new Storage(config);
     const { items } = await storage.bucket(bucketUUID).getObjects();
@@ -77,5 +83,10 @@ describe('Storage tests', () => {
     } catch (e) {
       console.log(e);
     }
+  });
+
+  test.skip('delete a file', async () => {
+    const storage = new Storage(config);
+    await storage.bucket(bucketUUID).deleteFile('cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc');
   });
 });

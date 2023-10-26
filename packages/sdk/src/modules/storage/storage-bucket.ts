@@ -32,6 +32,21 @@ export class StorageBucket {
   public uuid: string;
 
   /**
+   * @dev Name of the bucket.
+   */
+  public name: string = null;
+
+  /**
+   * @dev Bucket description.
+   */
+  public description: string = null;
+
+  /**
+   * @dev Size of the bucket in bytes.
+   */
+  public size: number = null;
+
+  /**
    * @dev Bucket content which are files and directories.
    */
   public content: (File | Directory)[] = null;
@@ -40,12 +55,29 @@ export class StorageBucket {
    * @dev Constructor which should only be called via Storage class.
    * @param uuid Unique identifier of the bucket.
    * @param api Axios instance set to correct rootUrl with correct error handling.
+   * @param data Data to populate storage bucket
    */
-  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string) {
+  constructor(api: AxiosInstance, logger: ApillonLogger, uuid: string, data?: Partial<StorageBucket>) {
     this.api = api;
     this.logger = logger;
     this.uuid = uuid;
     this.API_PREFIX = `/storage/${uuid}`;
+    this.populate(data);
+  }
+
+  /**
+   * Populates class properties via data object.
+   * @param data Data object.
+   */
+  private populate(data: any) {
+    if (data != null) {
+      Object.keys(data || {}).forEach((key) => {
+        const prop = this[key];
+        if (prop === null) {
+          this[key] = data[key];
+        }
+      });
+    }
   }
 
   /**
@@ -74,7 +106,7 @@ export class StorageBucket {
         content.push(directory, ...await directory.get());
       }
     }
-
+    this.content = content;
     return { total: data.data.total, items: content };
   }
 
@@ -152,5 +184,13 @@ export class StorageBucket {
    */
   file(fileUuid: string): File {
     return new File(this.api, this.logger, this.uuid, fileUuid, null, {});
+  }
+
+  /**
+   * Deletes a file from the bucket.
+   * @param fileUuid Uuid of the file.
+   */
+  async deleteFile(fileUuid: string): Promise<void> {
+    await this.api.delete(`/storage/buckets/${this.uuid}/files/${fileUuid}`);
   }
 }
