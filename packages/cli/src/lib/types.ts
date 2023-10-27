@@ -1,9 +1,10 @@
 export interface Options {
-  [Key: string]: string;
+  [key: string]: string;
 }
 
 export interface GlobalOptions {
   key: string;
   secret: string;
   apiUrl?: string;
+  [key: string]: string;
 }
