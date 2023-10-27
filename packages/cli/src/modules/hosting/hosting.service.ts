@@ -18,13 +18,13 @@ export async function uploadWebsiteFiles(
   optsWithGlobals: GlobalOptions,
 ) {
   const hosting = new Hosting(optsWithGlobals);
-  console.log(optsWithGlobals.uuid);
   await hosting.website(optsWithGlobals.uuid).uploadFromFolder(path);
 }
 
 export async function deployToEnvironment(optsWithGlobals: GlobalOptions) {
   const hosting = new Hosting(optsWithGlobals);
   await hosting.website(optsWithGlobals.uuid).deploy(+optsWithGlobals.env);
+  console.log('Deploy successful');
 }
 
 export async function listDeployments(optsWithGlobals: GlobalOptions) {
