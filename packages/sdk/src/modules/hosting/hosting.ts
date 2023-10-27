@@ -1,5 +1,6 @@
 import { IWebsiteFilters } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
+import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
 import { HostingWebsite } from './hosting-website';
@@ -20,19 +21,13 @@ export class Hosting extends ApillonModule {
   ): Promise<IApillonList<HostingWebsite>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const { data } = await this.api.get<IApillonListResponse<HostingWebsite>>(
+    const { data } = await ApillonApi.get<IApillonListResponse<HostingWebsite>>(
       url,
     );
 
     return {
       items: data.data.items.map(
-        (website) =>
-          new HostingWebsite(
-            this.api,
-            this.logger,
-            website['websiteUuid'],
-            website,
-          ),
+        (website) => new HostingWebsite(website['websiteUuid'], website),
       ),
       total: data.data.total,
     };
@@ -44,6 +39,6 @@ export class Hosting extends ApillonModule {
    * @returns An instance of HostingWebsite.
    */
   public website(uuid: string): HostingWebsite {
-    return new HostingWebsite(this.api, this.logger, uuid);
+    return new HostingWebsite(uuid);
   }
 }

@@ -1,18 +1,8 @@
-import { AxiosInstance } from 'axios';
+import { AxiosResponse } from 'axios';
+import { ApillonApi } from '../../lib/apillon-api';
 import { FileStatus, StorageContentType } from '../../types/storage';
-import { ApillonLogger } from '../../lib/apillon';
 
 export class File {
-  /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
   /**
    * @dev API url prefix for this class.
    */
@@ -54,20 +44,18 @@ export class File {
   public type = StorageContentType.FILE;
 
   /**
-   * @dev Constructor which should only be called via Storage class.
-   * @param uuid Unique identifier of the file.
-   * @param api Axios instance set to correct rootUrl with correct error handling.
+   * @dev Constructor which should only be called via HostingWebsite class.
+   * @param bucketUuid Unique identifier of the file's bucket.
+   * @param directoryUuid Unique identifier of the file's directory.
+   * @param fileUuid Unique identifier of the file.
+   * @param data Data to populate the directory with.
    */
   constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
     bucketUuid: string,
-    fileUuid: string,
     directoryUuid: string,
-    data: any,
+    fileUuid: string,
+    data: Partial<File & { fileStatus: number }>,
   ) {
-    this.api = api;
-    this.logger = logger;
     this.bucketUuid = bucketUuid;
     this.uuid = fileUuid;
     this.directoryUuid = directoryUuid;
@@ -96,7 +84,9 @@ export class File {
    * @dev Gets file details.
    */
   async get(): Promise<File> {
-    const { data } = await this.api.get(`${this.API_PREFIX}/detail`);
+    const { data } = await ApillonApi.get<
+      AxiosResponse<File & { fileStatus: number }>
+    >(`${this.API_PREFIX}/detail`);
     this.status = data.data.fileStatus;
     return this.populate(data.data);
   }

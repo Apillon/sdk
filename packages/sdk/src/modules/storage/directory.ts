@@ -1,37 +1,18 @@
-import { AxiosInstance } from 'axios';
 import {
   IStorageBucketContentRequest,
   StorageContentType,
 } from '../../types/storage';
 import { File } from './file';
-import { ApillonLogger } from '../../lib/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
+import { ApillonApi } from '../../lib/apillon-api';
+import { IApillonListResponse } from '../../types/apillon';
+import { ApillonModel } from '../../docs-index';
 
-export class Directory {
-  /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
-  /**
-   * @dev API url prefix for this class.
-   */
-  private API_PREFIX: string = null;
-
+export class Directory extends ApillonModel {
   /**
    * @dev Unique identifier of the bucket.
    */
   public bucketUuid;
-
-  /**
-   * @dev Unique identifier of the directory.
-   */
-  public uuid: string;
 
   /**
    * Directory name.
@@ -53,40 +34,23 @@ export class Directory {
    */
   public type = StorageContentType.DIRECTORY;
 
-  public content: (File | Directory)[] = null;
-  /**
-   * @dev Constructor which should only be called via Storage class.
-   * @param uuid Unique identifier of the directory.
-   * @param api Axios instance set to correct rootUrl with correct error handling.
-   */
-  constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
-    bucketUuid: string,
-    directoryUuid: string,
-    data: any,
-  ) {
-    this.api = api;
-    this.logger = logger;
-    this.bucketUuid = bucketUuid;
-    this.uuid = directoryUuid;
-    this.API_PREFIX = `/storage/${bucketUuid}`;
-    this.populate(data);
-  }
+  public content: (File | Directory)[] = [];
 
   /**
-   * Populates class properties via data object.
-   * @param data Data object.
+   * @dev Constructor which should only be called via HostingWebsite class.
+   * @param bucketUuid Unique identifier of the directory's bucket.
+   * @param directoryUuid Unique identifier of the directory.
+   * @param data Data to populate the directory with.
    */
-  private populate(data: any) {
-    if (data != null) {
-      Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
-          this[key] = data[key];
-        }
-      });
-    }
+  constructor(
+    bucketUuid: string,
+    directoryUuid: string,
+    data: Partial<Directory>,
+  ) {
+    super(directoryUuid);
+    this.bucketUuid = bucketUuid;
+    this.API_PREFIX = `/storage/${bucketUuid}`;
+    this.populate(data);
   }
 
   /**
@@ -101,28 +65,18 @@ export class Directory {
       `${this.API_PREFIX}/content`,
       params,
     );
-    const resp = await this.api.get(url);
-    for (const item of resp.data?.data?.items) {
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<File | Directory>
+    >(url);
+    for (const item of data?.data?.items) {
       if (item.type == StorageContentType.FILE) {
+        const file = item as File;
         this.content.push(
-          new File(
-            this.api,
-            this.logger,
-            this.bucketUuid,
-            item.uuid,
-            item.directoryUuid,
-            item,
-          ),
+          new File(this.bucketUuid, file.directoryUuid, file.uuid, file),
         );
       } else {
         this.content.push(
-          new Directory(
-            this.api,
-            this.logger,
-            this.bucketUuid,
-            item.uuid,
-            item,
-          ),
+          new Directory(this.bucketUuid, item.uuid, item as Directory),
         );
       }
     }

@@ -14,7 +14,7 @@ describe('Storage tests', () => {
   });
 
   test('List buckets', async () => {
-    const { items } = await new Storage(config).listBuckets({ limit: 1 });
+    const { items } = await new Storage(config).listBuckets();
     expect(items.length).toBeGreaterThanOrEqual(0);
     items.forEach((item) => expect(item.name).toBeTruthy());
   });

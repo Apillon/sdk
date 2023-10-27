@@ -2,7 +2,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-import { ApillonApiError, ApillonNetworkError } from './apillon';
+
+export class ApillonApiError extends Error {}
+export class ApillonRequestError extends Error {}
+export class ApillonNetworkError extends Error {}
 
 /**
  * Convert value to boolean if defined, else return undefined.

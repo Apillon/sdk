@@ -1,5 +1,6 @@
 import { IApillonPagination } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
+import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
 import { StorageBucket } from './storage-bucket';
@@ -20,23 +21,22 @@ export class Storage extends ApillonModule {
   ): Promise<IApillonList<StorageBucket>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const { data } = await this.api.get<IApillonListResponse<any>>(url);
+    const { data } = await ApillonApi.get<IApillonListResponse<any>>(url);
 
     return {
       items: data.data.items.map(
-        (bucket) =>
-          new StorageBucket(this.api, this.logger, bucket.bucketUuid, bucket),
+        (bucket) => new StorageBucket(bucket.bucketUuid, bucket),
       ),
       total: data.data.total,
     };
   }
 
   /**
-   * @dev Returns an website instance.
-   * @param uuid Unique website identifier.
-   * @returns An instance of Website.∂
+   * @dev Returns a bucket instance.
+   * @param uuid Unique bucket identifier.
+   * @returns An instance of StorageBucket.
    */
   public bucket(uuid: string): StorageBucket {
-    return new StorageBucket(this.api, this.logger, uuid);
+    return new StorageBucket(uuid);
   }
 }

@@ -1,4 +1,3 @@
-import { AxiosInstance } from 'axios';
 import { Directory } from './directory';
 import {
   IBucketFilesRequest,
@@ -11,30 +10,16 @@ import {
   listFilesRecursive,
   uploadFilesToS3,
 } from '../../lib/common';
-import { ApillonLogger } from '../../docs-index';
-import { IApillonList, IApillonListResponse } from '../../types/apillon';
+import {
+  IApillonList,
+  IApillonListResponse,
+  LogLevel,
+} from '../../types/apillon';
+import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonModel } from '../../docs-index';
+import { ApillonLogger } from '../../lib/apillon-logger';
 
-export class StorageBucket {
-  /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
-  /**
-   * @dev API url prefix for this class.
-   */
-  private API_PREFIX: string = null;
-
-  /**
-   * @dev Unique identifier of the bucket.
-   */
-  public uuid: string;
-
+export class StorageBucket extends ApillonModel {
   /**
    * @dev Name of the bucket.
    */
@@ -53,40 +38,17 @@ export class StorageBucket {
   /**
    * @dev Bucket content which are files and directories.
    */
-  public content: (File | Directory)[] = null;
+  public content: (File | Directory)[] = [];
 
   /**
    * @dev Constructor which should only be called via Storage class.
    * @param uuid Unique identifier of the bucket.
-   * @param api Axios instance set to correct rootUrl with correct error handling.
-   * @param data Data to populate storage bucket
+   * @param data Data to populate storage bucket with.
    */
-  constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
-    uuid: string,
-    data?: Partial<StorageBucket>,
-  ) {
-    this.api = api;
-    this.logger = logger;
-    this.uuid = uuid;
+  constructor(uuid: string, data?: Partial<StorageBucket>) {
+    super(uuid);
     this.API_PREFIX = `/storage/${uuid}`;
     this.populate(data);
-  }
-
-  /**
-   * Populates class properties via data object.
-   * @param data Data object.
-   */
-  private populate(data: any) {
-    if (data != null) {
-      Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
-          this[key] = data[key];
-        }
-      });
-    }
   }
 
   /**
@@ -100,26 +62,20 @@ export class StorageBucket {
       `${this.API_PREFIX}/content`,
       params,
     );
-    const { data } = await this.api.get(url);
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<File | Directory>
+    >(url);
     for (const item of data.data.items) {
       if (item.type == StorageContentType.FILE) {
-        content.push(
-          new File(
-            this.api,
-            this.logger,
-            this.uuid,
-            item.uuid,
-            item.directoryUuid,
-            item,
-          ),
+        const file = item as File;
+        this.content.push(
+          new File(this.uuid, file.directoryUuid, file.uuid, file),
         );
       } else {
         const directory = new Directory(
-          this.api,
-          this.logger,
           this.uuid,
           item.uuid,
-          item,
+          item as Directory,
         );
         content.push(directory, ...(await directory.get()));
       }
@@ -136,20 +92,12 @@ export class StorageBucket {
       `/storage/buckets/${this.uuid}/files`,
       params,
     );
-    const { data } = await this.api.get<IApillonListResponse<File>>(url);
+    const { data } = await ApillonApi.get<IApillonListResponse<File>>(url);
 
     return {
       total: data.data.total,
       items: data.data.items.map(
-        (file) =>
-          new File(
-            this.api,
-            this.logger,
-            this.uuid,
-            file.uuid,
-            file.directoryUuid,
-            file,
-          ),
+        (file) => new File(this.uuid, file.directoryUuid, file.uuid, file),
       ),
     };
   }
@@ -159,8 +107,9 @@ export class StorageBucket {
    * @param folderPath Path to the folder to upload.
    */
   public async uploadFromFolder(folderPath: string): Promise<void> {
-    console.log(
+    ApillonLogger.log(
       `Preparing to upload files from ${folderPath} to website ${this.uuid} ...`,
+      LogLevel.VERBOSE,
     );
     let files;
     try {
@@ -170,13 +119,11 @@ export class StorageBucket {
       throw new Error(`Error reading files in ${folderPath}`);
     }
 
-    console.log(`Files to upload: ${files.length}`);
+    ApillonLogger.log(`Files to upload: ${files.length}`, LogLevel.VERBOSE);
 
-    console.time('Got upload links');
-    const { data } = await this.api.post(`${this.API_PREFIX}/upload`, {
+    const { data } = await ApillonApi.post<any>(`${this.API_PREFIX}/upload`, {
       files,
     });
-    console.timeEnd('Got upload links');
 
     const uploadLinks = data.data.files.sort((a, b) =>
       a.fileName.localeCompare(b.fileName),
@@ -195,11 +142,11 @@ export class StorageBucket {
       ),
     );
 
-    console.log('Closing session...');
-    const respEndSession = await this.api.post(
+    ApillonLogger.log('Closing upload session...', LogLevel.VERBOSE);
+    const respEndSession = await ApillonApi.post<any>(
       `${this.API_PREFIX}/upload/${data.data.sessionUuid}/end`,
     );
-    console.log('Session ended.');
+    ApillonLogger.log('Session ended.', LogLevel.VERBOSE);
 
     if (!respEndSession.data?.data) {
       throw new Error('Failure when trying to end file upload session');
@@ -212,7 +159,7 @@ export class StorageBucket {
    * @returns Instance of file.
    */
   file(fileUuid: string): File {
-    return new File(this.api, this.logger, this.uuid, fileUuid, null, {});
+    return new File(this.uuid, null, fileUuid, {});
   }
 
   /**
@@ -220,6 +167,6 @@ export class StorageBucket {
    * @param fileUuid Uuid of the file.
    */
   async deleteFile(fileUuid: string): Promise<void> {
-    await this.api.delete(`/storage/buckets/${this.uuid}/files/${fileUuid}`);
+    await ApillonApi.delete(`/storage/buckets/${this.uuid}/files/${fileUuid}`);
   }
 }

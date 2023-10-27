@@ -1,33 +1,14 @@
-import { AxiosInstance } from 'axios';
-import { ApillonLogger } from '../../lib/apillon';
+import { ApillonModel } from '../../lib/apillon';
 import { DeployToEnvironment, DeploymentStatus } from '../../docs-index';
-import { LogLevel } from '../../types/apillon';
+import { IApillonResponse, LogLevel } from '../../types/apillon';
+import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
 
-export class Deployment {
-  /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
-  /**
-   * @dev API url prefix for this class.
-   */
-  private API_PREFIX: string = null;
-
+export class Deployment extends ApillonModel {
   /**
    * @dev Unique identifier of the website.
    */
   public websiteUuid: string = null;
-
-  /**
-   * @dev Unique identifier of the deployment.
-   */
-  public uuid: string = null;
 
   /**
    * IPFS CID for the deployment.
@@ -61,49 +42,32 @@ export class Deployment {
 
   /**
    * @dev Constructor which should only be called via HostingWebsite class.
-   * @param uuid Unique identifier of the deployment.
-   * @param api Axios instance set to correct rootUrl with correct error handling.
+   * @param websiteUuid Unique identifier of the deployment's website.
+   * @param deploymentUuid Unique identifier of the deployment.
+   * @param data Data to populate the deployment with.
    */
   constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
     websiteUuid: string,
     deploymentUuid: string,
-    data: any,
+    data: Partial<Deployment>,
   ) {
-    this.api = api;
-    this.logger = logger;
+    super(deploymentUuid);
     this.websiteUuid = websiteUuid;
-    this.uuid = deploymentUuid;
     this.API_PREFIX = `/hosting/websites/${websiteUuid}/deployments/${deploymentUuid}`;
     this.populate(data);
-  }
-
-  /**
-   * Populates class properties via data object.
-   * @param data Data object.
-   */
-  private populate(data: any) {
-    if (data != null) {
-      Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
-          this[key] = data[key];
-        }
-      });
-    }
-    return this;
   }
 
   /**
    * @dev Gets deployment details.
    */
   async get(): Promise<Deployment> {
-    this.logger.log(
+    ApillonLogger.log(
       `Get deployment for website ${this.uuid}`,
       LogLevel.VERBOSE,
     );
-    const { data } = await this.api.get(this.API_PREFIX);
+    const { data } = await ApillonApi.get<IApillonResponse<Deployment>>(
+      this.API_PREFIX,
+    );
     return this.populate(data.data);
   }
 }
