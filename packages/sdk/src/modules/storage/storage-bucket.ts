@@ -65,7 +65,7 @@ export class StorageBucket extends ApillonModel {
     const { data } = await ApillonApi.get<
       IApillonListResponse<File | Directory>
     >(url);
-    for (const item of data.data.items) {
+    for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
         const file = item as File;
         this.content.push(
@@ -81,7 +81,7 @@ export class StorageBucket extends ApillonModel {
       }
     }
     this.content = content;
-    return { total: data.data.total, items: content };
+    return { total: data.total, items: content };
   }
 
   /**
@@ -95,8 +95,8 @@ export class StorageBucket extends ApillonModel {
     const { data } = await ApillonApi.get<IApillonListResponse<File>>(url);
 
     return {
-      total: data.data.total,
-      items: data.data.items.map(
+      total: data.total,
+      items: data.items.map(
         (file) => new File(this.uuid, file.directoryUuid, file.uuid, file),
       ),
     };
@@ -125,7 +125,7 @@ export class StorageBucket extends ApillonModel {
       files,
     });
 
-    const uploadLinks = data.data.files.sort((a, b) =>
+    const uploadLinks = data.files.sort((a, b) =>
       a.fileName.localeCompare(b.fileName),
     );
     // Divide files into chunks for parallel processing and uploading
@@ -143,12 +143,12 @@ export class StorageBucket extends ApillonModel {
     );
 
     ApillonLogger.log('Closing upload session...', LogLevel.VERBOSE);
-    const respEndSession = await ApillonApi.post<any>(
-      `${this.API_PREFIX}/upload/${data.data.sessionUuid}/end`,
+    const { data: endSession } = await ApillonApi.post<any>(
+      `${this.API_PREFIX}/upload/${data.sessionUuid}/end`,
     );
     ApillonLogger.log('Session ended.', LogLevel.VERBOSE);
 
-    if (!respEndSession.data?.data) {
+    if (!endSession) {
       throw new Error('Failure when trying to end file upload session');
     }
   }

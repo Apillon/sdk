@@ -44,7 +44,7 @@ export class ApillonModel {
    * Populates class properties via data object.
    * @param data Data object.
    */
-  protected populate(data: any) {
+  protected populate(data: object) {
     if (data != null) {
       Object.keys(data || {}).forEach((key) => {
         const prop = this[key];

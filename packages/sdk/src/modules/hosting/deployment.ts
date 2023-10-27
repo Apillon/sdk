@@ -49,7 +49,7 @@ export class Deployment extends ApillonModel {
   constructor(
     websiteUuid: string,
     deploymentUuid: string,
-    data: Partial<Deployment>,
+    data?: Partial<Deployment>,
   ) {
     super(deploymentUuid);
     this.websiteUuid = websiteUuid;
@@ -68,6 +68,6 @@ export class Deployment extends ApillonModel {
     const { data } = await ApillonApi.get<IApillonResponse<Deployment>>(
       this.API_PREFIX,
     );
-    return this.populate(data.data);
+    return this.populate(data);
   }
 }

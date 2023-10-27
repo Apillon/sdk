@@ -133,7 +133,7 @@ export class NftCollection extends ApillonModel {
     const { data } = await ApillonApi.get<IApillonResponse<ICollection>>(
       this.API_PREFIX,
     );
-    return this.populate(data.data);
+    return this.populate(data);
   }
 
   /**
@@ -147,7 +147,7 @@ export class NftCollection extends ApillonModel {
       IApillonResponse<IApillonBoolResponse>
     >(`${this.API_PREFIX}/mint`, { receivingAddress: receiver, quantity });
 
-    return data?.data;
+    return data;
   }
 
   /**
@@ -174,7 +174,7 @@ export class NftCollection extends ApillonModel {
       { parentCollectionUuid, parentNftId, quantity },
     );
 
-    return data?.data;
+    return data;
   }
 
   /**
@@ -192,7 +192,7 @@ export class NftCollection extends ApillonModel {
       { tokenId: id },
     );
 
-    return data?.data;
+    return data;
   }
 
   /**
@@ -208,7 +208,7 @@ export class NftCollection extends ApillonModel {
       { address },
     );
 
-    this.populate(data?.data);
+    this.populate(data);
 
     return this;
   }
@@ -230,6 +230,6 @@ export class NftCollection extends ApillonModel {
       IApillonResponse<IApillonList<ITransaction>>
     >(url);
 
-    return data?.data.items;
+    return data.items;
   }
 }

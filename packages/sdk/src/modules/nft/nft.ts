@@ -36,9 +36,7 @@ export class Nft extends ApillonModule {
       url,
     );
 
-    return data.data.items.map(
-      (nft) => new NftCollection(nft.collectionUuid, nft),
-    );
+    return data.items.map((nft) => new NftCollection(nft.collectionUuid, nft));
   }
 
   /**
@@ -51,6 +49,6 @@ export class Nft extends ApillonModule {
       IApillonResponse<ICollection>
     >(this.API_PREFIX, data);
 
-    return new NftCollection(response?.data.collectionUuid, response?.data);
+    return new NftCollection(response.collectionUuid, response);
   }
 }

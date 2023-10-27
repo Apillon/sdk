@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { ApillonConfig } from './apillon';
 import { LogLevel } from '../types/apillon';
 import { ApillonLogger } from './apillon-logger';
@@ -58,25 +58,22 @@ export class ApillonApi {
     );
   }
 
-  public static async get<T>(
-    url: string,
-    config?: any,
-  ): Promise<AxiosResponse<T, any>> {
-    return this.instance.get<T>(url, config);
+  public static async get<T>(url: string, config?: any): Promise<T> {
+    const { data } = await this.instance.get<T>(url, config);
+    return data;
   }
 
   public static async post<T>(
     url: string,
-    data?: any,
+    body?: any,
     config?: any,
-  ): Promise<AxiosResponse<T, any>> {
-    return this.instance.post<T>(url, data, config);
+  ): Promise<T> {
+    const { data } = await this.instance.post<T>(url, body, config);
+    return data;
   }
 
-  public static async delete<T>(
-    url: string,
-    config?: any,
-  ): Promise<AxiosResponse<T, any>> {
-    return this.instance.delete<T>(url, config);
+  public static async delete<T>(url: string, config?: any): Promise<T> {
+    const { data } = await this.instance.delete<T>(url, config);
+    return data;
   }
 }

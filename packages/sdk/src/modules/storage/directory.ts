@@ -45,7 +45,7 @@ export class Directory extends ApillonModel {
   constructor(
     bucketUuid: string,
     directoryUuid: string,
-    data: Partial<Directory>,
+    data?: Partial<Directory>,
   ) {
     super(directoryUuid);
     this.bucketUuid = bucketUuid;
@@ -68,7 +68,8 @@ export class Directory extends ApillonModel {
     const { data } = await ApillonApi.get<
       IApillonListResponse<File | Directory>
     >(url);
-    for (const item of data?.data?.items) {
+
+    for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
         const file = item as File;
         this.content.push(

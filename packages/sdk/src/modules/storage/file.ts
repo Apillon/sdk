@@ -54,7 +54,7 @@ export class File {
     bucketUuid: string,
     directoryUuid: string,
     fileUuid: string,
-    data: Partial<File & { fileStatus: number }>,
+    data?: Partial<File & { fileStatus: number }>,
   ) {
     this.bucketUuid = bucketUuid;
     this.uuid = fileUuid;
@@ -87,7 +87,7 @@ export class File {
     const { data } = await ApillonApi.get<
       AxiosResponse<File & { fileStatus: number }>
     >(`${this.API_PREFIX}/detail`);
-    this.status = data.data.fileStatus;
-    return this.populate(data.data);
+    this.status = data.fileStatus;
+    return this.populate(data);
   }
 }

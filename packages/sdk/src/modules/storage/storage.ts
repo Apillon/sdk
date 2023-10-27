@@ -24,10 +24,10 @@ export class Storage extends ApillonModule {
     const { data } = await ApillonApi.get<IApillonListResponse<any>>(url);
 
     return {
-      items: data.data.items.map(
+      items: data.items.map(
         (bucket) => new StorageBucket(bucket.bucketUuid, bucket),
       ),
-      total: data.data.total,
+      total: data.total,
     };
   }
 

@@ -62,9 +62,9 @@ export class HostingWebsite extends ApillonModel {
    * @returns An instance of HostingWebsite class with filled properties.
    */
   public async get(): Promise<HostingWebsite> {
-    const { data } = (
-      await ApillonApi.get<IApillonResponse<HostingWebsite>>(this.API_PREFIX)
-    ).data;
+    const { data } = await ApillonApi.get<IApillonResponse<HostingWebsite>>(
+      this.API_PREFIX,
+    );
     return this.populate(data);
   }
 
@@ -101,10 +101,10 @@ export class HostingWebsite extends ApillonModel {
     ApillonLogger.logWithTime('Got upload links', LogLevel.VERBOSE);
 
     // console.log(resp);
-    const sessionUuid = session.data.sessionUuid;
+    const sessionUuid = session.sessionUuid;
 
     ApillonLogger.logWithTime('File upload complete', LogLevel.VERBOSE);
-    await uploadFilesToS3(session.data.files, files);
+    await uploadFilesToS3(session.files, files);
     ApillonLogger.logWithTime('File upload complete', LogLevel.VERBOSE);
 
     ApillonLogger.log('Closing session...', LogLevel.VERBOSE);
@@ -113,7 +113,7 @@ export class HostingWebsite extends ApillonModel {
     );
     ApillonLogger.log('Session ended.', LogLevel.VERBOSE);
 
-    if (!endSession.data) {
+    if (!endSession) {
       throw new Error('Upload session did not end');
     }
   }
@@ -140,7 +140,7 @@ export class HostingWebsite extends ApillonModel {
 
     ApillonLogger.logWithTime('Deploy complete', LogLevel.VERBOSE);
 
-    return data.data;
+    return data;
   }
 
   /**
@@ -161,10 +161,10 @@ export class HostingWebsite extends ApillonModel {
     >(url);
 
     return {
-      items: data.data.items.map(
+      items: data.items.map(
         (item) => new Deployment(item.websiteUuid, item.deploymentUuid, item),
       ),
-      total: data.data.total,
+      total: data.total,
     };
   }
 
