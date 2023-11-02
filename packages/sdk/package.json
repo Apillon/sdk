@@ -27,7 +27,7 @@
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
     "publish-package": "npm publish",
     "test": "npx jest",
-    "docs": "npx typedoc src/docs-index.ts"
+    "generate-docs": "npx typedoc src/docs-index.ts"
   },
   "keywords": [
     "SDK",

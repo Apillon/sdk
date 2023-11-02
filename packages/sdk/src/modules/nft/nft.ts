@@ -11,12 +11,11 @@ import { NftCollection } from './nft-collection';
 
 export class Nft extends ApillonModule {
   /**
-   * @dev API url for collections.
+   * API url for collections.
    */
   private API_PREFIX = '/nfts/collections';
 
   /**
-   * @dev Returns a collection instance.
    * @param uuid Unique collection identifier.
    * @returns An instance of NFT Collection
    */

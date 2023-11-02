@@ -18,17 +18,17 @@ import {
 
 export class NftCollection extends ApillonModel {
   /**
-   * @dev collection symbol.
+   * Collection symbol.
    */
   public symbol = null;
 
   /**
-   * @dev collection name
+   * Collection name
    */
   public name = null;
 
   /**
-   * @dev collection description.
+   * collection description.
    */
   public description: string = null;
 
@@ -70,7 +70,7 @@ export class NftCollection extends ApillonModel {
   public drop: boolean = null;
 
   /**
-   * Pri per NFT if drop is active.
+   * Price per NFT if drop is active.
    */
   public dropPrice: number = null;
 
@@ -85,7 +85,7 @@ export class NftCollection extends ApillonModel {
   public dropReserve: number = null;
 
   /**
-   * Procentual amount of royalties fees.
+   * Percentage amount of royalties fees.
    */
   public royaltiesFees: number = null;
 
@@ -115,7 +115,7 @@ export class NftCollection extends ApillonModel {
   public chain: EvmChain = null;
 
   /**
-   * @dev Constructor which should only be called via Nft class.
+   * Constructor which should only be called via Nft class.
    * @param uuid Unique identifier of the NFT collection.
    * @param data Data to populate the collection with.
    */

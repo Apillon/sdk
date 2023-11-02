@@ -21,27 +21,27 @@ import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class StorageBucket extends ApillonModel {
   /**
-   * @dev Name of the bucket.
+   * Name of the bucket.
    */
   public name: string = null;
 
   /**
-   * @dev Bucket description.
+   * Bucket description.
    */
   public description: string = null;
 
   /**
-   * @dev Size of the bucket in bytes.
+   * Size of the bucket in bytes.
    */
   public size: number = null;
 
   /**
-   * @dev Bucket content which are files and directories.
+   * Bucket content which are files and directories.
    */
   public content: (File | Directory)[] = [];
 
   /**
-   * @dev Constructor which should only be called via Storage class.
+   * Constructor which should only be called via Storage class.
    * @param uuid Unique identifier of the bucket.
    * @param data Data to populate storage bucket with.
    */
@@ -52,7 +52,7 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
-   * @dev Gets contents of a bucket.
+   * Gets contents of a bucket.
    */
   async getObjects(
     params?: IStorageBucketContentRequest,
@@ -85,7 +85,7 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
-   * @dev Gets all files in a bucket.
+   * Gets all files in a bucket.
    */
   async getFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(
@@ -103,7 +103,7 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
-   * @dev Uploads files inside a folder via path.
+   * Uploads files inside a folder via path.
    * @param folderPath Path to the folder to upload.
    */
   public async uploadFromFolder(folderPath: string): Promise<void> {

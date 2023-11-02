@@ -7,7 +7,7 @@ import { StorageBucket } from './storage-bucket';
 
 export class Storage extends ApillonModule {
   /**
-   * @dev API url for storage.
+   * API url for storage.
    */
   private API_PREFIX = '/storage/buckets';
 
@@ -32,7 +32,6 @@ export class Storage extends ApillonModule {
   }
 
   /**
-   * @dev Returns a bucket instance.
    * @param uuid Unique bucket identifier.
    * @returns An instance of StorageBucket.
    */

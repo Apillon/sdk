@@ -17,37 +17,37 @@ import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class HostingWebsite extends ApillonModel {
   /**
-   * @dev User assigned name of the website.
+   * User assigned name of the website.
    */
   public name: string = null;
 
   /**
-   * @dev User assigned description of the website.
+   * User assigned description of the website.
    */
   public description: string = null;
 
   /**
-   * @dev Domain on which this website lives.
+   * Domain on which this website lives.
    */
   public domain: string = null;
 
   /**
-   * @dev Unique identifier of a storage bucket in which this website files reside.
+   * Unique identifier of a storage bucket in which this website files reside.
    */
   public bucketUuid: string = null;
 
   /**
-   * @dev IPNS CID for staging environment.
+   * IPNS CID for staging environment.
    */
   public ipnsStaging: string = null;
 
   /**
-   * @dev IPNS CID for production environment.
+   * IPNS CID for production environment.
    */
   public ipnsProduction: string = null;
 
   /**
-   * @dev Constructor which should only be called via Hosting class.
+   * Constructor which should only be called via Hosting class.
    * @param uuid Unique identifier of the website.
    * @param data Data to populate the website with.
    */
@@ -58,7 +58,7 @@ export class HostingWebsite extends ApillonModel {
   }
 
   /**
-   * @dev Gets information about the website and fills properties with it.
+   * Gets information about the website and fills properties with it.
    * @returns An instance of HostingWebsite class with filled properties.
    */
   public async get(): Promise<HostingWebsite> {
@@ -69,7 +69,7 @@ export class HostingWebsite extends ApillonModel {
   }
 
   /**
-   * @dev Uploads website files inside a folder via path.
+   * Uploads website files inside a folder via path.
    * @param folderPath Path to the folder to upload.
    */
   public async uploadFromFolder(folderPath: string): Promise<void> {
@@ -119,7 +119,7 @@ export class HostingWebsite extends ApillonModel {
   }
 
   /**
-   * @dev Deploy a website to a new environment.
+   * Deploy a website to a new environment.
    * @param {DeployToEnvironment} toEnvironment The environment to deploy to
    * @returns The new deployment instance
    */
@@ -144,7 +144,6 @@ export class HostingWebsite extends ApillonModel {
   }
 
   /**
-   * @dev Returns an list of websites.
    * @param {IWebsiteFilters} params Query filters for listing websites
    * @returns A list of all deployments instances.
    */

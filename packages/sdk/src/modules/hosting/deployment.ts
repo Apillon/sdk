@@ -6,7 +6,7 @@ import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class Deployment extends ApillonModel {
   /**
-   * @dev Unique identifier of the website.
+   * Unique identifier of the website.
    */
   public websiteUuid: string = null;
 
@@ -41,7 +41,7 @@ export class Deployment extends ApillonModel {
   public number: number = null;
 
   /**
-   * @dev Constructor which should only be called via HostingWebsite class.
+   * Constructor which should only be called via HostingWebsite class.
    * @param websiteUuid Unique identifier of the deployment's website.
    * @param deploymentUuid Unique identifier of the deployment.
    * @param data Data to populate the deployment with.
@@ -58,7 +58,7 @@ export class Deployment extends ApillonModel {
   }
 
   /**
-   * @dev Gets deployment details.
+   * Gets deployment details.
    */
   async get(): Promise<Deployment> {
     ApillonLogger.log(

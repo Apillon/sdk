@@ -7,12 +7,11 @@ import { HostingWebsite } from './hosting-website';
 
 export class Hosting extends ApillonModule {
   /**
-   * @dev Base API url for hosting.
+   * Base API url for hosting.
    */
   private API_PREFIX = '/hosting/websites';
 
   /**
-   * @dev Returns a list of websites.
    * @param {IWebsiteFilters} params Query filters for listing websites
    * @returns A list of HostingWebsite instances.
    */
@@ -34,7 +33,6 @@ export class Hosting extends ApillonModule {
   }
 
   /**
-   * @dev Returns an website instance.
    * @param uuid Unique website identifier.
    * @returns An instance of HostingWebsite.
    */

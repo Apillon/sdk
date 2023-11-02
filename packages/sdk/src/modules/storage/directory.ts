@@ -10,7 +10,7 @@ import { ApillonModel } from '../../docs-index';
 
 export class Directory extends ApillonModel {
   /**
-   * @dev Unique identifier of the bucket.
+   * Unique identifier of the bucket.
    */
   public bucketUuid;
 
@@ -37,7 +37,7 @@ export class Directory extends ApillonModel {
   public content: (File | Directory)[] = [];
 
   /**
-   * @dev Constructor which should only be called via HostingWebsite class.
+   * Constructor which should only be called via HostingWebsite class.
    * @param bucketUuid Unique identifier of the directory's bucket.
    * @param directoryUuid Unique identifier of the directory.
    * @param data Data to populate the directory with.
@@ -54,7 +54,7 @@ export class Directory extends ApillonModel {
   }
 
   /**
-   * @dev Gets contents of a directory.
+   * Gets contents of a directory.
    */
   async get(
     params: IStorageBucketContentRequest = {},

@@ -27,12 +27,12 @@ export class ApillonModule {
 
 export class ApillonModel {
   /**
-   * @dev API url prefix for this class.
+   * API url prefix for this class.
    */
   protected API_PREFIX: string = null;
 
   /**
-   * @dev Unique identifier of the model.
+   * Unique identifier of the model.
    */
   public uuid: string;
 
