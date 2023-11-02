@@ -1,49 +1,42 @@
 # Structure example
 
 ```ts
-import { Hosting } from '@apillon/sdk';
-import { Storage } from '@apillon/sdk';
-import { Nft } from '@apillon/sdk';
+import { Hosting, Storage, Nft, DeployToEnvironment, FileStatus } from '@apillon/sdk';
 
 export async function test() {
-
+  // Hosting example
   const hosting = new Hosting({ apillonConfig });
   await hosting.listWebsites();
-  await hosting.createWebsite();
   const webpage1 = hosting.website('uuid');
-  await webpage1.getInfo();
-  await webpage1.update({});
-  await webpage1.getDeployment(id);
-  await webpage1.getDeployments();
-  await webpage1.deployFromFolder('path', 'environment'); // can go directly to production
-  await webpage1.updateDeployment(from stg -> production); // tu me moti še na api levelu, kr lahko dobiš in pogledaš detajle specifičnega deploymenta, ampak deploy klic pa dela samo na zadnjem
+  await webpage1.get();
 
-  // or
-  await hosting.website('uuid').getInfo();
+  await webpage1.uploadFromFolder('folder_path');
+  await webpage1.deploy(DeployToEnvironment.STAGING_TO_PRODUCTION);
+  await webpage1.listDeployments();
+  const deployment = await webpage1.deployment(deployment_uuid).get();
 
-
-  //Naming hosting -> webpage?
-
+  // Storage example
   const storage = new Storage({ apillonConfig });
   await storage.listBuckets();
-  await storage.createBucket();
-
   const bucket = storage.bucket('uuid');
-  await bucket.upload('path to files');
-  await bucket.getContent({ directory, search, limit });
-  await bucket.getFile(id);
-  await bucket.deleteFile(id);
+  await bucket.uploadFromFolder('folder_path');
+  await bucket.getObjects({
+    directoryUuid,
+    markedForDeletion: false,
+    limit: 5,
+  });
+  await bucket.getFiles({ fileStatus: FileStatus.UPLOADED });
+  const file = await bucket.file(file_uuid).get();
+  await bucket.deleteFile(file_uuid);
 
+  // NFT example
   const nft = new Nft({ apillonConfig });
   await nft.listCollections();
-
-  const collection = nft.collection('uuid');
-  const info = collection.getInfo(); //.info?
-  await collection.mint();
-  await collection.burn();
-  await collection.transferOwnership();
-  await collection.getTransactions();
-
-
+  const collection = await nft.collection('uuid').get();
+  await collection.mint(receiver, quantity);
+  await collection.nestMint(collection.uuid, 1, quantity);
+  await collection.burn(quantity);
+  await collection.listTransactions();
+  await collection.transferOwnership(to_address);
 }
 ```

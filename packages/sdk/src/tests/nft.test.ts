@@ -16,7 +16,7 @@ describe('Nft tests', () => {
 
   test('list nft collections', async () => {
     const nft = new Nft(config);
-    const collections = await nft.list();
+    const collections = await nft.listCollections();
     expect(collections.length).toBeGreaterThan(0);
     expect(collections[0]).toBeInstanceOf(NftCollection);
   });
@@ -69,7 +69,7 @@ describe('Nft tests', () => {
   test('should fail nest minting for collection that is not nestable if collection populated', async () => {
     const nft = new Nft(config);
     const collection = await nft.collection(collectionUUID).get();
-    await expect(collection.nestMintNft('', 1, 1)).rejects.toThrow(
+    await expect(collection.nestMint('', 1, 1)).rejects.toThrow(
       'Collection is not nestable.',
     );
   });
@@ -78,14 +78,14 @@ describe('Nft tests', () => {
   test('should fail nest minting', async () => {
     const nft = new Nft(config);
     const collection = nft.collection(collectionUUID);
-    await collection.nestMintNft('2ad03895-fd5d-40e7-af17-1d6daecf3b5a', 1, 1);
+    await collection.nestMint('2ad03895-fd5d-40e7-af17-1d6daecf3b5a', 1, 1);
   });
 
   test('should fail revoking for collection that is not revokable if collection populated', async () => {
     const nft = new Nft(config);
     const collection = await nft.collection(collectionUUID).get();
 
-    await expect(collection.burnNft('1')).rejects.toThrow(
+    await expect(collection.burn('1')).rejects.toThrow(
       'Collection is not revokable.',
     );
   });

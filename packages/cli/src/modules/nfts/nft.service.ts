@@ -16,7 +16,7 @@ export async function listCollections(
   const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.list({
+    const data = await nftService.listCollections({
       collectionStatus: toInteger(options.status),
       page: toInteger(options.page),
       limit: toInteger(options.limit),
@@ -103,7 +103,7 @@ export async function nestMintCollectionNft(
   try {
     const data = await nftService
       .collection(uuid)
-      .nestMintNft(
+      .nestMint(
         options.parentCollectionUuid,
         toInteger(options.parentNftId),
         toInteger(options.quantity),
@@ -122,7 +122,7 @@ export async function burnCollectionNft(
   const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.collection(uuid).burnNft(options.tokenId);
+    const data = await nftService.collection(uuid).burn(options.tokenId);
     console.log(data);
   } catch (e: any) {
     exceptionHandler(e);

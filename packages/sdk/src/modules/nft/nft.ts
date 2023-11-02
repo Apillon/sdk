@@ -29,7 +29,9 @@ export class Nft extends ApillonModule {
    * @param {ICollectionFilters} params Filter for listing collections.
    * @returns Array of NftCollection.
    */
-  public async list(params?: ICollectionFilters): Promise<NftCollection[]> {
+  public async listCollections(
+    params?: ICollectionFilters,
+  ): Promise<NftCollection[]> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
     const { data } = await ApillonApi.get<IApillonListResponse<ICollection>>(

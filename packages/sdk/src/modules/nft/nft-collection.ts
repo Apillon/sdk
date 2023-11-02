@@ -158,7 +158,7 @@ export class NftCollection extends ApillonModel {
    * @param quantity Amount of nfts we want to mint.
    * @returns Call status.
    */
-  public async nestMintNft(
+  public async nestMint(
     parentCollectionUuid: string,
     parentNftId: number,
     quantity: number,
@@ -183,7 +183,7 @@ export class NftCollection extends ApillonModel {
    * @param id Id of the NFT we want to burn.
    * @returns Status.
    */
-  public async burnNft(id: string): Promise<IApillonStatus> {
+  public async burn(id: string): Promise<IApillonStatus> {
     if (this.isRevokable != null && !this.isRevokable) {
       throw new Error('Collection is not revokable.');
     }
