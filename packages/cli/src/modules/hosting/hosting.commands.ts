@@ -27,7 +27,7 @@ export function createHostingCommands(cli: Command) {
     });
 
   hosting
-    .command('upload-files')
+    .command('upload')
     .argument('<path>', 'path to folder with website files')
     .requiredOption(
       '--uuid <website uuid>',
