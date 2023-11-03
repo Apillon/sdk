@@ -5,19 +5,11 @@ import {
   StorageContentType,
 } from '../../types/storage';
 import { File } from './file';
-import {
-  constructUrlWithQueryParams,
-  listFilesRecursive,
-  uploadFilesToS3,
-} from '../../lib/common';
-import {
-  IApillonList,
-  IApillonListResponse,
-  LogLevel,
-} from '../../types/apillon';
+import { constructUrlWithQueryParams } from '../../lib/common';
+import { IApillonList, IApillonListResponse } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonModel } from '../../docs-index';
-import { ApillonLogger } from '../../lib/apillon-logger';
+import { uploadFilesFromFolder } from '../../util/file-utils';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -107,50 +99,7 @@ export class StorageBucket extends ApillonModel {
    * @param folderPath Path to the folder to upload.
    */
   public async uploadFromFolder(folderPath: string): Promise<void> {
-    ApillonLogger.log(
-      `Preparing to upload files from ${folderPath} to website ${this.uuid} ...`,
-      LogLevel.VERBOSE,
-    );
-    let files;
-    try {
-      files = listFilesRecursive(folderPath);
-    } catch (err) {
-      console.error(err);
-      throw new Error(`Error reading files in ${folderPath}`);
-    }
-
-    ApillonLogger.log(`Files to upload: ${files.length}`, LogLevel.VERBOSE);
-
-    const { data } = await ApillonApi.post<any>(`${this.API_PREFIX}/upload`, {
-      files,
-    });
-
-    const uploadLinks = data.files.sort((a, b) =>
-      a.fileName.localeCompare(b.fileName),
-    );
-    // Divide files into chunks for parallel processing and uploading
-    const chunkSize = 10;
-    const fileChunks = [];
-    for (let i = 0; i < files.length; i += chunkSize) {
-      const chunkFiles = files.slice(i, i + chunkSize);
-      const chunkLinks = uploadLinks.slice(i, i + chunkSize);
-      fileChunks.push({ chunkFiles, chunkLinks });
-    }
-    await Promise.all(
-      fileChunks.map(({ chunkFiles, chunkLinks }) =>
-        uploadFilesToS3(chunkLinks, chunkFiles),
-      ),
-    );
-
-    ApillonLogger.log('Closing upload session...', LogLevel.VERBOSE);
-    const { data: endSession } = await ApillonApi.post<any>(
-      `${this.API_PREFIX}/upload/${data.sessionUuid}/end`,
-    );
-    ApillonLogger.log('Session ended.', LogLevel.VERBOSE);
-
-    if (!endSession) {
-      throw new Error('Failure when trying to end file upload session');
-    }
+    await uploadFilesFromFolder(folderPath, this.API_PREFIX);
   }
 
   /**

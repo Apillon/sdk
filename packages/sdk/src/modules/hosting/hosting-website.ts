@@ -1,8 +1,4 @@
-import {
-  constructUrlWithQueryParams,
-  listFilesRecursive,
-  uploadFilesToS3,
-} from '../../lib/common';
+import { constructUrlWithQueryParams } from '../../lib/common';
 import { DeployToEnvironment, IDeploymentFilters } from '../../types/hosting';
 import {
   IApillonList,
@@ -14,6 +10,7 @@ import { Deployment } from './deployment';
 import { ApillonModel } from '../../docs-index';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
+import { uploadFilesFromFolder } from '../../util/file-utils';
 
 export class HostingWebsite extends ApillonModel {
   /**
@@ -73,49 +70,7 @@ export class HostingWebsite extends ApillonModel {
    * @param folderPath Path to the folder to upload.
    */
   public async uploadFromFolder(folderPath: string): Promise<void> {
-    ApillonLogger.log(
-      `Preparing to upload files from ${folderPath} to website ${this.uuid} ...`,
-      LogLevel.VERBOSE,
-    );
-
-    let files;
-    try {
-      files = listFilesRecursive(folderPath);
-    } catch (err) {
-      ApillonLogger.log(err, LogLevel.ERROR);
-      throw new Error(`Error reading files in ${folderPath}`);
-    }
-
-    const data = { files };
-    ApillonLogger.log(
-      `Files to upload: ${data.files.length}`,
-      LogLevel.VERBOSE,
-    );
-
-    ApillonLogger.logWithTime('Get upload links', LogLevel.VERBOSE);
-    const { data: session } = await ApillonApi.post<any>(
-      `${this.API_PREFIX}/upload`,
-      data,
-    );
-
-    ApillonLogger.logWithTime('Got upload links', LogLevel.VERBOSE);
-
-    // console.log(resp);
-    const sessionUuid = session.sessionUuid;
-
-    ApillonLogger.logWithTime('File upload complete', LogLevel.VERBOSE);
-    await uploadFilesToS3(session.files, files);
-    ApillonLogger.logWithTime('File upload complete', LogLevel.VERBOSE);
-
-    ApillonLogger.log('Closing session...', LogLevel.VERBOSE);
-    const { data: endSession } = await ApillonApi.post<any>(
-      `${this.API_PREFIX}/upload/${sessionUuid}/end`,
-    );
-    ApillonLogger.log('Session ended.', LogLevel.VERBOSE);
-
-    if (!endSession) {
-      throw new Error('Upload session did not end');
-    }
+    await uploadFilesFromFolder(folderPath, this.API_PREFIX);
   }
 
   /**

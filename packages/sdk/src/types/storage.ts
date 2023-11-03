@@ -1,8 +1,8 @@
 import { IApillonPagination } from './generic';
 
 export enum StorageContentType {
-  FILE = 2,
   DIRECTORY = 1,
+  FILE = 2,
 }
 
 export enum FileStatus {
