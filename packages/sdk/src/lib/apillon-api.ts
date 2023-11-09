@@ -46,7 +46,7 @@ export class ApillonApi {
     this.instance.interceptors.response.use(
       (response) => response,
       (error) => {
-        ApillonLogger.log(error, LogLevel.ERROR);
+        // ApillonLogger.log(error, LogLevel.ERROR);
         if (error.response?.data) {
           throw new ApillonApiError(
             JSON.stringify(error.response.data, null, 2),
