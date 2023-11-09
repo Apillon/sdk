@@ -8,6 +8,7 @@ import {
   listWebsites,
   uploadWebsiteFiles,
 } from './hosting.service';
+import { DeployToEnvironment } from '@apillon/sdk';
 
 export function createHostingCommands(cli: Command) {
   const hosting = cli.command('hosting');
@@ -41,7 +42,13 @@ export function createHostingCommands(cli: Command) {
     .command('deploy')
     .requiredOption('--uuid <website uuid>', 'UUID of website to deploy')
     .addOption(
-      new Option('--env <environment>', 'Environment to deploy to')
+      new Option(
+        '--env <environment>',
+        'Sets the environment to deploy the files to. Choose from:\n' +
+          `  - ${DeployToEnvironment.TO_STAGING}: To staging.\n` +
+          `  - ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production.\n` +
+          `  - ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production.`,
+      )
         .choices(['1', '2', '3'])
         .makeOptionMandatory(true),
     )

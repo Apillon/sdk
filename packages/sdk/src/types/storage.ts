@@ -1,4 +1,4 @@
-import { IApillonPagination } from './generic';
+import { IApillonPagination } from './apillon';
 
 export enum StorageContentType {
   DIRECTORY = 1,

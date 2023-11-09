@@ -1,4 +1,4 @@
-export * from './types/generic';
+export * from './types/apillon';
 export * from './types/nfts';
 export * from './types/hosting';
 export * from './types/storage';

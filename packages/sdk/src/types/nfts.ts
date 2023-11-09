@@ -1,4 +1,4 @@
-import { IApillonPagination } from './generic';
+import { IApillonPagination } from './apillon';
 
 export enum EvmChain {
   MOONBEAM = 1284,
