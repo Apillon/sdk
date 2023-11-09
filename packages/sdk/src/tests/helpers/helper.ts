@@ -1,8 +1,12 @@
 import * as dotenv from 'dotenv';
 import { ApillonConfig } from '../../lib/apillon';
+import { resolve } from 'path';
 
 export function getConfig(): ApillonConfig {
-  dotenv.config({ path: '../../.env' });
+  // Configure dotenv with the absolute path
+  const envPath = resolve(__dirname, '../../.env');
+  dotenv.config({ path: envPath });
+
   return {
     apiUrl: process.env['APILLON_API_URL'],
     secret: process.env['APILLON_API_SECRET'],

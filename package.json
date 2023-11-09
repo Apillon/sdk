@@ -1,6 +1,6 @@
 {
   "name": "apillon-web3-tools",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Monorepo for Apillon tools",
   "author": "Apillon",
   "license": "MIT",
@@ -37,7 +37,6 @@
       "js",
       "json"
     ],
-    "rootDir": "src/tests",
     "testPathIgnorePatterns": [
       "dist/*"
     ],

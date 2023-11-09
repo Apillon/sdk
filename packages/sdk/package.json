@@ -1,7 +1,7 @@
 {
   "name": "@apillon/sdk",
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -27,7 +27,7 @@
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
     "publish-package": "npm publish",
     "test": "npx jest",
-    "docs": "npx typedoc src/docs-index.ts"
+    "generate-docs": "npx typedoc src/docs-index.ts"
   },
   "keywords": [
     "SDK",

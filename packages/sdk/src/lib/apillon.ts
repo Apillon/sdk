@@ -1,5 +1,6 @@
-import axios, { AxiosInstance } from 'axios';
 import { LogLevel } from '../types/apillon';
+import { ApillonApi } from './apillon-api';
+import { ApillonLogger } from './apillon-logger';
 
 export interface ApillonConfig {
   key?: string;
@@ -8,92 +9,50 @@ export interface ApillonConfig {
   logLevel?: LogLevel;
 }
 
-export class ApillonApiError extends Error {}
-export class ApillonRequestError extends Error {}
-export class ApillonNetworkError extends Error {}
-
 export class ApillonModule {
-  protected api: AxiosInstance;
-  protected logger: ApillonLogger;
-  private config: ApillonConfig;
-
   public constructor(config?: ApillonConfig) {
-    const defaultOptions: ApillonConfig = {
+    const defaultConfig: ApillonConfig = {
       key: process.env.APILLON_API_KEY,
       secret: process.env.APILLON_API_SECRET,
       apiUrl: process.env.APILLON_API_URL || 'https://api.apillon.io',
       logLevel: LogLevel.NONE,
     };
 
-    this.config = { ...defaultOptions, ...config };
-    this.logger = new ApillonLogger(this.config.logLevel);
+    const mergedConfig = { ...defaultConfig, ...config };
 
-    let auth = undefined;
-    if (this.config.key && this.config.secret) {
-      auth = {
-        username: this.config.key,
-        password: this.config.secret,
-      };
-    }
-
-    this.api = axios.create({
-      baseURL: this.config.apiUrl,
-      headers: {
-        'content-type': 'application/json',
-      },
-      auth,
-    });
-
-    this.api.interceptors.request.use(
-      (config) => {
-        return config;
-      },
-      (error) => {
-        this.logger.log(error, LogLevel.ERROR);
-        throw new ApillonRequestError(error.request);
-      },
-    );
-
-    this.api.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      (error) => {
-        this.logger.log(error, LogLevel.ERROR);
-        if (error.response?.data) {
-          throw new ApillonApiError(
-            JSON.stringify(error.response.data, null, 2),
-          );
-        } else {
-          throw new ApillonNetworkError(error.message);
-        }
-      },
-    );
+    ApillonApi.initialize(mergedConfig);
+    ApillonLogger.initialize(mergedConfig.logLevel);
   }
 }
 
-export class ApillonLogger {
-  private logLevel: LogLevel = LogLevel.NONE;
-  constructor(logLevel?: LogLevel) {
-    this.logLevel = logLevel || LogLevel.NONE;
+export class ApillonModel {
+  /**
+   * API url prefix for this class.
+   */
+  protected API_PREFIX: string = null;
+
+  /**
+   * Unique identifier of the model.
+   */
+  public uuid: string;
+
+  constructor(uuid: string) {
+    this.uuid = uuid;
   }
 
-  log(message: any, logLevel: LogLevel) {
-    if (this.logLevel >= logLevel) {
-      if (message instanceof Object) {
-        console.log(JSON.stringify(message));
-      } else {
-        console.log(message);
-      }
+  /**
+   * Populates class properties via data object.
+   * @param data Data object.
+   */
+  protected populate(data: object) {
+    if (data != null) {
+      Object.keys(data || {}).forEach((key) => {
+        const prop = this[key];
+        if (prop === null) {
+          this[key] = data[key];
+        }
+      });
     }
-  }
-  logWithTime(message: any, logLevel: LogLevel) {
-    if (this.logLevel >= logLevel) {
-      if (message instanceof Object) {
-        console.log(`${new Date().toISOString()}: `, JSON.stringify(message));
-      } else {
-        console.log(`${new Date().toISOString()}: `, message);
-      }
-    }
+    return this;
   }
 }

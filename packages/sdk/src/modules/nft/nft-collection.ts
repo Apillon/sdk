@@ -1,4 +1,5 @@
-import { AxiosInstance } from 'axios';
+import { ApillonModel } from '../../docs-index';
+import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import {
   IApillonResponse,
@@ -14,41 +15,20 @@ import {
   CollectionStatus,
   EvmChain,
 } from '../../types/nfts';
-import { ApillonLogger } from '../../docs-index';
 
-export class NftCollection {
+export class NftCollection extends ApillonModel {
   /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
-  /**
-   * @dev API url prefix for this class.
-   */
-  private API_PREFIX: string = null;
-
-  /**
-   * @dev Unique identifier of the collection.
-   */
-  public uuid;
-
-  /**
-   * @dev collection symbol.
+   * Collection symbol.
    */
   public symbol = null;
 
   /**
-   * @dev collection name
+   * Collection name
    */
   public name = null;
 
   /**
-   * @dev collection description.
+   * collection description.
    */
   public description: string = null;
 
@@ -90,7 +70,7 @@ export class NftCollection {
   public drop: boolean = null;
 
   /**
-   * Pri per NFT if drop is active.
+   * Price per NFT if drop is active.
    */
   public dropPrice: number = null;
 
@@ -105,7 +85,7 @@ export class NftCollection {
   public dropReserve: number = null;
 
   /**
-   * Procentual amount of royalties fees.
+   * Percentage amount of royalties fees.
    */
   public royaltiesFees: number = null;
 
@@ -134,32 +114,15 @@ export class NftCollection {
    */
   public chain: EvmChain = null;
 
-  constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
-    uuid: string,
-    data: any,
-  ) {
-    this.api = api;
-    this.logger = logger;
-    this.uuid = uuid;
+  /**
+   * Constructor which should only be called via Nft class.
+   * @param uuid Unique identifier of the NFT collection.
+   * @param data Data to populate the collection with.
+   */
+  constructor(uuid: string, data?: Partial<NftCollection>) {
+    super(uuid);
     this.API_PREFIX = `/nfts/collections/${this.uuid}`;
     this.populate(data);
-  }
-
-  /**
-   * Populates class properties via data object.
-   * @param data Data object.
-   */
-  private populate(data: any) {
-    if (data != null) {
-      Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
-          this[key] = data[key];
-        }
-      });
-    }
   }
 
   /**
@@ -167,12 +130,10 @@ export class NftCollection {
    * @returns Collection instance.
    */
   public async get(): Promise<NftCollection> {
-    const resp = await this.api.get<IApillonResponse<ICollection>>(
+    const { data } = await ApillonApi.get<IApillonResponse<ICollection>>(
       this.API_PREFIX,
     );
-    this.populate(resp.data?.data);
-
-    return this;
+    return this.populate(data);
   }
 
   /**
@@ -182,12 +143,11 @@ export class NftCollection {
    * @returns Call status.
    */
   public async mint(receiver: string, quantity: number) {
-    const resp = await this.api.post<IApillonResponse<IApillonBoolResponse>>(
-      `${this.API_PREFIX}/mint`,
-      { receivingAddress: receiver, quantity },
-    );
+    const { data } = await ApillonApi.post<
+      IApillonResponse<IApillonBoolResponse>
+    >(`${this.API_PREFIX}/mint`, { receivingAddress: receiver, quantity });
 
-    return resp.data?.data;
+    return data;
   }
 
   /**
@@ -198,7 +158,7 @@ export class NftCollection {
    * @param quantity Amount of nfts we want to mint.
    * @returns Call status.
    */
-  public async nestMintNft(
+  public async nestMint(
     parentCollectionUuid: string,
     parentNftId: number,
     quantity: number,
@@ -209,12 +169,12 @@ export class NftCollection {
     ) {
       throw new Error('Collection is not nestable.');
     }
-    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+    const { data } = await ApillonApi.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/nest-mint`,
       { parentCollectionUuid, parentNftId, quantity },
     );
 
-    return resp.data?.data;
+    return data;
   }
 
   /**
@@ -223,16 +183,16 @@ export class NftCollection {
    * @param id Id of the NFT we want to burn.
    * @returns Status.
    */
-  public async burnNft(id: string): Promise<IApillonStatus> {
+  public async burn(id: string): Promise<IApillonStatus> {
     if (this.isRevokable != null && !this.isRevokable) {
       throw new Error('Collection is not revokable.');
     }
-    const resp = await this.api.post<IApillonResponse<IApillonStatus>>(
+    const { data } = await ApillonApi.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/burn`,
       { tokenId: id },
     );
 
-    return resp.data?.data;
+    return data;
   }
 
   /**
@@ -243,12 +203,12 @@ export class NftCollection {
    * @returns Collection data.
    */
   public async transferOwnership(address: string): Promise<NftCollection> {
-    const resp = await this.api.post<IApillonResponse<ICollection>>(
+    const { data } = await ApillonApi.post<IApillonResponse<ICollection>>(
       `${this.API_PREFIX}/transfer`,
       { address },
     );
 
-    this.populate(resp.data?.data);
+    this.populate(data);
 
     return this;
   }
@@ -266,10 +226,10 @@ export class NftCollection {
       params,
     );
 
-    const resp = await this.api.get<
+    const { data } = await ApillonApi.get<
       IApillonResponse<IApillonList<ITransaction>>
     >(url);
 
-    return resp.data?.data.items;
+    return data.items;
   }
 }

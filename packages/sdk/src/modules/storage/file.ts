@@ -1,32 +1,22 @@
-import { AxiosInstance } from 'axios';
+import { AxiosResponse } from 'axios';
+import { ApillonApi } from '../../lib/apillon-api';
 import { FileStatus, StorageContentType } from '../../types/storage';
-import { ApillonLogger } from '../../lib/apillon';
 
 export class File {
   /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
-  /**
-   * @dev API url prefix for this class.
+   * API url prefix for this class.
    */
   private API_PREFIX: string = null;
 
   /**
-   * @dev Unique identifier of the bucket.
+   * Unique identifier of the file's bucket.
    */
   public bucketUuid: string;
 
   /**
-   * @dev Unique identifier of the file.
+   * Unique identifier of the file.
    */
-  public id: string;
+  public uuid: string;
 
   /**
    * File name.
@@ -46,7 +36,7 @@ export class File {
   /**
    * Id of the directory in which the file resides.
    */
-  public parentDirectoryId: string = null;
+  public directoryUuid: string = null;
 
   /**
    * Type of content.
@@ -54,22 +44,23 @@ export class File {
   public type = StorageContentType.FILE;
 
   /**
-   * @dev Constructor which should only be called via Storage class.
-   * @param uuid Unique identifier of the bucket.
-   * @param api Axios instance set to correct rootUrl with correct error handling.
+   * Constructor which should only be called via HostingWebsite class.
+   * @param bucketUuid Unique identifier of the file's bucket.
+   * @param directoryUuid Unique identifier of the file's directory.
+   * @param fileUuid Unique identifier of the file.
+   * @param data Data to populate the directory with.
    */
   constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
     bucketUuid: string,
-    fileId: string,
-    data: any,
+    directoryUuid: string,
+    fileUuid: string,
+    data?: Partial<File & { fileStatus: number }>,
   ) {
-    this.api = api;
-    this.logger = logger;
     this.bucketUuid = bucketUuid;
-    this.id = fileId;
-    this.API_PREFIX = `/storage/${bucketUuid}/file/${fileId}`;
+    this.uuid = fileUuid;
+    this.directoryUuid = directoryUuid;
+    this.API_PREFIX = `/storage/${bucketUuid}/file/${fileUuid}`;
+    this.status = data?.fileStatus;
     this.populate(data);
   }
 
@@ -86,15 +77,17 @@ export class File {
         }
       });
     }
+    return this;
   }
 
   /**
-   * @dev Gets file details.
+   * Gets file details.
    */
-  async get() {
-    const resp = await this.api.get(`${this.API_PREFIX}/detail`);
-    this.status = resp.data?.data?.fileStatus;
-    this.populate(resp.data?.data?.file);
-    return this;
+  async get(): Promise<File> {
+    const { data } = await ApillonApi.get<
+      AxiosResponse<File & { fileStatus: number }>
+    >(`${this.API_PREFIX}/detail`);
+    this.status = data.fileStatus;
+    return this.populate(data);
   }
 }

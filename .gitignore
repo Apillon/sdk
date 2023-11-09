@@ -6,8 +6,8 @@
 # Node artifact files
 node_modules/
 dist/
-packages/sdk/docs/
-packages/cli/docs/
+docs/
+.turbo
 
 # Compiled Java class files
 *.class

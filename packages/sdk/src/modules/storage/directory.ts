@@ -1,33 +1,18 @@
-import { AxiosInstance } from 'axios';
-import { StorageContentType } from '../../types/storage';
+import {
+  IStorageBucketContentRequest,
+  StorageContentType,
+} from '../../types/storage';
 import { File } from './file';
-import { ApillonLogger } from '../../lib/apillon';
+import { constructUrlWithQueryParams } from '../../lib/common';
+import { ApillonApi } from '../../lib/apillon-api';
+import { IApillonListResponse } from '../../types/apillon';
+import { ApillonModel } from '../../docs-index';
 
-export class Directory {
+export class Directory extends ApillonModel {
   /**
-   * Axios instance set to correct rootUrl with correct error handling.
-   */
-  protected api: AxiosInstance;
-
-  /**
-   * Logger.
-   */
-  protected logger: ApillonLogger;
-
-  /**
-   * @dev API url prefix for this class.
-   */
-  private API_PREFIX: string = null;
-
-  /**
-   * @dev Unique identifier of the bucket.
+   * Unique identifier of the bucket.
    */
   public bucketUuid;
-
-  /**
-   * @dev Unique identifier of the directory.
-   */
-  public id;
 
   /**
    * Directory name.
@@ -42,64 +27,57 @@ export class Directory {
   /**
    * Id of the directory in which the file resides.
    */
-  public parentDirectoryId: string = null;
+  public parentDirectoryUuid: string = null;
 
   /**
    * Type of content.
    */
   public type = StorageContentType.DIRECTORY;
 
-  public content: (File | Directory)[] = null;
+  public content: (File | Directory)[] = [];
+
   /**
-   * @dev Constructor which should only be called via Storage class.
-   * @param uuid Unique identifier of the bucket.
-   * @param api Axios instance set to correct rootUrl with correct error handling.
+   * Constructor which should only be called via HostingWebsite class.
+   * @param bucketUuid Unique identifier of the directory's bucket.
+   * @param directoryUuid Unique identifier of the directory.
+   * @param data Data to populate the directory with.
    */
   constructor(
-    api: AxiosInstance,
-    logger: ApillonLogger,
     bucketUuid: string,
-    directoryId: string,
-    data: any,
+    directoryUuid: string,
+    data?: Partial<Directory>,
   ) {
-    this.api = api;
-    this.logger = logger;
+    super(directoryUuid);
     this.bucketUuid = bucketUuid;
-    this.id = directoryId;
     this.API_PREFIX = `/storage/${bucketUuid}`;
     this.populate(data);
   }
 
   /**
-   * Populates class properties via data object.
-   * @param data Data object.
+   * Gets contents of a directory.
    */
-  private populate(data: any) {
-    if (data != null) {
-      Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
-          this[key] = data[key];
-        }
-      });
-    }
-  }
-
-  /**
-   * @dev Gets contents of a directory.
-   */
-  async get() {
+  async get(
+    params: IStorageBucketContentRequest = {},
+  ): Promise<(Directory | File)[]> {
     this.content = [];
-    const postfix = `?directoryId=${this.id}`;
-    const resp = await this.api.get(`${this.API_PREFIX}/content${postfix}`);
-    for (const item of resp.data?.data?.items) {
+    params.directoryUuid = this.uuid;
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/content`,
+      params,
+    );
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<File | Directory>
+    >(url);
+
+    for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
+        const file = item as File;
         this.content.push(
-          new File(this.api, this.logger, this.bucketUuid, item.id, item),
+          new File(this.bucketUuid, file.directoryUuid, file.uuid, file),
         );
       } else {
         this.content.push(
-          new Directory(this.api, this.logger, this.bucketUuid, item.id, item),
+          new Directory(this.bucketUuid, item.uuid, item as Directory),
         );
       }
     }

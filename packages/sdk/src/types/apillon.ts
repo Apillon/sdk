@@ -13,6 +13,10 @@ export interface IApillonStatus {
   status: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface IApillonListResponse<T>
+  extends IApillonResponse<IApillonList<T>> {}
+
 export interface IApillonBoolResponse {
   success: boolean;
 }
