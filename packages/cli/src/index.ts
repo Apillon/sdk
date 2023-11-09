@@ -6,7 +6,7 @@ import config from './config';
 import { createHostingCommands } from './modules/hosting/hosting.commands';
 import { createNftsCommands } from './modules/nfts/nfts.commands';
 import { createStorageCommands } from './modules/storage/storage.commands';
-import { LogLevel } from '@apillon/sdk/dist/types/apillon';
+import { LogLevel } from '@apillon/sdk';
 
 const cli = new Command('apillon').version(config.VERSION);
 cli.addHelpText(
@@ -39,7 +39,13 @@ cli.addOption(
     .makeOptionMandatory(),
 );
 cli.addOption(
-  new Option('--log-level <log level>', 'Level of output logging')
+  new Option(
+    '--log-level <log level>',
+    'Sets the verbosity level for output logs. Choose from:\n' +
+      `  - ${LogLevel.NONE}: No logging.\n` +
+      `  - ${LogLevel.ERROR}: Log only error messages.\n` +
+      `  - ${LogLevel.VERBOSE}: Log all messages including errors, warnings, and informational messages.`,
+  )
     .env('APILLON_LOG_LEVEL')
     .default(LogLevel.VERBOSE, 'Verbose logging (3)')
     .choices([
