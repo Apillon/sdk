@@ -14,6 +14,9 @@ export async function test() {
   await webpage1.deploy(DeployToEnvironment.STAGING_TO_PRODUCTION);
   await webpage1.listDeployments();
   const deployment = await webpage1.deployment(deployment_uuid).get();
+  if (deployment.deploymentStatus === DeploymentStatus.SUCCESSFUL) {
+    // done
+  }
 
   // Storage example
   const storage = new Storage({ apillonConfig });
