@@ -12,7 +12,7 @@ export class Directory extends ApillonModel {
   /**
    * Unique identifier of the bucket.
    */
-  public bucketUuid;
+  public bucketUuid: string = null;
 
   /**
    * Directory name.
