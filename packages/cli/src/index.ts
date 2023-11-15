@@ -42,9 +42,9 @@ cli.addOption(
   new Option(
     '--log-level <log level>',
     'Sets the verbosity level for output logs. Choose from:\n' +
-      `  - ${LogLevel.NONE}: No logging.\n` +
-      `  - ${LogLevel.ERROR}: Log only error messages.\n` +
-      `  - ${LogLevel.VERBOSE}: Log all messages including errors, warnings, and informational messages.`,
+      `  ${LogLevel.NONE}: No logging.\n` +
+      `  ${LogLevel.ERROR}: Log only error messages.\n` +
+      `  ${LogLevel.VERBOSE}: Log all messages including errors, warnings, and informational messages.\n`,
   )
     .env('APILLON_LOG_LEVEL')
     .default(LogLevel.VERBOSE, 'Verbose logging (3)')
