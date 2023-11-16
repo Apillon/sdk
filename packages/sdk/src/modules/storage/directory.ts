@@ -84,4 +84,17 @@ export class Directory extends ApillonModel {
 
     return this.content;
   }
+
+  protected serializeFilter(key, value) {
+    const enums = {
+      type: StorageContentType[value],
+    };
+    if (super.serializeFilter(key, value) && Object.keys(enums).includes(key)) {
+      return enums[key];
+    }
+    const excludedKeys = ['content'];
+    return excludedKeys.includes(key)
+      ? undefined
+      : super.serializeFilter(key, value);
+  }
 }

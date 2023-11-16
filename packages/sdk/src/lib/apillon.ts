@@ -7,6 +7,7 @@ export interface ApillonConfig {
   secret?: string;
   apiUrl?: string;
   logLevel?: LogLevel;
+  debug?: boolean;
 }
 
 export class ApillonModule {
@@ -15,13 +16,16 @@ export class ApillonModule {
       key: process.env.APILLON_API_KEY,
       secret: process.env.APILLON_API_SECRET,
       apiUrl: process.env.APILLON_API_URL || 'https://api.apillon.io',
-      logLevel: LogLevel.NONE,
+      logLevel: LogLevel.ERROR,
+      debug: false,
     };
 
     const mergedConfig = { ...defaultConfig, ...config };
 
     ApillonApi.initialize(mergedConfig);
-    ApillonLogger.initialize(mergedConfig.logLevel);
+    ApillonLogger.initialize(
+      mergedConfig.debug ? LogLevel.VERBOSE : mergedConfig.logLevel,
+    );
   }
 }
 
@@ -54,5 +58,14 @@ export class ApillonModel {
       });
     }
     return this;
+  }
+
+  public serialize() {
+    return JSON.parse(JSON.stringify(this, this.serializeFilter));
+  }
+
+  protected serializeFilter(key, value) {
+    const excludedKeys = ['API_PREFIX'];
+    return excludedKeys.includes(key) ? undefined : value;
   }
 }

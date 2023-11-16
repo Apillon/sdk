@@ -12,7 +12,9 @@ import {
 import { DeployToEnvironment } from '@apillon/sdk';
 
 export function createHostingCommands(cli: Command) {
-  const hosting = cli.command('hosting');
+  const hosting = cli
+    .command('hosting')
+    .description('Commands for managing websites on Apillon hosting');
 
   hosting
     .command('deploy-website')
@@ -64,9 +66,9 @@ export function createHostingCommands(cli: Command) {
       new Option(
         '--env <environment>',
         'Sets the environment to deploy the files to. Choose from:\n' +
-          `  ${DeployToEnvironment.TO_STAGING}: To Staging.\n` +
-          `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production.\n` +
-          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production.`,
+          `  ${DeployToEnvironment.TO_STAGING}: To Staging\n` +
+          `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production\n` +
+          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production`,
       )
         .choices(['1', '2', '3'])
         .makeOptionMandatory(true),

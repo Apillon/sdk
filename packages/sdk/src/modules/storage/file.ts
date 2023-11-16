@@ -1,13 +1,9 @@
 import { AxiosResponse } from 'axios';
+import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { FileStatus, StorageContentType } from '../../types/storage';
 
-export class File {
-  /**
-   * API url prefix for this class.
-   */
-  private API_PREFIX: string = null;
-
+export class File extends ApillonModel {
   /**
    * Unique identifier of the file's bucket.
    */
@@ -56,28 +52,12 @@ export class File {
     fileUuid: string,
     data?: Partial<File & { fileStatus: number }>,
   ) {
+    super(fileUuid);
     this.bucketUuid = bucketUuid;
-    this.uuid = fileUuid;
     this.directoryUuid = directoryUuid;
     this.API_PREFIX = `/storage/${bucketUuid}/file/${fileUuid}`;
     this.status = data?.fileStatus;
     this.populate(data);
-  }
-
-  /**
-   * Populates class properties via data object.
-   * @param data Data object.
-   */
-  private populate(data: any) {
-    if (data != null) {
-      Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
-          this[key] = data[key];
-        }
-      });
-    }
-    return this;
   }
 
   /**
@@ -89,5 +69,16 @@ export class File {
     >(`${this.API_PREFIX}/detail`);
     this.status = data.fileStatus;
     return this.populate(data);
+  }
+
+  protected serializeFilter(key, value) {
+    const enums = {
+      status: FileStatus[value],
+      type: StorageContentType[value],
+    };
+    if (super.serializeFilter(key, value) && Object.keys(enums).includes(key)) {
+      return enums[key];
+    }
+    return super.serializeFilter(key, value);
   }
 }

@@ -24,7 +24,7 @@
     "build": "tsc --declarationMap",
     "dev": "tsc --declarationMap --watch",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
-    "cli-install": "tsc && npm i -g",
+    "cli-install": "tsc && npm uninstall -g ; npm i -g",
     "publish-package": "npm publish"
   },
   "bin": {

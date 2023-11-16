@@ -5,31 +5,31 @@ export async function listBuckets(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
     const { items: buckets } = await storage.listBuckets();
-    console.log(buckets);
+    console.log(buckets.map((x) => x.serialize()));
   } catch (err) {
     exceptionHandler(err);
   }
 }
 
-export async function getObjects(optsWithGlobals: GlobalOptions) {
+export async function listObjects(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
     const { items: objects } = await storage
-      .bucket(optsWithGlobals.uuid)
+      .bucket(optsWithGlobals.bucketUuid)
       .getObjects();
-    console.log(objects);
+    console.log(objects.map((x) => x.serialize()));
   } catch (err) {
     exceptionHandler(err);
   }
 }
 
-export async function getFiles(optsWithGlobals: GlobalOptions) {
+export async function listFiles(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
     const { items: files } = await storage
-      .bucket(optsWithGlobals.uuid)
+      .bucket(optsWithGlobals.bucketUuid)
       .getFiles();
-    console.log(files);
+    console.log(files.map((x) => x.serialize()));
   } catch (err) {
     exceptionHandler(err);
   }
@@ -47,14 +47,14 @@ export async function uploadFromFolder(
   }
 }
 
-export async function file(optsWithGlobals: GlobalOptions) {
+export async function getFile(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
     const file = await storage
-      .bucket(optsWithGlobals.uuid)
+      .bucket(optsWithGlobals.bucketUuid)
       .file(optsWithGlobals.fileUuid)
       .get();
-    console.log(file);
+    console.log(file.serialize());
   } catch (err) {
     exceptionHandler(err);
   }
@@ -64,7 +64,7 @@ export async function deleteFile(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
     await storage
-      .bucket(optsWithGlobals.uuid)
+      .bucket(optsWithGlobals.bucketUuid)
       .deleteFile(optsWithGlobals.fileUuid);
     console.log('File deleted successfully');
   } catch (err) {
