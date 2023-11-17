@@ -24,13 +24,6 @@ jobs:
           cd packages/sdk
           npm run generate-docs
 
-      - name: Copy files
-        run: |
-          cp *.html dist/
-          cp -r images dist/
-          cp -r style dist/
-          cp -r js dist/
-
       - name: Deploy docs
         env:
           APILLON_API_KEY: ${{ secrets.APILLON_API_KEY }}
