@@ -43,20 +43,6 @@ export async function deployToEnvironment(optsWithGlobals: GlobalOptions) {
   }
 }
 
-export async function uploadAndDeploy(
-  path: string,
-  optsWithGlobals: GlobalOptions,
-) {
-  const hosting = new Hosting(optsWithGlobals);
-  try {
-    await hosting.website(optsWithGlobals.uuid).uploadFromFolder(path);
-    await hosting.website(optsWithGlobals.uuid).deploy(+optsWithGlobals.env);
-    console.log('Deploy successful');
-  } catch (err) {
-    exceptionHandler(err);
-  }
-}
-
 export async function listDeployments(optsWithGlobals: GlobalOptions) {
   const hosting = new Hosting(optsWithGlobals);
   const params =
