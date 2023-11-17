@@ -8,6 +8,7 @@ import {
   getFile,
   deleteFile,
 } from './storage.service';
+import { FileStatus } from '@apillon/sdk';
 
 export function createStorageCommands(cli: Command) {
   const storage = cli
@@ -16,38 +17,47 @@ export function createStorageCommands(cli: Command) {
       'Commands for manipulating buckets and files on Apillon storage.',
     );
 
-  storage
+  const listBucketsCommand = storage
     .command('list-buckets')
     .description('List project buckets')
     .action(async function () {
       await listBuckets(this.optsWithGlobals());
     });
+  addPaginationOptions(listBucketsCommand);
 
-  addPaginationOptions(storage);
-
-  storage
+  const listObjectsCommand = storage
     .command('list-objects')
     .description('List files and folders in directory')
-    .requiredOption('--bucket-uuid <uuid>', 'UUID of bucket')
-    .option('-d, --dir', 'Directory path', '/')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .option('-d, --directory-uuid <string>', 'Directory UUID')
+    .option('-del, --deleted', 'Include deleted objects')
     .action(async function () {
       await listObjects(this.optsWithGlobals());
     });
+  addPaginationOptions(listObjectsCommand);
 
-  storage
+  const listFilesCommand = storage
     .command('list-files')
     .description('List all files from a bucket')
-    .requiredOption('--bucket-uuid <uuid>', 'UUID of bucket')
-    .option('-p, --path', 'Filter by file path')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .option(
+      '-fs, --file-status <integer>',
+      'Filter by file status. Choose from:\n' +
+        `  ${FileStatus.UPLOAD_REQUEST_GENERATED}: Upload request generated\n` +
+        `  ${FileStatus.UPLOADED}: Uploaded\n` +
+        `  ${FileStatus.AVAILABLE_ON_IPFS}: Available on IPFS\n` +
+        `  ${FileStatus.AVAILABLE_ON_IPFS_AND_REPLICATED}: Available on IPFS and replicated\n`,
+    )
     .action(async function () {
       await listFiles(this.optsWithGlobals());
     });
+  addPaginationOptions(listFilesCommand);
 
   storage
     .command('upload')
     .description('Upload files and folders to bucket')
     .argument('<path>', 'path to source')
-    .requiredOption('--bucket-uuid <uuid>', 'UUID of destination bucket')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of destination bucket')
     .action(async function (path: string) {
       await uploadFromFolder(path, this.optsWithGlobals());
     });
@@ -55,8 +65,8 @@ export function createStorageCommands(cli: Command) {
   storage
     .command('get-file')
     .description('Get file info')
-    .requiredOption('--bucket-uuid <uuid>', 'UUID of bucket')
-    .requiredOption('--file-uuid <uuid>', 'UUID of file to get')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .requiredOption('--uuid <uuid>', 'UUID of file to get')
     .action(async function () {
       await getFile(this.optsWithGlobals());
     });
@@ -64,14 +74,14 @@ export function createStorageCommands(cli: Command) {
   storage
     .command('delete-file')
     .description('Mark file for removal from IPFS storage')
-    .requiredOption('--bucket-uuid <bucket uuid>', 'UUID of bucket')
-    .requiredOption('--file-uuid <file uuid>', 'UUID of file to delete')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .requiredOption('--uuid <uuid>', 'UUID of file to delete')
     .action(async function () {
       await deleteFile(this.optsWithGlobals());
     });
 
   /*
-    TODO: 
+    TODO:
     - download file
     - upload folder
     - ipns methods

@@ -40,6 +40,16 @@ export class ApillonModel {
    */
   public uuid: string;
 
+  /**
+   * The object's creation date
+   */
+  public createTime: Date = null;
+
+  /**
+   * The date when the object was last updated
+   */
+  public updateTime: Date = null;
+
   constructor(uuid: string) {
     this.uuid = uuid;
   }

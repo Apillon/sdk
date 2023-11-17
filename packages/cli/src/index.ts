@@ -6,7 +6,6 @@ import config from './config';
 import { createHostingCommands } from './modules/hosting/hosting.commands';
 import { createNftsCommands } from './modules/nfts/nfts.commands';
 import { createStorageCommands } from './modules/storage/storage.commands';
-import { LogLevel } from '@apillon/sdk';
 
 const cli = new Command('apillon').version(config.VERSION);
 cli.addHelpText(
