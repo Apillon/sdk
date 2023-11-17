@@ -20,6 +20,7 @@ jobs:
 
       - name: Generate docs
         run: |
+          npm i
           cd packages/sdk
           npm run generate-docs
 
