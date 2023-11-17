@@ -4,7 +4,6 @@ import {
   IApillonList,
   IApillonListResponse,
   IApillonResponse,
-  LogLevel,
 } from '../../types/apillon';
 import { Deployment } from './deployment';
 import { ApillonModel } from '../../docs-index';
@@ -85,15 +84,14 @@ export class HostingWebsite extends ApillonModel {
           ? 'preview'
           : 'production'
       })`,
-      LogLevel.VERBOSE,
     );
 
-    ApillonLogger.logWithTime('Deploy start', LogLevel.VERBOSE);
+    ApillonLogger.logWithTime('Deploy start');
     const { data } = await ApillonApi.post<any>(`${this.API_PREFIX}/deploy`, {
       environment: toEnvironment,
     });
 
-    ApillonLogger.logWithTime('Deploy complete', LogLevel.VERBOSE);
+    ApillonLogger.logWithTime('Deploy complete');
 
     return data;
   }

@@ -84,12 +84,14 @@ export class StorageBucket extends ApillonModel {
       `/storage/buckets/${this.uuid}/files`,
       params,
     );
-    const { data } = await ApillonApi.get<IApillonListResponse<File>>(url);
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<File & { fileUuid: string }>
+    >(url);
 
     return {
       total: data.total,
       items: data.items.map(
-        (file) => new File(this.uuid, file.directoryUuid, file.uuid, file),
+        (file) => new File(this.uuid, file.directoryUuid, file.fileUuid, file),
       ),
     };
   }

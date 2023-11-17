@@ -7,7 +7,7 @@ export class ApillonLogger {
     this.logLevel = logLevel || LogLevel.NONE;
   }
 
-  static log(message: any, logLevel: LogLevel) {
+  static log(message: any, logLevel: LogLevel = LogLevel.VERBOSE) {
     if (this.logLevel >= logLevel) {
       if (message instanceof Object) {
         console.log(JSON.stringify(message));
@@ -17,7 +17,7 @@ export class ApillonLogger {
     }
   }
 
-  static logWithTime(message: any, logLevel: LogLevel) {
+  static logWithTime(message: any, logLevel: LogLevel = LogLevel.VERBOSE) {
     if (this.logLevel >= logLevel) {
       if (message instanceof Object) {
         console.log(`${new Date().toISOString()}: `, JSON.stringify(message));

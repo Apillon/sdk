@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 import { ApillonLogger } from '../lib/apillon-logger';
-import { LogLevel } from '../types/apillon';
 import { ApillonApi } from '../lib/apillon-api';
 
 export function listFilesRecursive(
@@ -59,10 +58,7 @@ export async function uploadFilesFromFolder(
   folderPath: string,
   apiPrefix: string,
 ): Promise<void> {
-  ApillonLogger.log(
-    `Preparing to upload files from ${folderPath}...`,
-    LogLevel.VERBOSE,
-  );
+  ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   let files;
   try {
     files = listFilesRecursive(folderPath);
@@ -71,7 +67,7 @@ export async function uploadFilesFromFolder(
     throw new Error(`Error reading files in ${folderPath}`);
   }
 
-  ApillonLogger.log(`Files to upload: ${files.length}`, LogLevel.VERBOSE);
+  ApillonLogger.log(`Total files to upload: ${files.length}`);
 
   const { data } = await ApillonApi.post<any>(`${apiPrefix}/upload`, {
     files,
@@ -87,13 +83,13 @@ export async function uploadFilesFromFolder(
       uploadFilesToS3(chunkLinks, chunkFiles),
     ),
   );
-  ApillonLogger.logWithTime('File upload complete', LogLevel.VERBOSE);
+  ApillonLogger.logWithTime('File upload complete');
 
-  ApillonLogger.log('Closing upload session...', LogLevel.VERBOSE);
+  ApillonLogger.log('Closing upload session...');
   const { data: endSession } = await ApillonApi.post<any>(
     `${apiPrefix}/upload/${data.sessionUuid}/end`,
   );
-  ApillonLogger.logWithTime('Session ended.', LogLevel.VERBOSE);
+  ApillonLogger.logWithTime('Session ended.');
 
   if (!endSession) {
     throw new Error('Failure when trying to end file upload session');
