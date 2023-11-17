@@ -74,7 +74,7 @@ export class ApillonModel {
     return JSON.parse(JSON.stringify(this, this.serializeFilter));
   }
 
-  protected serializeFilter(key, value) {
+  protected serializeFilter(key: string, value: any) {
     const excludedKeys = ['API_PREFIX'];
     return excludedKeys.includes(key) ? undefined : value;
   }

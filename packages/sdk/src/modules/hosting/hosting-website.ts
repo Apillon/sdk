@@ -104,7 +104,7 @@ export class HostingWebsite extends ApillonModel {
    */
   public async listDeployments(
     params?: IDeploymentFilters,
-  ): Promise<IApillonList<any>> {
+  ): Promise<IApillonList<Deployment>> {
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/deployments`,
       params,

@@ -71,7 +71,7 @@ export class File extends ApillonModel {
     return this.populate(data);
   }
 
-  protected serializeFilter(key, value) {
+  protected override serializeFilter(key: string, value: any) {
     const enums = {
       status: FileStatus[value],
       type: StorageContentType[value],

@@ -23,6 +23,5 @@ export function paginate(opts: GlobalOptions): IApillonPagination {
     limit: +opts.limit,
     orderBy: opts.orderBy,
     desc: !!opts.desc,
-    ...opts,
   };
 }

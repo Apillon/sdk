@@ -94,7 +94,7 @@ export function createHostingCommands(cli: Command) {
   hosting
     .command('get-deployment')
     .description('Returns deployment data')
-    .requiredOption('--uuid <website uuid>', 'UUID of website')
+    .requiredOption('--website-uuid <website uuid>', 'UUID of website')
     .requiredOption(
       '--deployment-uuid <deployment uuid>',
       'UUID of deployment to get',

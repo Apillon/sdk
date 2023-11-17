@@ -70,4 +70,15 @@ export class Deployment extends ApillonModel {
     );
     return this.populate(data);
   }
+
+  protected override serializeFilter(key: string, value: any) {
+    const enums = {
+      environment: DeployToEnvironment[value],
+      deploymentStatus: DeploymentStatus[value],
+    };
+    if (super.serializeFilter(key, value) && Object.keys(enums).includes(key)) {
+      return enums[key];
+    }
+    return super.serializeFilter(key, value);
+  }
 }
