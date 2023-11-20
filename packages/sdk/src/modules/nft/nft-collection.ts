@@ -110,6 +110,11 @@ export class NftCollection extends ApillonModel {
   public transactionHash: string = null;
 
   /**
+   * Wallet address of deployer.
+   */
+  public deployerAddress: string = null;
+
+  /**
    * Chain on which the smart contract was deployed.
    */
   public chain: EvmChain = null;
@@ -231,5 +236,14 @@ export class NftCollection extends ApillonModel {
     >(url);
 
     return data.items;
+  }
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      collectionType: CollectionType[serialized],
+      collectionStatus: CollectionStatus[serialized],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

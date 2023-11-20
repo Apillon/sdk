@@ -2,39 +2,33 @@ import {
   exceptionHandler,
   ICreateCollection,
   Nft,
-  toBoolean,
   toInteger,
 } from '@apillon/sdk';
 import { readAndParseJson } from '../../lib/files';
-import { GlobalOptions, Options } from '../../lib/types';
+import { GlobalOptions } from '../../lib/types';
+import { paginate } from '../../lib/options';
 
 // COLLECTIONS
-export async function listCollections(
-  options: Options,
-  optsWithGlobals: GlobalOptions,
-) {
+export async function listCollections(optsWithGlobals: GlobalOptions) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
     const data = await nftService.listCollections({
-      collectionStatus: toInteger(options.status),
-      page: toInteger(options.page),
-      limit: toInteger(options.limit),
-      orderBy: options.orderBy,
-      desc: toBoolean(options.desc),
+      ...paginate(optsWithGlobals),
+      collectionStatus: toInteger(optsWithGlobals.status),
     });
-    console.log(data);
+    console.log(data.map((d) => d.serialize()));
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function getCollection(uuid: string, optsWithGlobals) {
+export async function getCollection(optsWithGlobals: GlobalOptions) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.collection(uuid).get();
-    console.log(data);
+    const data = await nftService.collection(optsWithGlobals.uuid).get();
+    console.log(data.serialize());
   } catch (e: any) {
     exceptionHandler(e);
   }
@@ -49,17 +43,14 @@ export async function createCollection(
     createCollectionData = readAndParseJson(filePath) as ICreateCollection;
   } catch (e) {
     if (e.code === 'ENOENT') {
-      console.error(`Error: File not found (${filePath}).`);
-      return;
+      return console.error(`Error: File not found (${filePath}).`);
     } else if (
       e.name === 'SyntaxError' &&
       e.message.includes('Unexpected end of JSON input')
     ) {
-      console.error(`Error: Failed to parse JSON file (${filePath}).`);
-      return;
+      return console.error(`Error: Failed to parse JSON file (${filePath}).`);
     } else {
-      console.error(e);
-      return;
+      return console.error(e);
     }
   }
   if (!createCollectionData) {
@@ -70,77 +61,72 @@ export async function createCollection(
 
   try {
     const data = await nftService.create(createCollectionData);
-    console.log(data);
+    console.log(data.serialize());
+    console.log('NFT collection created successfully!');
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function mintCollectionNft(
-  uuid: string,
-  options: Options,
-  optsWithGlobals: GlobalOptions,
-) {
+export async function mintCollectionNft(optsWithGlobals: GlobalOptions) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
     const data = await nftService
-      .collection(uuid)
-      .mint(options.address, toInteger(options.quantity));
-    console.log(data);
+      .collection(optsWithGlobals.uuid)
+      .mint(optsWithGlobals.address, toInteger(optsWithGlobals.quantity));
+    if (data.success) {
+      console.log('NFT minted successfully');
+    }
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function nestMintCollectionNft(
-  uuid: string,
-  options: Options,
-  optsWithGlobals: GlobalOptions,
-) {
+export async function nestMintCollectionNft(optsWithGlobals: GlobalOptions) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
     const data = await nftService
-      .collection(uuid)
+      .collection(optsWithGlobals.uuid)
       .nestMint(
-        options.parentCollectionUuid,
-        toInteger(options.parentNftId),
-        toInteger(options.quantity),
+        optsWithGlobals.parentCollectionUuid,
+        toInteger(optsWithGlobals.parentNftId),
+        toInteger(optsWithGlobals.quantity),
       );
-    console.log(data);
+    if (data.status === 5) {
+      console.log('NFT nest minted successfully');
+    }
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function burnCollectionNft(
-  uuid: string,
-  options: Options,
-  optsWithGlobals: GlobalOptions,
-) {
+export async function burnCollectionNft(optsWithGlobals: GlobalOptions) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.collection(uuid).burn(options.tokenId);
-    console.log(data);
+    const data = await nftService
+      .collection(optsWithGlobals.uuid)
+      .burn(optsWithGlobals.tokenId);
+    if (data.status === 5) {
+      console.log('NFT burned successfully');
+    }
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
 export async function transferCollectionOwnership(
-  uuid: string,
-  options: Options,
   optsWithGlobals: GlobalOptions,
 ) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService
-      .collection(uuid)
-      .transferOwnership(options.address);
-    console.log(data);
+    await nftService
+      .collection(optsWithGlobals.uuid)
+      .transferOwnership(optsWithGlobals.address);
+    console.log('NFT ownership transfered successfully');
   } catch (e: any) {
     exceptionHandler(e);
   }
@@ -148,21 +134,18 @@ export async function transferCollectionOwnership(
 
 // TRANSACTIONS
 export async function listCollectionTransactions(
-  uuid: string,
-  options: Options,
   optsWithGlobals: GlobalOptions,
 ) {
   const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.collection(uuid).listTransactions({
-      transactionStatus: toInteger(options.status),
-      transactionType: toInteger(options.type),
-      page: toInteger(options.page),
-      limit: toInteger(options.limit),
-      orderBy: options.orderBy,
-      desc: toBoolean(options.desc),
-    });
+    const data = await nftService
+      .collection(optsWithGlobals.uuid)
+      .listTransactions({
+        ...paginate(optsWithGlobals),
+        transactionStatus: toInteger(optsWithGlobals.status),
+        transactionType: toInteger(optsWithGlobals.type),
+      });
     console.log(data);
   } catch (e: any) {
     exceptionHandler(e);

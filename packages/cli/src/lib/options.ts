@@ -1,6 +1,6 @@
 import { Command, Option } from 'commander';
 import { GlobalOptions } from './types';
-import { IApillonPagination } from '@apillon/sdk';
+import { IApillonPagination, toBoolean, toInteger } from '@apillon/sdk';
 
 export function addPaginationOptions(command: Command) {
   return command
@@ -19,9 +19,9 @@ export function addPaginationOptions(command: Command) {
 export function paginate(opts: GlobalOptions): IApillonPagination {
   return {
     search: opts.search,
-    page: +opts.page,
-    limit: +opts.limit,
+    page: toInteger(opts.page),
+    limit: toInteger(opts.limit),
     orderBy: opts.orderBy,
-    desc: !!opts.desc,
+    desc: toBoolean(opts.desc),
   };
 }
