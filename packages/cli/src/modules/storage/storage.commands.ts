@@ -29,7 +29,7 @@ export function createStorageCommands(cli: Command) {
     .command('list-objects')
     .description('List files and folders in directory')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
-    .option('-d, --directory-uuid <string>', 'Directory UUID')
+    .option('-dir, --directory-uuid <string>', 'Directory UUID')
     .option('-del, --deleted', 'Include deleted objects')
     .action(async function () {
       await listObjects(this.optsWithGlobals());
@@ -66,7 +66,7 @@ export function createStorageCommands(cli: Command) {
     .command('get-file')
     .description('Get file info')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
-    .requiredOption('--uuid <uuid>', 'UUID of file to get')
+    .requiredOption('-f, --file-uuid <uuid>', 'UUID or CID of file to get')
     .action(async function () {
       await getFile(this.optsWithGlobals());
     });
@@ -75,7 +75,7 @@ export function createStorageCommands(cli: Command) {
     .command('delete-file')
     .description('Mark file for removal from IPFS storage')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
-    .requiredOption('--uuid <uuid>', 'UUID of file to delete')
+    .requiredOption('-f, --file-uuid <uuid>', 'UUID or CID of file to delete')
     .action(async function () {
       await deleteFile(this.optsWithGlobals());
     });

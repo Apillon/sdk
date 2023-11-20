@@ -1,4 +1,9 @@
-import { Hosting, exceptionHandler, DeployToEnvironment } from '@apillon/sdk';
+import {
+  Hosting,
+  exceptionHandler,
+  DeployToEnvironment,
+  toInteger,
+} from '@apillon/sdk';
 import { GlobalOptions } from '../../lib/types';
 import { paginate } from '../../lib/options';
 
@@ -62,7 +67,9 @@ export async function uploadWebsiteFiles(
 export async function deployToEnvironment(optsWithGlobals: GlobalOptions) {
   const hosting = new Hosting(optsWithGlobals);
   try {
-    await hosting.website(optsWithGlobals.uuid).deploy(+optsWithGlobals.env);
+    await hosting
+      .website(optsWithGlobals.uuid)
+      .deploy(toInteger(optsWithGlobals.env));
     console.log('Deploy successful');
   } catch (err) {
     exceptionHandler(err);
@@ -73,8 +80,8 @@ export async function listDeployments(optsWithGlobals: GlobalOptions) {
   const hosting = new Hosting(optsWithGlobals);
   const params = {
     ...paginate(optsWithGlobals),
-    environment: +optsWithGlobals.env || undefined,
-    deploymentStatus: +optsWithGlobals.status || undefined,
+    environment: toInteger(optsWithGlobals.env),
+    deploymentStatus: toInteger(optsWithGlobals.status),
   };
   try {
     const { items: deployments } = await hosting

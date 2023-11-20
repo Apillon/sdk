@@ -72,13 +72,11 @@ export class Deployment extends ApillonModel {
   }
 
   protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
     const enums = {
       environment: DeployToEnvironment[value],
       deploymentStatus: DeploymentStatus[value],
     };
-    if (super.serializeFilter(key, value) && Object.keys(enums).includes(key)) {
-      return enums[key];
-    }
-    return super.serializeFilter(key, value);
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

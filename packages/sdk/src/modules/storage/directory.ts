@@ -12,7 +12,7 @@ export class Directory extends ApillonModel {
   /**
    * Unique identifier of the bucket.
    */
-  public bucketUuid;
+  public bucketUuid: string = null;
 
   /**
    * Directory name.
@@ -33,6 +33,11 @@ export class Directory extends ApillonModel {
    * Type of content.
    */
   public type = StorageContentType.DIRECTORY;
+
+  /**
+   * Link on IPFS gateway.
+   */
+  public link: string = null;
 
   public content: (File | Directory)[] = [];
 
@@ -85,16 +90,15 @@ export class Directory extends ApillonModel {
     return this.content;
   }
 
-  protected serializeFilter(key, value) {
+  protected serializeFilter(key: string, value: string) {
+    const serialized = super.serializeFilter(key, value);
     const enums = {
       type: StorageContentType[value],
     };
-    if (super.serializeFilter(key, value) && Object.keys(enums).includes(key)) {
+    if (Object.keys(enums).includes(key)) {
       return enums[key];
     }
     const excludedKeys = ['content'];
-    return excludedKeys.includes(key)
-      ? undefined
-      : super.serializeFilter(key, value);
+    return excludedKeys.includes(key) ? undefined : serialized;
   }
 }

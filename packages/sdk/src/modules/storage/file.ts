@@ -10,11 +10,6 @@ export class File extends ApillonModel {
   public bucketUuid: string;
 
   /**
-   * Unique identifier of the file.
-   */
-  public uuid: string;
-
-  /**
    * File name.
    */
   public name: string = null;
@@ -23,6 +18,11 @@ export class File extends ApillonModel {
    * File unique ipfs identifier.
    */
   public CID: string = null;
+
+  /**
+   * File content identifier V1.
+   */
+  public CIDv1: string = null;
 
   /**
    * File status.
@@ -38,6 +38,16 @@ export class File extends ApillonModel {
    * Type of content.
    */
   public type = StorageContentType.FILE;
+
+  /**
+   * Link on IPFS gateway.
+   */
+  public link: string = null;
+
+  /**
+   * Full path to file.
+   */
+  public path: string = null;
 
   /**
    * Constructor which should only be called via HostingWebsite class.
@@ -72,13 +82,11 @@ export class File extends ApillonModel {
   }
 
   protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
     const enums = {
       status: FileStatus[value],
       type: StorageContentType[value],
     };
-    if (super.serializeFilter(key, value) && Object.keys(enums).includes(key)) {
-      return enums[key];
-    }
-    return super.serializeFilter(key, value);
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

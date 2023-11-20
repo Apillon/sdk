@@ -60,9 +60,7 @@ export class StorageBucket extends ApillonModel {
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
         const file = item as File;
-        this.content.push(
-          new File(this.uuid, file.directoryUuid, file.uuid, file),
-        );
+        content.push(new File(this.uuid, file.directoryUuid, file.uuid, file));
       } else {
         const directory = new Directory(
           this.uuid,
