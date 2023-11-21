@@ -21,6 +21,10 @@ if (deployment.deploymentStatus === DeploymentStatus.SUCCESSFUL) {
 }
 ```
 
+### Detailed Hosting docs
+
+Detailed hosting SDK method, class and property documentation is available [here](https://sdk-docs.apillon.io/classes/Hosting.html).
+
 ## Storage
 
 Storage module encapsulates functionalities for Storage service available on Apillon dashboard.
@@ -43,6 +47,10 @@ await bucket.listFiles({ fileStatus: FileStatus.UPLOADED });
 const file = await bucket.file(file_uuid).get();
 await bucket.deleteFile(file_uuid);
 ```
+
+### Detailed Storage docs
+
+Detailed Storage SDK method, class and property documentation is available [here](https://sdk-docs.apillon.io/classes/Storage.html).
 
 ## NFTs
 
@@ -81,6 +89,6 @@ const nft = new Nft({ apillonConfig });
   await collection.transferOwnership(to_address);
 ```
 
-## Detailed docs
+### Detailed NFT docs
 
-Detailed SDK method, class and property documentation is available [here](https://sdk-docs.apillon.io).
+Detailed NFT SDK method, class and property documentation is available [here](https://sdk-docs.apillon.io/classes/Nft.html).

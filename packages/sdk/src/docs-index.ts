@@ -8,6 +8,7 @@ export * from './modules/storage/storage-bucket';
 export * from './modules/storage/file';
 export * from './modules/storage/directory';
 export * from './modules/hosting/hosting';
+export * from './modules/hosting/deployment';
 export * from './modules/hosting/hosting-website';
 export * from './modules/nft/nft';
 export * from './modules/nft/nft-collection';
