@@ -19,7 +19,7 @@ export async function listObjects(optsWithGlobals: GlobalOptions) {
   try {
     const { items: objects } = await storage
       .bucket(optsWithGlobals.bucketUuid)
-      .getObjects({
+      .listObjects({
         ...paginate(optsWithGlobals),
         directoryUuid: optsWithGlobals.directoryUuid,
         markedForDeletion: !!optsWithGlobals.deleted,
@@ -35,7 +35,7 @@ export async function listFiles(optsWithGlobals: GlobalOptions) {
   try {
     const { items: files } = await storage
       .bucket(optsWithGlobals.bucketUuid)
-      .getFiles(paginate(optsWithGlobals));
+      .listFiles(paginate(optsWithGlobals));
     console.log(files.map((x) => x.serialize()));
   } catch (err) {
     exceptionHandler(err);

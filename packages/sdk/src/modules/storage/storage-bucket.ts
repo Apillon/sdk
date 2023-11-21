@@ -46,7 +46,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * Gets contents of a bucket.
    */
-  async getObjects(
+  async listObjects(
     params?: IStorageBucketContentRequest,
   ): Promise<IApillonList<File | Directory>> {
     const content = [];
@@ -77,7 +77,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * Gets all files in a bucket.
    */
-  async getFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
+  async listFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(
       `/storage/buckets/${this.uuid}/files`,
       params,

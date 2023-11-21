@@ -21,7 +21,7 @@ describe('Storage tests', () => {
 
   test('get bucket content', async () => {
     const storage = new Storage(config);
-    const { items } = await storage.bucket(bucketUUID).getObjects();
+    const { items } = await storage.bucket(bucketUUID).listObjects();
     for (const item of items) {
       if (item.type == StorageContentType.DIRECTORY) {
         await item.get();
@@ -34,7 +34,7 @@ describe('Storage tests', () => {
 
   test('get bucket files', async () => {
     const storage = new Storage(config);
-    const { items } = await storage.bucket(bucketUUID).getFiles();
+    const { items } = await storage.bucket(bucketUUID).listFiles();
     for (const item of items) {
       console.log(`${item.type}: ${item.name}`);
     }
@@ -46,7 +46,7 @@ describe('Storage tests', () => {
     const storage = new Storage(config);
     const { items } = await storage
       .bucket(bucketUUID)
-      .getObjects({ markedForDeletion: true });
+      .listObjects({ markedForDeletion: true });
     expect(items.some((file) => file['status'] == 8));
   });
 
@@ -54,7 +54,7 @@ describe('Storage tests', () => {
     const storage = new Storage(config);
     const { items } = await storage
       .bucket(bucketUUID)
-      .getObjects({ directoryUuid: '6c9c6ab1-801d-4915-a63e-120eed21fee0' });
+      .listObjects({ directoryUuid: '6c9c6ab1-801d-4915-a63e-120eed21fee0' });
 
     for (const item of items) {
       if (item.type == StorageContentType.DIRECTORY) {
