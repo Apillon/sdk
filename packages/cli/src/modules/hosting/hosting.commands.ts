@@ -84,7 +84,21 @@ export function createHostingCommands(cli: Command) {
       '--uuid <website uuid>',
       'UUID of website to list deployments for',
     )
-    .option('--env <environment', 'environment of the deployments')
+    .addOption(
+      new Option(
+        '--env <environment>',
+        'Sets the environment to deploy the files to. Choose from:\n' +
+          `  ${DeployToEnvironment.TO_STAGING}: To Staging\n` +
+          `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production\n` +
+          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production`,
+      ).choices(['1', '2', '3']),
+    )
+    .addOption(
+      new Option(
+        '--status <deployment-status>',
+        'Status of the deployment (DeploymentStatus enum)',
+      ).choices(['0', '1', '10', '100']),
+    )
     .option('--status <deployment-status>', 'deployment status')
     .action(async function () {
       await listDeployments(this.optsWithGlobals());

@@ -22,7 +22,12 @@ export function createNftsCommands(cli: Command) {
   const listCollectionsCommand = nfts
     .command('list-collections')
     .description('List NFT collections owned by project')
-    .addOption(new Option('-s, --status <integer>', 'Collection status'))
+    .addOption(
+      new Option(
+        '--status <integer>',
+        'Collection status (CollectionStatus enum)',
+      ),
+    )
     .action(async function () {
       await listCollections(this.optsWithGlobals());
     });
@@ -104,8 +109,18 @@ export function createNftsCommands(cli: Command) {
     .command('list-transactions')
     .description('List NFT transactions for specific collection')
     .requiredOption('--uuid <collection uuid>', 'Collection UUID')
-    .addOption(new Option('-s, --status <integer>', 'Transaction status'))
-    .addOption(new Option('-t, --type <integer>', 'Transaction type'))
+    .addOption(
+      new Option(
+        '--status <integer>',
+        'Transaction status (TransactionStatus enum)',
+      ),
+    )
+    .addOption(
+      new Option(
+        '-t, --type <integer>',
+        'Transaction type (TransactionType enum)',
+      ),
+    )
     .action(async function () {
       await listCollectionTransactions(this.optsWithGlobals());
     });

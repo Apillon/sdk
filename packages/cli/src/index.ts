@@ -17,7 +17,7 @@ cli.addHelpText(
 cli.addHelpText(
   'afterAll',
   chalk.yellow(`
-Find more help at wiki.apillon.io!
+Find more help at wiki.apillon.io/build/6-apillon-cli.html
 `),
 );
 
