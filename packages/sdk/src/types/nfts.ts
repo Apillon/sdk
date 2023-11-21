@@ -80,8 +80,8 @@ export interface ICollection {
   dropStart: number;
   dropPrice: number;
   dropReserve: number;
-  updateTime: Date;
-  createTime: Date;
+  updateTime: string;
+  createTime: string;
 }
 
 export interface ITransaction {
