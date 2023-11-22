@@ -90,8 +90,8 @@ export async function nestMintCollectionNft(optsWithGlobals: GlobalOptions) {
     const data = await nftService
       .collection(optsWithGlobals.uuid)
       .nestMint(
-        optsWithGlobals.parentCollectionUuid,
-        toInteger(optsWithGlobals.parentNftId),
+        optsWithGlobals.parentCollection,
+        toInteger(optsWithGlobals.parentNft),
         toInteger(optsWithGlobals.quantity),
       );
     if (data.status === 5) {

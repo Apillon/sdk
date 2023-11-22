@@ -2,6 +2,18 @@
 
 Hosting module encapsulates functionalities for Hosting service available on Apillon dashboard.
 
+::: tip
+You can only create a new webpage through the [dashboard hosting service](https://app.apillon.io/dashboard/service/hosting).
+:::
+
+The flow of deploying a new website looks like this:
+
+1. upload new website files
+2. trigger deploy to staging
+3. trigger deploy from staging to production
+
+You can also directly deploy uploaded files to production.
+
 ### Usage example
 
 ```ts
@@ -13,7 +25,7 @@ const webpage1 = hosting.website('uuid');
 await webpage1.get();
 
 await webpage1.uploadFromFolder('folder_path');
-await webpage1.deploy(DeployToEnvironment.STAGING_TO_PRODUCTION);
+await webpage1.deploy(DeployToEnvironment.TO_STAGING);
 await webpage1.listDeployments();
 const deployment = await webpage1.deployment(deployment_uuid).get();
 if (deployment.deploymentStatus === DeploymentStatus.SUCCESSFUL) {

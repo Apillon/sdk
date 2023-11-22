@@ -29,8 +29,8 @@ export function createStorageCommands(cli: Command) {
     .command('list-objects')
     .description('List files and folders in directory')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
-    .option('-dir, --directory-uuid <string>', 'Directory UUID')
-    .option('-del, --deleted', 'Include deleted objects')
+    .option('-d, --directory-uuid <string>', 'Directory UUID')
+    .option('--deleted', 'Include deleted objects')
     .action(async function () {
       await listObjects(this.optsWithGlobals());
     });
@@ -41,7 +41,7 @@ export function createStorageCommands(cli: Command) {
     .description('List all files from a bucket')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
     .option(
-      '-fs, --file-status <integer>',
+      '-s, --file-status <integer>',
       'Filter by file status. Choose from:\n' +
         `  ${FileStatus.UPLOAD_REQUEST_GENERATED}: Upload request generated\n` +
         `  ${FileStatus.UPLOADED}: Uploaded\n` +

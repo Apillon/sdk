@@ -10,10 +10,12 @@ export function addPaginationOptions(command: Command) {
         'Search by name or other object identifier',
       ),
     )
-    .addOption(new Option('-p, --page <integer>', 'Page number'))
-    .addOption(new Option('-l, --limit <integer>', 'Page limit'))
-    .addOption(new Option('-o, --order-by <string>', 'Page order by'))
-    .addOption(new Option('-d --desc <boolean>', 'Page order descending'));
+    .addOption(new Option('--page <integer>', 'Page number').default(1))
+    .addOption(
+      new Option('--limit <integer>', 'Page limit (page size)').default(20),
+    )
+    .addOption(new Option('--order-by <string>', 'Page order by any property'))
+    .addOption(new Option('--desc <boolean>', 'Page order descending'));
 }
 
 export function paginate(opts: GlobalOptions): IApillonPagination {

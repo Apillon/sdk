@@ -9,7 +9,7 @@ import {
   uploadWebsiteFiles,
   deployWebsite,
 } from './hosting.service';
-import { DeployToEnvironment } from '@apillon/sdk';
+import { DeployToEnvironment, DeploymentStatus } from '@apillon/sdk';
 
 export function createHostingCommands(cli: Command) {
   const hosting = cli
@@ -91,15 +91,18 @@ export function createHostingCommands(cli: Command) {
           `  ${DeployToEnvironment.TO_STAGING}: To Staging\n` +
           `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production\n` +
           `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production`,
-      ).choices(['1', '2', '3']),
+      ).choices(Object.values(DeployToEnvironment).map((x) => `${x}`)),
     )
     .addOption(
       new Option(
         '--status <deployment-status>',
-        'Status of the deployment (DeploymentStatus enum)',
-      ).choices(['0', '1', '10', '100']),
+        'Status of the deployment (optional) Choose from:\n' +
+          `  ${DeploymentStatus.INITIATED}: Initiated\n` +
+          `  ${DeploymentStatus.IN_PROCESS}: In process\n` +
+          `  ${DeploymentStatus.SUCCESSFUL}: Successful\n` +
+          `  ${DeploymentStatus.FAILED}: Failed`,
+      ).choices(Object.values(DeploymentStatus).map((x) => `${x}`)),
     )
-    .option('--status <deployment-status>', 'deployment status')
     .action(async function () {
       await listDeployments(this.optsWithGlobals());
     });
@@ -108,9 +111,9 @@ export function createHostingCommands(cli: Command) {
   hosting
     .command('get-deployment')
     .description('Returns deployment data')
-    .requiredOption('--website-uuid <website uuid>', 'UUID of website')
+    .requiredOption('-w, --website-uuid <website uuid>', 'UUID of website')
     .requiredOption(
-      '--deployment-uuid <deployment uuid>',
+      '-d, --deployment-uuid <deployment uuid>',
       'UUID of deployment to get',
     )
     .action(async function () {
