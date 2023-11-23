@@ -57,7 +57,7 @@ export interface ICreateCollection {
 }
 
 //OUTPUTS
-export interface ICollection {
+export interface ICollection extends ICreateCollection {
   collectionUuid: string;
   contractAddress: string;
   deployerAddress: string;
@@ -69,35 +69,24 @@ export interface ICollection {
   symbol: string;
   description: string;
   bucketUuid: string;
-  baseUri: string;
-  baseExtension: string;
-  maxSupply: number;
-  isRevokable: boolean;
-  isSoulbound: boolean;
-  royaltiesAddress: string;
-  royaltiesFees: number;
-  drop: boolean;
-  dropStart: number;
-  dropPrice: number;
-  dropReserve: number;
   updateTime: string;
   createTime: string;
 }
 
 export interface ITransaction {
   chainId: number;
-  transactionType: number;
-  transactionStatus: number;
+  transactionType: TransactionType;
+  transactionStatus: TransactionStatus;
   transactionHash: string;
   updateTime: string;
   createTime: string;
 }
 
 export interface ICollectionFilters extends IApillonPagination {
-  collectionStatus: CollectionStatus;
+  collectionStatus?: CollectionStatus;
 }
 
 export interface ITransactionFilters extends IApillonPagination {
-  transactionStatus: TransactionStatus;
-  transactionType: TransactionType;
+  transactionStatus?: TransactionStatus;
+  transactionType?: TransactionType;
 }

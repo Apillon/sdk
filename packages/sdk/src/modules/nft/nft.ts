@@ -1,7 +1,11 @@
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonResponse, IApillonListResponse } from '../../types/apillon';
+import {
+  IApillonResponse,
+  IApillonListResponse,
+  IApillonList,
+} from '../../types/apillon';
 import {
   ICollectionFilters,
   ICollection,
@@ -30,14 +34,19 @@ export class Nft extends ApillonModule {
    */
   public async listCollections(
     params?: ICollectionFilters,
-  ): Promise<NftCollection[]> {
+  ): Promise<IApillonList<NftCollection>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
     const { data } = await ApillonApi.get<IApillonListResponse<ICollection>>(
       url,
     );
 
-    return data.items.map((nft) => new NftCollection(nft.collectionUuid, nft));
+    return {
+      ...data,
+      items: data.items.map(
+        (nft) => new NftCollection(nft.collectionUuid, nft),
+      ),
+    };
   }
 
   /**

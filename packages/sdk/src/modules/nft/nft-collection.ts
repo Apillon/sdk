@@ -1,4 +1,4 @@
-import { ApillonModel } from '../../docs-index';
+import { TransactionStatus } from './../../types/nfts';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
@@ -15,7 +15,9 @@ import {
   CollectionType,
   CollectionStatus,
   EvmChain,
+  TransactionType,
 } from '../../types/nfts';
+import { ApillonModel } from '../../lib/apillon';
 
 export class NftCollection extends ApillonModel {
   /**
@@ -109,6 +111,11 @@ export class NftCollection extends ApillonModel {
    * Transaction hash of contract deploy.
    */
   public transactionHash: string = null;
+
+  /**
+   * Wallet address of deployer.
+   */
+  public deployerAddress: string = null;
 
   /**
    * Chain on which the smart contract was deployed.
@@ -226,7 +233,7 @@ export class NftCollection extends ApillonModel {
    */
   public async listTransactions(
     params?: ITransactionFilters,
-  ): Promise<ITransaction[]> {
+  ): Promise<IApillonList<ITransaction>> {
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/transactions`,
       params,
@@ -236,6 +243,24 @@ export class NftCollection extends ApillonModel {
       IApillonResponse<IApillonList<ITransaction>>
     >(url);
 
-    return data.items;
+    return {
+      ...data,
+      items: data.items.map((t) =>
+        JSON.parse(JSON.stringify(t, this.serializeFilter)),
+      ),
+    };
+  }
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      collectionType: CollectionType[serialized],
+      collectionStatus: CollectionStatus[serialized],
+      transactionType: TransactionType[serialized],
+      transactionStatus: TransactionStatus[serialized],
+      chain: EvmChain[serialized],
+      chainId: EvmChain[serialized],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

@@ -4,6 +4,8 @@ import * as path from 'path';
 import axios from 'axios';
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
+import { FileMetadata, IFileUploadRequest } from '../types/storage';
+import { LogLevel } from '../types/apillon';
 
 export function listFilesRecursive(
   folderPath: string,
@@ -35,18 +37,25 @@ export async function uploadFilesToS3(uploadLinks: any[], files: any[]) {
       throw new Error(`Cant find file ${link.path}${link.fileName}!`);
     }
     uploadWorkers.push(
-      new Promise<void>((resolve, reject) => {
-        fs.readFile(file.index, async (err, data) => {
-          if (err) {
-            reject(err.message);
-          }
-          // const respS3 =
-          await s3Api.put(link.url, data);
-          // console.log(respS3);
+      new Promise<void>(async (resolve, reject) => {
+        // If uploading from local folder read file, otherwise directly upload content
+        if (file.index) {
+          fs.readFile(file.index, async (err, data) => {
+            if (err) {
+              reject(err.message);
+            }
+            // const respS3 =
+            await s3Api.put(link.url, data);
+            // console.log(respS3);
 
+            console.log(`File uploaded: ${file.fileName} `);
+            resolve();
+          });
+        } else if (file.content) {
+          await s3Api.put(link.url, file.content);
           console.log(`File uploaded: ${file.fileName} `);
           resolve();
-        });
+        }
       }),
     );
   }
@@ -54,17 +63,33 @@ export async function uploadFilesToS3(uploadLinks: any[], files: any[]) {
   await Promise.all(uploadWorkers);
 }
 
-export async function uploadFilesFromFolder(
+export async function uploadFiles(
   folderPath: string,
   apiPrefix: string,
+  params?: IFileUploadRequest,
+  files?: FileMetadata[],
 ): Promise<void> {
-  ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
-  let files;
-  try {
-    files = listFilesRecursive(folderPath);
-  } catch (err) {
-    console.error(err);
-    throw new Error(`Error reading files in ${folderPath}`);
+  if (folderPath) {
+    ApillonLogger.log(
+      `Preparing to upload files from ${folderPath}...`,
+      LogLevel.VERBOSE,
+    );
+  } else if (files?.length) {
+    ApillonLogger.log(
+      `Preparing to upload ${files.length} files...`,
+      LogLevel.VERBOSE,
+    );
+  } else {
+    throw new Error('Invalid upload parameters received');
+  }
+  // If folderPath param passed, read files from local storage
+  if (folderPath && !files?.length) {
+    try {
+      files = listFilesRecursive(folderPath);
+    } catch (err) {
+      console.error(err);
+      throw new Error(`Error reading files in ${folderPath}`);
+    }
   }
 
   ApillonLogger.log(`Total files to upload: ${files.length}`);
@@ -88,6 +113,7 @@ export async function uploadFilesFromFolder(
   ApillonLogger.log('Closing upload session...');
   const { data: endSession } = await ApillonApi.post<any>(
     `${apiPrefix}/upload/${data.sessionUuid}/end`,
+    params,
   );
   ApillonLogger.logWithTime('Session ended.');
 

@@ -1,7 +1,7 @@
 import { ApillonModel } from '../../lib/apillon';
-import { DeployToEnvironment, DeploymentStatus } from '../../docs-index';
 import { IApillonResponse } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
+import { DeployToEnvironment, DeploymentStatus } from '../../types/hosting';
 
 export class Deployment extends ApillonModel {
   /**
@@ -64,5 +64,14 @@ export class Deployment extends ApillonModel {
       this.API_PREFIX,
     );
     return this.populate(data);
+  }
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      environment: DeployToEnvironment[value],
+      deploymentStatus: DeploymentStatus[value],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

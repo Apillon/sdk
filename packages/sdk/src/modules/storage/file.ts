@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
+import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { FileStatus, StorageContentType } from '../../types/storage';
-import { ApillonModel } from '../../docs-index';
 
 export class File extends ApillonModel {
   /**
@@ -10,7 +10,7 @@ export class File extends ApillonModel {
   public bucketUuid: string = null;
 
   /**
-   * Id of the directory in which the file resides.
+   * Unique identifier of the directory in which the file resides.
    */
   public directoryUuid: string = null;
 
@@ -25,6 +25,11 @@ export class File extends ApillonModel {
   public CID: string = null;
 
   /**
+   * File content identifier V1.
+   */
+  public CIDv1: string = null;
+
+  /**
    * File status.
    */
   public status: FileStatus = null;
@@ -33,6 +38,16 @@ export class File extends ApillonModel {
    * Type of content.
    */
   public type = StorageContentType.FILE;
+
+  /**
+   * Link on IPFS gateway.
+   */
+  public link: string = null;
+
+  /**
+   * Full path to file.
+   */
+  public path: string = null;
 
   /**
    * Constructor which should only be called via HostingWebsite class.
@@ -64,5 +79,14 @@ export class File extends ApillonModel {
     >(`${this.API_PREFIX}/detail`);
     this.status = data.fileStatus;
     return this.populate(data);
+  }
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      status: FileStatus[value],
+      type: StorageContentType[value],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

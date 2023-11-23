@@ -6,7 +6,7 @@ import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonApi } from '../../lib/apillon-api';
 import { IApillonListResponse } from '../../types/apillon';
-import { ApillonModel } from '../../docs-index';
+import { ApillonModel } from '../../lib/apillon';
 
 export class Directory extends ApillonModel {
   /**
@@ -33,6 +33,11 @@ export class Directory extends ApillonModel {
    * Type of content.
    */
   public type = StorageContentType.DIRECTORY;
+
+  /**
+   * Link on IPFS gateway.
+   */
+  public link: string = null;
 
   public content: (File | Directory)[] = [];
 
@@ -83,5 +88,17 @@ export class Directory extends ApillonModel {
     }
 
     return this.content;
+  }
+
+  protected serializeFilter(key: string, value: string) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      type: StorageContentType[value],
+    };
+    if (Object.keys(enums).includes(key)) {
+      return enums[key];
+    }
+    const excludedKeys = ['content'];
+    return excludedKeys.includes(key) ? undefined : serialized;
   }
 }

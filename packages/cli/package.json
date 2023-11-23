@@ -6,11 +6,11 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "bugs": {
-    "url": "https://github.com/Apillon-web3/sdk/issues"
+    "url": "https://github.com/Apillon/sdk/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Apillon-web3/sdk"
+    "url": "https://github.com/Apillon/sdk"
   },
   "homepage": "https://wiki.apillon.io",
   "declaration": true,
@@ -24,7 +24,7 @@
     "build": "tsc --declarationMap",
     "dev": "tsc --declarationMap --watch",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
-    "cli-install": "tsc && npm i -g",
+    "cli-install": "tsc && npm uninstall -g ; npm i -g",
     "publish-package": "npm publish"
   },
   "bin": {

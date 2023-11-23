@@ -3,6 +3,7 @@ import { ApillonConfig } from '../lib/apillon';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
 import { getBucketUUID, getConfig } from './helpers/helper';
+import * as fs from 'fs';
 
 describe('Storage tests', () => {
   let config: ApillonConfig;
@@ -21,7 +22,7 @@ describe('Storage tests', () => {
 
   test('get bucket content', async () => {
     const storage = new Storage(config);
-    const { items } = await storage.bucket(bucketUUID).getObjects();
+    const { items } = await storage.bucket(bucketUUID).listObjects();
     for (const item of items) {
       if (item.type == StorageContentType.DIRECTORY) {
         await item.get();
@@ -34,7 +35,7 @@ describe('Storage tests', () => {
 
   test('get bucket files', async () => {
     const storage = new Storage(config);
-    const { items } = await storage.bucket(bucketUUID).getFiles();
+    const { items } = await storage.bucket(bucketUUID).listFiles();
     for (const item of items) {
       console.log(`${item.type}: ${item.name}`);
     }
@@ -46,7 +47,7 @@ describe('Storage tests', () => {
     const storage = new Storage(config);
     const { items } = await storage
       .bucket(bucketUUID)
-      .getObjects({ markedForDeletion: true });
+      .listObjects({ markedForDeletion: true });
     expect(items.some((file) => file['status'] == 8));
   });
 
@@ -54,7 +55,7 @@ describe('Storage tests', () => {
     const storage = new Storage(config);
     const { items } = await storage
       .bucket(bucketUUID)
-      .getObjects({ directoryUuid: '6c9c6ab1-801d-4915-a63e-120eed21fee0' });
+      .listObjects({ directoryUuid: '6c9c6ab1-801d-4915-a63e-120eed21fee0' });
 
     for (const item of items) {
       if (item.type == StorageContentType.DIRECTORY) {
@@ -74,12 +75,47 @@ describe('Storage tests', () => {
     expect(file.name).toBeTruthy();
   });
 
-  test.skip('upload files', async () => {
+  test.skip('upload files from folder', async () => {
     const storage = new Storage(config);
     try {
       const uploadDir = resolve(__dirname, './helpers/website/');
       console.time('File upload complete');
       await storage.bucket(bucketUUID).uploadFromFolder(uploadDir);
+      console.timeEnd('File upload complete');
+
+      // console.log(content);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  test.skip('upload files from buffer', async () => {
+    const storage = new Storage(config);
+    const html = fs.readFileSync(
+      resolve(__dirname, './helpers/website/index.html'),
+    );
+    const css = fs.readFileSync(
+      resolve(__dirname, './helpers/website/style.css'),
+    );
+    try {
+      console.time('File upload complete');
+      await storage.bucket(bucketUUID).uploadFiles(
+        [
+          {
+            fileName: 'index.html',
+            contentType: 'text/html',
+            path: null,
+            content: html,
+          },
+          {
+            fileName: 'style.css',
+            contentType: 'text/css',
+            path: null,
+            content: css,
+          },
+        ],
+        { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+      );
       console.timeEnd('File upload complete');
 
       // console.log(content);
