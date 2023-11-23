@@ -45,8 +45,10 @@ export function createHostingCommands(cli: Command) {
     });
 
   hosting
-    .command('upload-files')
-    .description('Uploads files from local folder to deployment bucket')
+    .command('upload')
+    .description(
+      `Uploads a local folder's contents to a website deployment bucket.`,
+    )
     .argument('<path>', 'path to folder with website files')
     .requiredOption(
       '--uuid <website uuid>',
@@ -70,7 +72,7 @@ export function createHostingCommands(cli: Command) {
           `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production\n` +
           `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production`,
       )
-        .choices(['1', '2', '3'])
+        .choices(Object.values(DeployToEnvironment).map((x) => `${x}`))
         .makeOptionMandatory(true),
     )
     .action(async function () {

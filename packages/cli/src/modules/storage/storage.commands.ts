@@ -55,8 +55,8 @@ export function createStorageCommands(cli: Command) {
 
   storage
     .command('upload')
-    .description('Upload files and folders to bucket')
-    .argument('<path>', 'path to source')
+    .description('Upload contents of a local folder to bucket')
+    .argument('<path>', 'path to local folder')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of destination bucket')
     .action(async function (path: string) {
       await uploadFromFolder(path, this.optsWithGlobals());
