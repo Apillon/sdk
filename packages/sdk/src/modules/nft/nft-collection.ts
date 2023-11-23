@@ -1,3 +1,4 @@
+import { TransactionStatus } from './../../types/nfts';
 import { ApillonModel } from '../../docs-index';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
@@ -14,6 +15,7 @@ import {
   CollectionType,
   CollectionStatus,
   EvmChain,
+  TransactionType,
 } from '../../types/nfts';
 
 export class NftCollection extends ApillonModel {
@@ -235,7 +237,9 @@ export class NftCollection extends ApillonModel {
       IApillonResponse<IApillonList<ITransaction>>
     >(url);
 
-    return data.items;
+    return data.items.map((t) =>
+      JSON.parse(JSON.stringify(t, this.serializeFilter)),
+    );
   }
 
   protected override serializeFilter(key: string, value: any) {
@@ -243,6 +247,9 @@ export class NftCollection extends ApillonModel {
     const enums = {
       collectionType: CollectionType[serialized],
       collectionStatus: CollectionStatus[serialized],
+      transactionType: TransactionType[serialized],
+      transactionStatus: TransactionStatus[serialized],
+      chain: EvmChain[serialized],
     };
     return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }

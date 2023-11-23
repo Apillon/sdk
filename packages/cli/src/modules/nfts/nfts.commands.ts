@@ -68,7 +68,7 @@ export function createNftsCommands(cli: Command) {
       '-a, --address <string>',
       'Address which will receive minted NFTs.',
     )
-    .requiredOption('-q, --quantity <integer>', 'Number of NFTs to mint.')
+    .requiredOption('-q, --quantity <integer>', 'Number of NFTs to mint.', '1')
     .action(async function () {
       await mintCollectionNft(this.optsWithGlobals());
     });
