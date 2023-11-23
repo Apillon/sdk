@@ -1,8 +1,11 @@
-import { IApillonPagination } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList, IApillonListResponse } from '../../types/apillon';
+import {
+  IApillonList,
+  IApillonListResponse,
+  IApillonPagination,
+} from '../../types/apillon';
 import { StorageBucket } from './storage-bucket';
 
 export class Storage extends ApillonModule {

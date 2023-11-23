@@ -1,6 +1,7 @@
-import { CollectionType, EvmChain, NftCollection } from '../docs-index';
 import { ApillonConfig } from '../lib/apillon';
 import { Nft } from '../modules/nft/nft';
+import { NftCollection } from '../modules/nft/nft-collection';
+import { CollectionType, EvmChain } from '../types/nfts';
 import { getCollectionUUID, getConfig, getMintAddress } from './helpers/helper';
 
 describe('Nft tests', () => {

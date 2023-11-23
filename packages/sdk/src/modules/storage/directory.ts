@@ -6,7 +6,7 @@ import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonApi } from '../../lib/apillon-api';
 import { IApillonListResponse } from '../../types/apillon';
-import { ApillonModel } from '../../docs-index';
+import { ApillonModel } from '../../lib/apillon';
 
 export class Directory extends ApillonModel {
   /**

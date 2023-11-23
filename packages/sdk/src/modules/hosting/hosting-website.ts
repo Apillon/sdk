@@ -4,17 +4,13 @@ import {
   IApillonList,
   IApillonListResponse,
   IApillonResponse,
-  LogLevel,
 } from '../../types/apillon';
 import { Deployment } from './deployment';
-import {
-  ApillonModel,
-  FileMetadata,
-  IFileUploadRequest,
-} from '../../docs-index';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { uploadFiles } from '../../util/file-utils';
+import { ApillonModel } from '../../lib/apillon';
+import { FileMetadata, IFileUploadRequest } from '../../types/storage';
 
 export class HostingWebsite extends ApillonModel {
   /**
@@ -105,15 +101,14 @@ export class HostingWebsite extends ApillonModel {
           ? 'preview'
           : 'production'
       })`,
-      LogLevel.VERBOSE,
     );
 
-    ApillonLogger.logWithTime('Deploy start', LogLevel.VERBOSE);
+    ApillonLogger.logWithTime('Deploy start');
     const { data } = await ApillonApi.post<any>(`${this.API_PREFIX}/deploy`, {
       environment: toEnvironment,
     });
 
-    ApillonLogger.logWithTime('Deploy complete', LogLevel.VERBOSE);
+    ApillonLogger.logWithTime('Deploy complete');
 
     return data;
   }

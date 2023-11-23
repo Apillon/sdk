@@ -1,6 +1,6 @@
 import { TransactionStatus } from './../../types/nfts';
-import { ApillonModel } from '../../docs-index';
 import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import {
   IApillonResponse,
@@ -17,6 +17,7 @@ import {
   EvmChain,
   TransactionType,
 } from '../../types/nfts';
+import { ApillonModel } from '../../lib/apillon';
 
 export class NftCollection extends ApillonModel {
   /**
@@ -154,6 +155,8 @@ export class NftCollection extends ApillonModel {
       IApillonResponse<IApillonBoolResponse>
     >(`${this.API_PREFIX}/mint`, { receivingAddress: receiver, quantity });
 
+    ApillonLogger.log(`NFT minted successfully to ${receiver}`);
+
     return data;
   }
 
@@ -181,24 +184,26 @@ export class NftCollection extends ApillonModel {
       { parentCollectionUuid, parentNftId, quantity },
     );
 
+    ApillonLogger.log(`NFT nest minted successfully on NFT ${parentNftId}`);
     return data;
   }
 
   /**
    * Burns a nft.
    * @warn Can only burn NFTs if the collection is revokable.
-   * @param id Id of the NFT we want to burn.
+   * @param tokenId Token ID of the NFT we want to burn.
    * @returns Status.
    */
-  public async burn(id: string): Promise<IApillonStatus> {
+  public async burn(tokenId: string): Promise<IApillonStatus> {
     if (this.isRevokable != null && !this.isRevokable) {
       throw new Error('Collection is not revokable.');
     }
     const { data } = await ApillonApi.post<IApillonResponse<IApillonStatus>>(
       `${this.API_PREFIX}/burn`,
-      { tokenId: id },
+      { tokenId },
     );
 
+    ApillonLogger.log(`NFT ${tokenId} burned successfully`);
     return data;
   }
 
@@ -217,6 +222,7 @@ export class NftCollection extends ApillonModel {
 
     this.populate(data);
 
+    ApillonLogger.log(`NFT collection transferred successfully to ${address}`);
     return this;
   }
 

@@ -1,8 +1,8 @@
-import { IWebsiteFilters } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
+import { IWebsiteFilters } from '../../types/hosting';
 import { HostingWebsite } from './hosting-website';
 
 export class Hosting extends ApillonModule {

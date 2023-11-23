@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { ApillonConfig } from '../../lib/apillon';
 import { resolve } from 'path';
+import { LogLevel } from '../../types/apillon';
 
 export function getConfig(): ApillonConfig {
   // Configure dotenv with the absolute path
@@ -11,6 +12,7 @@ export function getConfig(): ApillonConfig {
     apiUrl: process.env['APILLON_API_URL'],
     secret: process.env['APILLON_API_SECRET'],
     key: process.env['APILLON_API_KEY'],
+    logLevel: LogLevel.VERBOSE,
   } as ApillonConfig;
 }
 

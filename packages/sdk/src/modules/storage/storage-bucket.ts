@@ -10,8 +10,8 @@ import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
-import { ApillonModel } from '../../docs-index';
 import { uploadFiles } from '../../util/file-utils';
+import { ApillonModel } from '../../lib/apillon';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -84,12 +84,14 @@ export class StorageBucket extends ApillonModel {
       `/storage/buckets/${this.uuid}/files`,
       params,
     );
-    const { data } = await ApillonApi.get<IApillonListResponse<File>>(url);
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<File & { fileUuid: string }>
+    >(url);
 
     return {
       ...data,
       items: data.items.map(
-        (file) => new File(this.uuid, file.directoryUuid, file.uuid, file),
+        (file) => new File(this.uuid, file.directoryUuid, file.fileUuid, file),
       ),
     };
   }

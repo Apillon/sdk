@@ -7,7 +7,12 @@ export class File extends ApillonModel {
   /**
    * Unique identifier of the file's bucket.
    */
-  public bucketUuid: string;
+  public bucketUuid: string = null;
+
+  /**
+   * Unique identifier of the directory in which the file resides.
+   */
+  public directoryUuid: string = null;
 
   /**
    * File name.
@@ -28,11 +33,6 @@ export class File extends ApillonModel {
    * File status.
    */
   public status: FileStatus = null;
-
-  /**
-   * Id of the directory in which the file resides.
-   */
-  public directoryUuid: string = null;
 
   /**
    * Type of content.

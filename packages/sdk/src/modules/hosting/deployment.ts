@@ -1,8 +1,7 @@
 import { ApillonModel } from '../../lib/apillon';
-import { DeployToEnvironment, DeploymentStatus } from '../../docs-index';
-import { IApillonResponse, LogLevel } from '../../types/apillon';
+import { IApillonResponse } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
-import { ApillonLogger } from '../../lib/apillon-logger';
+import { DeployToEnvironment, DeploymentStatus } from '../../types/hosting';
 
 export class Deployment extends ApillonModel {
   /**
@@ -61,10 +60,6 @@ export class Deployment extends ApillonModel {
    * Gets deployment details.
    */
   async get(): Promise<Deployment> {
-    ApillonLogger.log(
-      `Get deployment for website ${this.uuid}`,
-      LogLevel.VERBOSE,
-    );
     const { data } = await ApillonApi.get<IApillonResponse<Deployment>>(
       this.API_PREFIX,
     );
