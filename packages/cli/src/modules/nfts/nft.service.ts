@@ -17,7 +17,7 @@ export async function listCollections(optsWithGlobals: GlobalOptions) {
       ...paginate(optsWithGlobals),
       collectionStatus: toInteger(optsWithGlobals.status),
     });
-    console.log(data.map((d) => d.serialize()));
+    console.log(data.items.map((d) => d.serialize()));
   } catch (e: any) {
     exceptionHandler(e);
   }

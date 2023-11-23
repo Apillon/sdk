@@ -10,6 +10,7 @@ import {
   deployWebsite,
 } from './hosting.service';
 import { DeployToEnvironment, DeploymentStatus } from '@apillon/sdk';
+import { enumValues } from '../../lib/utils';
 
 export function createHostingCommands(cli: Command) {
   const hosting = cli
@@ -70,9 +71,9 @@ export function createHostingCommands(cli: Command) {
         'Sets the environment to deploy the files to. Choose from:\n' +
           `  ${DeployToEnvironment.TO_STAGING}: To Staging\n` +
           `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production\n` +
-          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production`,
+          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production\n`,
       )
-        .choices(Object.values(DeployToEnvironment).map((x) => `${x}`))
+        .choices(enumValues(DeployToEnvironment))
         .makeOptionMandatory(true),
     )
     .action(async function () {
@@ -92,8 +93,8 @@ export function createHostingCommands(cli: Command) {
         'Sets the environment to deploy the files to. Choose from:\n' +
           `  ${DeployToEnvironment.TO_STAGING}: To Staging\n` +
           `  ${DeployToEnvironment.STAGING_TO_PRODUCTION}: Staging to Production\n` +
-          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production`,
-      ).choices(Object.values(DeployToEnvironment).map((x) => `${x}`)),
+          `  ${DeployToEnvironment.DIRECTLY_TO_PRODUCTION}: Directly to Production\n`,
+      ).choices(enumValues(DeployToEnvironment)),
     )
     .addOption(
       new Option(
@@ -102,8 +103,8 @@ export function createHostingCommands(cli: Command) {
           `  ${DeploymentStatus.INITIATED}: Initiated\n` +
           `  ${DeploymentStatus.IN_PROCESS}: In process\n` +
           `  ${DeploymentStatus.SUCCESSFUL}: Successful\n` +
-          `  ${DeploymentStatus.FAILED}: Failed`,
-      ).choices(Object.values(DeploymentStatus).map((x) => `${x}`)),
+          `  ${DeploymentStatus.FAILED}: Failed\n`,
+      ).choices(enumValues(DeploymentStatus)),
     )
     .action(async function () {
       await listDeployments(this.optsWithGlobals());

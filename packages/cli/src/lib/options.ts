@@ -6,7 +6,7 @@ export function addPaginationOptions(command: Command) {
   return command
     .addOption(
       new Option(
-        '-s, --search <string>',
+        '--search <string>',
         'Search by name or other object identifier',
       ),
     )

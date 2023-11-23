@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { addPaginationOptions } from '../../lib/options';
 import {
   listBuckets,
@@ -9,6 +9,7 @@ import {
   deleteFile,
 } from './storage.service';
 import { FileStatus } from '@apillon/sdk';
+import { enumValues } from '../../lib/utils';
 
 export function createStorageCommands(cli: Command) {
   const storage = cli
@@ -40,13 +41,15 @@ export function createStorageCommands(cli: Command) {
     .command('list-files')
     .description('List all files from a bucket')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
-    .option(
-      '-s, --file-status <integer>',
-      'Filter by file status. Choose from:\n' +
-        `  ${FileStatus.UPLOAD_REQUEST_GENERATED}: Upload request generated\n` +
-        `  ${FileStatus.UPLOADED}: Uploaded\n` +
-        `  ${FileStatus.AVAILABLE_ON_IPFS}: Available on IPFS\n` +
-        `  ${FileStatus.AVAILABLE_ON_IPFS_AND_REPLICATED}: Available on IPFS and replicated\n`,
+    .addOption(
+      new Option(
+        '-s, --file-status <integer>',
+        'Filter by file status. Choose from:\n' +
+          `  ${FileStatus.UPLOAD_REQUEST_GENERATED}: Upload request generated\n` +
+          `  ${FileStatus.UPLOADED}: Uploaded\n` +
+          `  ${FileStatus.AVAILABLE_ON_IPFS}: Available on IPFS\n` +
+          `  ${FileStatus.AVAILABLE_ON_IPFS_AND_REPLICATED}: Available on IPFS and replicated\n`,
+      ).choices(enumValues(FileStatus)),
     )
     .action(async function () {
       await listFiles(this.optsWithGlobals());

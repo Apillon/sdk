@@ -15,6 +15,7 @@ import {
   TransactionStatus,
   TransactionType,
 } from '@apillon/sdk';
+import { enumValues } from '../../lib/utils';
 
 export function createNftsCommands(cli: Command) {
   const nfts = cli
@@ -36,8 +37,8 @@ export function createNftsCommands(cli: Command) {
           `  ${CollectionStatus.DEPLOYING}: Deploying\n` +
           `  ${CollectionStatus.DEPLOYED}: Deployed\n` +
           `  ${CollectionStatus.TRANSFERRED}: Transferred\n` +
-          `  ${CollectionStatus.FAILED}: Failed`,
-      ).choices(Object.values(CollectionStatus).map((x) => `${x}`)),
+          `  ${CollectionStatus.FAILED}: Failed\n`,
+      ).choices(enumValues(CollectionStatus)),
     )
     .action(async function () {
       await listCollections(this.optsWithGlobals());
@@ -127,8 +128,8 @@ export function createNftsCommands(cli: Command) {
           `  ${TransactionStatus.PENDING}: Pending\n` +
           `  ${TransactionStatus.CONFIRMED}: Confirmed\n` +
           `  ${TransactionStatus.FAILED}: Failed\n` +
-          `  ${TransactionStatus.ERROR}: Error`,
-      ).choices(Object.values(TransactionStatus).map((x) => `${x}`)),
+          `  ${TransactionStatus.ERROR}: Error\n`,
+      ).choices(enumValues(TransactionStatus)),
     )
     .addOption(
       new Option(
@@ -139,8 +140,8 @@ export function createNftsCommands(cli: Command) {
           `  ${TransactionType.MINT_NFT}: Mint NFT\n` +
           `  ${TransactionType.SET_COLLECTION_BASE_URI}: Set Collection Base URI\n` +
           `  ${TransactionType.BURN_NFT}: Burn NFT\n` +
-          `  ${TransactionType.NEST_MINT_NFT}: Nest Mint NFT`,
-      ).choices(Object.values(TransactionType).map((x) => `${x}`)),
+          `  ${TransactionType.NEST_MINT_NFT}: Nest Mint NFT\n`,
+      ).choices(enumValues(TransactionType)),
     )
     .action(async function () {
       await listCollectionTransactions(this.optsWithGlobals());

@@ -1,4 +1,4 @@
-import { Storage, exceptionHandler } from '@apillon/sdk';
+import { Storage, exceptionHandler, toInteger } from '@apillon/sdk';
 import { GlobalOptions } from '../../lib/types';
 import { paginate } from '../../lib/options';
 
@@ -31,9 +31,10 @@ export async function listObjects(optsWithGlobals: GlobalOptions) {
 export async function listFiles(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
-    const data = await storage
-      .bucket(optsWithGlobals.bucketUuid)
-      .listFiles(paginate(optsWithGlobals));
+    const data = await storage.bucket(optsWithGlobals.bucketUuid).listFiles({
+      ...paginate(optsWithGlobals),
+      fileStatus: toInteger(optsWithGlobals.fileStatus),
+    });
     data.items = data.items.map((w) => w.serialize());
     console.log(data);
   } catch (err) {
