@@ -14,6 +14,7 @@ export interface IApillonStatus {
 }
 
 export interface IApillonPagination {
+  search?: string;
   page?: number;
   limit?: number;
   orderBy?: string;

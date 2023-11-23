@@ -1,6 +1,7 @@
-import { CollectionType, EvmChain, NftCollection } from '../docs-index';
 import { ApillonConfig } from '../lib/apillon';
 import { Nft } from '../modules/nft/nft';
+import { NftCollection } from '../modules/nft/nft-collection';
+import { CollectionType, EvmChain } from '../types/nfts';
 import { getCollectionUUID, getConfig, getMintAddress } from './helpers/helper';
 
 describe('Nft tests', () => {
@@ -16,7 +17,7 @@ describe('Nft tests', () => {
 
   test('list nft collections', async () => {
     const nft = new Nft(config);
-    const collections = await nft.listCollections();
+    const { items: collections } = await nft.listCollections();
     expect(collections.length).toBeGreaterThan(0);
     expect(collections[0]).toBeInstanceOf(NftCollection);
   });
@@ -52,7 +53,7 @@ describe('Nft tests', () => {
 
   test('get nft collection transactions', async () => {
     const nft = new Nft(config);
-    const transactions = await nft
+    const { items: transactions } = await nft
       .collection(collectionUUID)
       .listTransactions();
     expect(transactions.length).toBeGreaterThan(0);

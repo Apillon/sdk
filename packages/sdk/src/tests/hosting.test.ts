@@ -4,6 +4,7 @@ import { Hosting } from '../modules/hosting/hosting';
 import { DeployToEnvironment } from '../types/hosting';
 import { getConfig, getWebsiteUUID } from './helpers/helper';
 import { HostingWebsite } from '../modules/hosting/hosting-website';
+import * as fs from 'fs';
 
 describe('Hosting tests', () => {
   let config: ApillonConfig;
@@ -40,13 +41,39 @@ describe('Hosting tests', () => {
     expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
   });
 
-  // test('get deployment status', async () => {
-  //   const hosting = new Hosting(config);
-  //   const website = hosting.website(websiteUUID);
-
-  //   const deployStatus = await website.deploy(DeployToEnvironment.TO_STAGING);
-  //   console.log(deployStatus);
-  // });
+  test.skip('upload files from buffer', async () => {
+    const hosting = new Hosting(config);
+    const html = fs.readFileSync(
+      resolve(__dirname, './helpers/website/index.html'),
+    );
+    const css = fs.readFileSync(
+      resolve(__dirname, './helpers/website/style.css'),
+    );
+    try {
+      console.time('File upload complete');
+      await hosting.website(websiteUUID).uploadFiles(
+        [
+          {
+            fileName: 'index.html',
+            contentType: 'text/html',
+            path: null,
+            content: html,
+          },
+          {
+            fileName: 'style.css',
+            contentType: 'text/css',
+            path: null,
+            content: css,
+          },
+        ],
+        { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+      );
+      console.timeEnd('File upload complete');
+      // console.log(content);
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
   test('list all deployments', async () => {
     const hosting = new Hosting(config);

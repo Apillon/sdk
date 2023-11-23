@@ -1,8 +1,11 @@
-import { IApillonPagination } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList, IApillonListResponse } from '../../types/apillon';
+import {
+  IApillonList,
+  IApillonListResponse,
+  IApillonPagination,
+} from '../../types/apillon';
 import { StorageBucket } from './storage-bucket';
 
 export class Storage extends ApillonModule {
@@ -24,10 +27,10 @@ export class Storage extends ApillonModule {
     const { data } = await ApillonApi.get<IApillonListResponse<any>>(url);
 
     return {
+      ...data,
       items: data.items.map(
         (bucket) => new StorageBucket(bucket.bucketUuid, bucket),
       ),
-      total: data.total,
     };
   }
 

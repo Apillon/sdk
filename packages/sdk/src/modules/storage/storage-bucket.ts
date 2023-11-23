@@ -1,6 +1,8 @@
 import { Directory } from './directory';
 import {
+  FileMetadata,
   IBucketFilesRequest,
+  IFileUploadRequest,
   IStorageBucketContentRequest,
   StorageContentType,
 } from '../../types/storage';
@@ -8,8 +10,8 @@ import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
-import { ApillonModel } from '../../docs-index';
-import { uploadFilesFromFolder } from '../../util/file-utils';
+import { uploadFiles } from '../../util/file-utils';
+import { ApillonModel } from '../../lib/apillon';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -46,7 +48,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * Gets contents of a bucket.
    */
-  async getObjects(
+  async listObjects(
     params?: IStorageBucketContentRequest,
   ): Promise<IApillonList<File | Directory>> {
     const content = [];
@@ -60,9 +62,7 @@ export class StorageBucket extends ApillonModel {
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
         const file = item as File;
-        this.content.push(
-          new File(this.uuid, file.directoryUuid, file.uuid, file),
-        );
+        content.push(new File(this.uuid, file.directoryUuid, file.uuid, file));
       } else {
         const directory = new Directory(
           this.uuid,
@@ -79,7 +79,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * Gets all files in a bucket.
    */
-  async getFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
+  async listFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(
       `/storage/buckets/${this.uuid}/files`,
       params,
@@ -89,7 +89,7 @@ export class StorageBucket extends ApillonModel {
     >(url);
 
     return {
-      total: data.total,
+      ...data,
       items: data.items.map(
         (file) => new File(this.uuid, file.directoryUuid, file.fileUuid, file),
       ),
@@ -97,11 +97,27 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
-   * Uploads files inside a folder via path.
+   * Uploads files inside a local folder via path.
    * @param folderPath Path to the folder to upload.
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
    */
-  public async uploadFromFolder(folderPath: string): Promise<void> {
-    await uploadFilesFromFolder(folderPath, this.API_PREFIX);
+  public async uploadFromFolder(
+    folderPath: string,
+    params?: IFileUploadRequest,
+  ): Promise<void> {
+    await uploadFiles(folderPath, this.API_PREFIX, params);
+  }
+
+  /**
+   * Uploads files to the bucket.
+   * @param {FileMetadata[]} files - The files to be uploaded
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
+   */
+  public async uploadFiles(
+    files: FileMetadata[],
+    params?: IFileUploadRequest,
+  ): Promise<void> {
+    await uploadFiles(null, this.API_PREFIX, params, files);
   }
 
   /**
