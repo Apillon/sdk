@@ -6,11 +6,11 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "bugs": {
-    "url": "https://github.com/Apillon-web3/sdk/issues"
+    "url": "https://github.com/Apillon/sdk/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Apillon-web3/sdk"
+    "url": "https://github.com/Apillon/sdk"
   },
   "homepage": "https://wiki.apillon.io",
   "declaration": true,
