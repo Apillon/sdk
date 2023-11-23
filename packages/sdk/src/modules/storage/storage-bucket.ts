@@ -1,6 +1,8 @@
 import { Directory } from './directory';
 import {
+  FileMetadata,
   IBucketFilesRequest,
+  IFileUploadRequest,
   IStorageBucketContentRequest,
   StorageContentType,
 } from '../../types/storage';
@@ -9,7 +11,7 @@ import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonListResponse } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonModel } from '../../docs-index';
-import { uploadFilesFromFolder } from '../../util/file-utils';
+import { uploadFiles } from '../../util/file-utils';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -93,11 +95,27 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
-   * Uploads files inside a folder via path.
+   * Uploads files inside a local folder via path.
    * @param folderPath Path to the folder to upload.
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
    */
-  public async uploadFromFolder(folderPath: string): Promise<void> {
-    await uploadFilesFromFolder(folderPath, this.API_PREFIX);
+  public async uploadFromFolder(
+    folderPath: string,
+    params?: IFileUploadRequest,
+  ): Promise<void> {
+    await uploadFiles(folderPath, this.API_PREFIX, params);
+  }
+
+  /**
+   * Uploads files to the bucket.
+   * @param {FileMetadata[]} files - The files to be uploaded
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
+   */
+  public async uploadFiles(
+    files: FileMetadata[],
+    params?: IFileUploadRequest,
+  ): Promise<void> {
+    await uploadFiles(null, this.API_PREFIX, params, files);
   }
 
   /**

@@ -7,10 +7,14 @@ import {
   LogLevel,
 } from '../../types/apillon';
 import { Deployment } from './deployment';
-import { ApillonModel } from '../../docs-index';
+import {
+  ApillonModel,
+  FileMetadata,
+  IFileUploadRequest,
+} from '../../docs-index';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
-import { uploadFilesFromFolder } from '../../util/file-utils';
+import { uploadFiles } from '../../util/file-utils';
 
 export class HostingWebsite extends ApillonModel {
   /**
@@ -68,9 +72,25 @@ export class HostingWebsite extends ApillonModel {
   /**
    * Uploads website files inside a folder via path.
    * @param folderPath Path to the folder to upload.
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
    */
-  public async uploadFromFolder(folderPath: string): Promise<void> {
-    await uploadFilesFromFolder(folderPath, this.API_PREFIX);
+  public async uploadFromFolder(
+    folderPath: string,
+    params?: IFileUploadRequest,
+  ): Promise<void> {
+    await uploadFiles(folderPath, this.API_PREFIX, params);
+  }
+
+  /**
+   * Uploads files to the hosting bucket.
+   * @param {FileMetadata[]} files - The files to be uploaded
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
+   */
+  public async uploadFiles(
+    files: FileMetadata[],
+    params?: IFileUploadRequest,
+  ): Promise<void> {
+    await uploadFiles(null, this.API_PREFIX, params, files);
   }
 
   /**

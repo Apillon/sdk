@@ -24,7 +24,22 @@ await hosting.listWebsites({ orderBy: 'createdTime' });
 const webpage1 = hosting.website('uuid');
 await webpage1.get();
 
-await webpage1.uploadFromFolder('folder_path');
+// Upload files from local folder
+await webpage1.uploadFromFolder('./my-foler/files/');
+// Or alternatively, send file buffers as upload parameters
+await webpage1.uploadFiles(
+    [
+      {
+        fileName: 'index.html',
+        contentType: 'text/html',
+        path: null,
+        content: htmlBuffer,
+      },
+    ],
+    // Upload the files in a new subdirectory in the bucket instead of in the root of the bucket
+    { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+);
+
 await webpage1.deploy(DeployToEnvironment.TO_STAGING);
 await webpage1.listDeployments();
 const deployment = await webpage1.deployment(deployment_uuid).get();
@@ -45,11 +60,27 @@ Storage module encapsulates functionalities for Storage service available on Api
 
 ```ts
 import { Storage } from "@apillon/sdk";
+import * as fs from 'fs';
 
 const storage = new Storage({ apillonConfig });
 await storage.listBuckets({ limit: 5 });
 const bucket = storage.bucket('uuid');
-await bucket.uploadFromFolder('folder_path');
+
+// Upload files from local folder
+await bucket.uploadFromFolder('./my-foler/files/');
+// Or alternatively, send file buffers as upload parameters
+await bucket.uploadFiles(
+    [
+      {
+        fileName: 'index.html',
+        contentType: 'text/html',
+        path: null,
+        content: htmlBuffer,
+      },
+    ],
+    // Upload the files in a new subdirectory in the bucket instead of in the root of the bucket
+    { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+);
 await bucket.listObjects({
   directoryUuid,
   markedForDeletion: false,

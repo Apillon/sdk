@@ -3,6 +3,7 @@ import { ApillonConfig } from '../lib/apillon';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
 import { getBucketUUID, getConfig } from './helpers/helper';
+import * as fs from 'fs';
 
 describe('Storage tests', () => {
   let config: ApillonConfig;
@@ -74,12 +75,47 @@ describe('Storage tests', () => {
     expect(file.name).toBeTruthy();
   });
 
-  test.skip('upload files', async () => {
+  test.skip('upload files from folder', async () => {
     const storage = new Storage(config);
     try {
       const uploadDir = resolve(__dirname, './helpers/website/');
       console.time('File upload complete');
       await storage.bucket(bucketUUID).uploadFromFolder(uploadDir);
+      console.timeEnd('File upload complete');
+
+      // console.log(content);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  test.skip('upload files from buffer', async () => {
+    const storage = new Storage(config);
+    const html = fs.readFileSync(
+      resolve(__dirname, './helpers/website/index.html'),
+    );
+    const css = fs.readFileSync(
+      resolve(__dirname, './helpers/website/style.css'),
+    );
+    try {
+      console.time('File upload complete');
+      await storage.bucket(bucketUUID).uploadFiles(
+        [
+          {
+            fileName: 'index.html',
+            contentType: 'text/html',
+            path: null,
+            content: html,
+          },
+          {
+            fileName: 'style.css',
+            contentType: 'text/css',
+            path: null,
+            content: css,
+          },
+        ],
+        { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+      );
       console.timeEnd('File upload complete');
 
       // console.log(content);
