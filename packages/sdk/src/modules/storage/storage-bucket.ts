@@ -87,7 +87,7 @@ export class StorageBucket extends ApillonModel {
     const { data } = await ApillonApi.get<IApillonListResponse<File>>(url);
 
     return {
-      total: data.total,
+      ...data,
       items: data.items.map(
         (file) => new File(this.uuid, file.directoryUuid, file.uuid, file),
       ),

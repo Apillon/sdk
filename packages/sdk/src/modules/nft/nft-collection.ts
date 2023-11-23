@@ -227,7 +227,7 @@ export class NftCollection extends ApillonModel {
    */
   public async listTransactions(
     params?: ITransactionFilters,
-  ): Promise<ITransaction[]> {
+  ): Promise<IApillonList<ITransaction>> {
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/transactions`,
       params,
@@ -237,9 +237,12 @@ export class NftCollection extends ApillonModel {
       IApillonResponse<IApillonList<ITransaction>>
     >(url);
 
-    return data.items.map((t) =>
-      JSON.parse(JSON.stringify(t, this.serializeFilter)),
-    );
+    return {
+      ...data,
+      items: data.items.map((t) =>
+        JSON.parse(JSON.stringify(t, this.serializeFilter)),
+      ),
+    };
   }
 
   protected override serializeFilter(key: string, value: any) {
@@ -250,6 +253,7 @@ export class NftCollection extends ApillonModel {
       transactionType: TransactionType[serialized],
       transactionStatus: TransactionStatus[serialized],
       chain: EvmChain[serialized],
+      chainId: EvmChain[serialized],
     };
     return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }

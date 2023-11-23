@@ -10,10 +10,9 @@ import { paginate } from '../../lib/options';
 export async function listWebsites(optsWithGlobals: GlobalOptions) {
   const hosting = new Hosting(optsWithGlobals);
   try {
-    const { items: websites } = await hosting.listWebsites(
-      paginate(optsWithGlobals),
-    );
-    console.log(websites.map((w) => w.serialize()));
+    const data = await hosting.listWebsites(paginate(optsWithGlobals));
+    data.items = data.items.map((w) => w.serialize());
+    console.log(data);
   } catch (err) {
     exceptionHandler(err);
   }
@@ -84,10 +83,11 @@ export async function listDeployments(optsWithGlobals: GlobalOptions) {
     deploymentStatus: toInteger(optsWithGlobals.status),
   };
   try {
-    const { items: deployments } = await hosting
+    const data = await hosting
       .website(optsWithGlobals.uuid)
       .listDeployments(params);
-    console.log(deployments.map((d) => d.serialize()));
+    data.items = data.items.map((w) => w.serialize());
+    console.log(data);
   } catch (err) {
     exceptionHandler(err);
   }

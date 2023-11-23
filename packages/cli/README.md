@@ -88,21 +88,23 @@ apillon hosting list-websites --search "My-Website" --limit 1
 
 **Example response**
 ```json
-[
-  {
-    "createTime": "2023-10-25T10:41:06.000Z",
-    "updateTime": "2023-10-26T12:41:41.000Z",
-    "uuid": "5b908779-3687-4592-a073-9bebbf86afe2",
-    "name": "My Website",
-    "description": "My own website",
-    "domain": "https://my-website.com",
-    "bucketUuid": "47251013-37c6-4b30-be2b-8583dea25c4c",
-    "ipnsStaging": "k2k4r8ob2rf35wbmhhtzbq6nd4lhwv4qphwv9zl5smbzkuakwd50m6fd",
-    "ipnsProduction": "k2k4r8pple7phwm9azqgxshxdzyb1fs4n1hy8k5kcq5bkm5jnpznthrb"
-  }
-  ...
-]
-
+{
+  "items": [
+    {
+      "createTime": "2023-10-25T10:41:06.000Z",
+      "updateTime": "2023-10-26T12:41:41.000Z",
+      "uuid": "5b908779-3687-4592-a073-9bebbf86afe2",
+      "name": "My Website",
+      "description": "My own website",
+      "domain": "https://my-website.com",
+      "bucketUuid": "47251013-37c6-4b30-be2b-8583dea25c4c",
+      "ipnsStaging": "k2k4r8ob2rf35wbmhhtzbq6nd4lhwv4qphwv9zl5smbzkuakwd50m6fd",
+      "ipnsProduction": "k2k4r8pple7phwm9azqgxshxdzyb1fs4n1hy8k5kcq5bkm5jnpznthrb"
+    },
+    ...
+  ],
+  "total": 3
+}
 ```
 
 #### `hosting get-website`
@@ -190,21 +192,24 @@ apillon hosting list-deployments --uuid "58a16026-1356-405b-97f9-efcc9dfac1dd" -
 
 **Example response**
 ```json
-[
-  {
-    "createTime": "2023-11-14T12:09:20.000Z",
-    "updateTime": "2023-11-14T12:09:42.000Z",
-    "uuid": "9b677fe2-1bb1-44d9-8956-e7749452f02d",
-    "websiteUuid": "58a16026-1356-405b-97f9-efcc9dfac1dd",
-    "cid": "QmPPBMsFccJVaLwvdhSh3zMbfEvonxoNSBLVd1kWK34Nps",
-    "cidv1": "bafybeizpqaa5xb5r46d2voj35qtokhb3c3bekofe5fnistbs7s3g7nnvmq",
-    "environment": "DIRECTLY_TO_PRODUCTION",
-    "deploymentStatus": "SUCCESSFUL",
-    "size": 7162,
-    "number": 1
-  }
-  ...
-]
+{
+  "items": [
+    {
+      "createTime": "2023-11-14T12:09:20.000Z",
+      "updateTime": "2023-11-14T12:09:42.000Z",
+      "uuid": "9b677fe2-1bb1-44d9-8956-e7749452f02d",
+      "websiteUuid": "58a16026-1356-405b-97f9-efcc9dfac1dd",
+      "cid": "QmPPBMsFccJVaLwvdhSh3zMbfEvonxoNSBLVd1kWK34Nps",
+      "cidv1": "bafybeizpqaa5xb5r46d2voj35qtokhb3c3bekofe5fnistbs7s3g7nnvmq",
+      "environment": "DIRECTLY_TO_PRODUCTION",
+      "deploymentStatus": "SUCCESSFUL",
+      "size": 7162,
+      "number": 1
+    },
+    ...
+  ],
+  "total": 7
+}
 ```
 
 #### `hosting get-deployment`
@@ -231,17 +236,20 @@ apillon storage list-buckets
 
 **Example response**
 ```json
-[
-  {
-    "createTime": "2023-11-15T09:56:53.000Z",
-    "updateTime": "2023-11-23T08:55:46.000Z",
-    "uuid": "91c57d55-e8e4-40b7-ad6a-81a82831bfb3",
-    "name": "My Storage Bucket",
-    "description": "For storing my images and videos",
-    "size": 23576
-  }
-  ...
-]
+{
+  "items": [
+    {
+      "createTime": "2023-11-15T09:56:53.000Z",
+      "updateTime": "2023-11-23T08:55:46.000Z",
+      "uuid": "91c57d55-e8e4-40b7-ad6a-81a82831bfb3",
+      "name": "My Storage Bucket",
+      "description": "For storing my images and videos",
+      "size": 23576
+    },
+    ...
+  ],
+  "total": 2
+}
 ```
 
 #### `storage list-objects`
@@ -260,23 +268,26 @@ apillon storage list-objects --bucket-uuid "123e4567-e89b-12d3-a456-426655440000
 **Example response**
 
 ```json
-[
-  {
-    "createTime": "2023-11-23T08:55:45.000Z",
-    "updateTime": "2023-11-23T08:55:46.000Z",
-    "uuid": "14a7a891-877c-41ac-900c-7382347e1e77",
-    "name": "index.html",
-    "CID": "QmWX5CcNvnaVmgGBn4o82XW9uW1uLvsHQDdNrANrQeSdXm",
-    "CIDv1": "bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima",
-    "status": "AVAILABLE_ON_IPFS_AND_REPLICATED",
-    "directoryUuid": null,
-    "type": "FILE",
-    "link": "https://ipfs-eu1.apillon.io/ipfs/bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaWQiOiJiYWZ5YmVpZHpyZDdwNWRkajY3ajJtdWQzMmNibnplMmM3YjJwdmJobjdmbGZkMjJzaG56dXZnbmltYSIsInByb2plY3RfdXVpZCI6IjgwOWQzYjljLTMxNjMtNDgzMC1hZjg2LTJiNTMxYmZmNTUyZCIsImlhdCI6MTcwMDczNjM5Mywic3ViIjoiSVBGUy10b2tlbiJ9.nmq7BYdEYGXW6kHO9_ExOr3i5OBesWkN4TDI4QG6Fok",
-    "path": null,
-    "bucketUuid": "91c57d55-e8e4-40b7-ad6a-81a82831bfb3"
-  }
-  ...
-]
+{
+  "items": [
+    {
+      "createTime": "2023-11-23T08:55:45.000Z",
+      "updateTime": "2023-11-23T08:55:46.000Z",
+      "uuid": "14a7a891-877c-41ac-900c-7382347e1e77",
+      "name": "index.html",
+      "CID": "QmWX5CcNvnaVmgGBn4o82XW9uW1uLvsHQDdNrANrQeSdXm",
+      "CIDv1": "bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima",
+      "status": "AVAILABLE_ON_IPFS_AND_REPLICATED",
+      "directoryUuid": null,
+      "type": "FILE",
+      "link": "https://ipfs-eu1.apillon.io/ipfs/bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaWQiOiJiYWZ5YmVpZHpyZDdwNWRkajY3ajJtdWQzMmNibnplMmM3YjJwdmJobjdmbGZkMjJzaG56dXZnbmltYSIsInByb2plY3RfdXVpZCI6IjgwOWQzYjljLTMxNjMtNDgzMC1hZjg2LTJiNTMxYmZmNTUyZCIsImlhdCI6MTcwMDczNjM5Mywic3ViIjoiSVBGUy10b2tlbiJ9.nmq7BYdEYGXW6kHO9_ExOr3i5OBesWkN4TDI4QG6Fok",
+      "path": null,
+      "bucketUuid": "91c57d55-e8e4-40b7-ad6a-81a82831bfb3"
+    },
+    ...
+  ],
+  "total": 16
+}
 ```
 
 #### `storage list-files`
@@ -301,22 +312,25 @@ apillon storage list-files --bucket-uuid "123e4567-e89b-12d3-a456-426655440000" 
 
 **Example response**
 ```json
-[
-  {
-    "createTime": "2023-11-15T09:58:04.000Z",
-    "updateTime": "2023-11-15T09:58:10.000Z",
-    "name": "style.css",
-    "CID": "QmWX5CcNvnaVmgGBn4o82XW9uW1uLvsHQDdNrANrQeSdXm",
-    "CIDv1": "bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima",
-    "status": "AVAILABLE_ON_IPFS_AND_REPLICATED",
-    "directoryUuid": null,
-    "type": "FILE",
-    "link": "https://ipfs-eu1.apillon.io/ipfs/bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaWQiOiJiYWZ5YmVpZHpyZDdwNWRkajY3ajJtdWQzMmNibnplMmM3YjJwdmJobjdmbGZkMjJzaG56dXZnbmltYSIsInByb2plY3RfdXVpZCI6IjgwOWQzYjljLTMxNjMtNDgzMC1hZjg2LTJiNTMxYmZmNTUyZCIsImlhdCI6MTcwMDczNjM5Mywic3ViIjoiSVBGUy10b2tlbiJ9.nmq7BYdEYGXW6kHO9_ExOr3i5OBesWkN4TDI4QG6Fok",
-    "path": null,
-    "bucketUuid": "91c57d55-e8e4-40b7-ad6a-81a82831bfb3"
-  }
-  ...
-]
+{
+  "items": [
+    {
+      "createTime": "2023-11-15T09:58:04.000Z",
+      "updateTime": "2023-11-15T09:58:10.000Z",
+      "name": "style.css",
+      "CID": "QmWX5CcNvnaVmgGBn4o82XW9uW1uLvsHQDdNrANrQeSdXm",
+      "CIDv1": "bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima",
+      "status": "AVAILABLE_ON_IPFS_AND_REPLICATED",
+      "directoryUuid": null,
+      "type": "FILE",
+      "link": "https://ipfs-eu1.apillon.io/ipfs/bafybeidzrd7p5ddj67j2mud32cbnze2c7b2pvbhn7flfd22shnzuvgnima/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaWQiOiJiYWZ5YmVpZHpyZDdwNWRkajY3ajJtdWQzMmNibnplMmM3YjJwdmJobjdmbGZkMjJzaG56dXZnbmltYSIsInByb2plY3RfdXVpZCI6IjgwOWQzYjljLTMxNjMtNDgzMC1hZjg2LTJiNTMxYmZmNTUyZCIsImlhdCI6MTcwMDczNjM5Mywic3ViIjoiSVBGUy10b2tlbiJ9.nmq7BYdEYGXW6kHO9_ExOr3i5OBesWkN4TDI4QG6Fok",
+      "path": null,
+      "bucketUuid": "91c57d55-e8e4-40b7-ad6a-81a82831bfb3"
+    },
+    ...
+  ],
+  "total": 10
+}
 ```
 
 #### `storage upload`
@@ -381,34 +395,36 @@ apillon nfts list-collections --status 3
 **Example response**
 
 ```json
-[
-  {
-    "createTime": "2023-11-20T10:21:12.000Z",
-    "updateTime": "2023-11-20T14:12:33.000Z",
-    "uuid": "2cda3a9b-01b1-4b5e-9709-7087129d55d0",
-    "symbol": "SE",
-    "name": "SpaceExplorers",
-    "description": "A collection of unique space exploration NFTs.",
-    "collectionType": "GENERIC",
-    "maxSupply": 1000,
-    "baseUri": "https://moonbeamnfts.com/collections/spaceexplorers/",
-    "baseExtension": ".json",
-    "isSoulbound": false,
-    "isRevokable": false,
-    "drop": false,
-    "dropPrice": 0.05,
-    "dropStart": 1679875200,
-    "dropReserve": 100,
-    "royaltiesFees": 5,
-    "royaltiesAddress": "0xaz5Bh6E56c5d3B58c944542de2bF18E7F65eED82",
-    "collectionStatus": "TRANSFERRED",
-    "contractAddress": "0x4e22162A6d0c91a088Cb57A72aB976ccA2A96B25",
-    "transactionHash": null,
-    "deployerAddress": "0xba015fgc6d80378a9a95f1687e9960857593983b",
-    "chain": "MOONBASE"
-  }
-  ...
-]
+{
+  "items": [
+    {
+      "createTime": "2023-11-20T10:21:12.000Z",
+      "updateTime": "2023-11-20T14:12:33.000Z",
+      "uuid": "2cda3a9b-01b1-4b5e-9709-7087129d55d0",
+      "symbol": "SE",
+      "name": "SpaceExplorers",
+      "description": "A collection of unique space exploration NFTs.",
+      "collectionType": "GENERIC",
+      "maxSupply": 1000,
+      "baseUri": "https://moonbeamnfts.com/collections/spaceexplorers/",
+      "baseExtension": ".json",
+      "isSoulbound": false,
+      "isRevokable": false,
+      "drop": false,
+      "dropPrice": 0.05,
+      "dropStart": 1679875200,
+      "dropReserve": 100,
+      "royaltiesFees": 5,
+      "royaltiesAddress": "0xaz5Bh6E56c5d3B58c944542de2bF18E7F65eED82",
+      "collectionStatus": "TRANSFERRED",
+      "contractAddress": "0x4e22162A6d0c91a088Cb57A72aB976ccA2A96B25",
+      "transactionHash": null,
+      "deployerAddress": "0xba015fgc6d80378a9a95f1687e9960857593983b",
+      "chain": "MOONBASE"
+    }
+  ],
+  "total": 1
+}
 ```
 
 #### `nfts get-collection`
@@ -518,25 +534,28 @@ apillon nfts list-transactions --uuid "123e4567-e89b-12d3-a456-426655440000"
 **Example response**
 
 ```json
-[
-  {
-    "createTime": "2023-11-20T10:21:22.000Z",
-    "updateTime": "2023-11-20T10:23:31.000Z",
-    "chainId": 1287,
-    "transactionType": "DEPLOY_CONTRACT",
-    "transactionStatus": "CONFIRMED",
-    "transactionHash": "0xab99e630f9475df92768b1e5d73f43e291252d889dba81e8fcc0f0fbe690bc0b"
-  },
-  {
-    "createTime": "2023-11-20T11:55:13.000Z",
-    "updateTime": "2023-11-20T11:57:31.000Z",
-    "chainId": 1287,
-    "transactionType": "MINT_NFT",
-    "transactionStatus": "CONFIRMED",
-    "transactionHash": "0x1ecfeeaeddfa0a39fc2ae1ec755d2736b2577866089fe1d619c84690fbdac05a"
-  }
-  ...
-]
+{
+  "items": [
+    {
+      "createTime": "2023-11-20T10:21:22.000Z",
+      "updateTime": "2023-11-20T10:23:31.000Z",
+      "chainId": "MOONBEAM",
+      "transactionType": "DEPLOY_CONTRACT",
+      "transactionStatus": "CONFIRMED",
+      "transactionHash": "0xab99e630f9475df92768b1e5d73f43e291252d889dba81e8fcc0f0fbe690bc0b"
+    },
+    {
+      "createTime": "2023-11-20T11:55:13.000Z",
+      "updateTime": "2023-11-20T11:57:31.000Z",
+      "chainId": "MOONBEAM",
+      "transactionType": "MINT_NFT",
+      "transactionStatus": "CONFIRMED",
+      "transactionHash": "0x1ecfeeaeddfa0a39fc2ae1ec755d2736b2577866089fe1d619c84690fbdac05a"
+    },
+    ...
+  ],
+  "total": 4
+}
 ```
 
 ## Using in CI/CD tools

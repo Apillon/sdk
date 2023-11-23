@@ -135,10 +135,10 @@ export class HostingWebsite extends ApillonModel {
     >(url);
 
     return {
+      ...data,
       items: data.items.map(
         (item) => new Deployment(item.websiteUuid, item.deploymentUuid, item),
       ),
-      total: data.total,
     };
   }
 

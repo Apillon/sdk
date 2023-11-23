@@ -5,10 +5,9 @@ import { paginate } from '../../lib/options';
 export async function listBuckets(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
-    const { items: buckets } = await storage.listBuckets(
-      paginate(optsWithGlobals),
-    );
-    console.log(buckets.map((x) => x.serialize()));
+    const data = await storage.listBuckets(paginate(optsWithGlobals));
+    data.items = data.items.map((w) => w.serialize());
+    console.log(data);
   } catch (err) {
     exceptionHandler(err);
   }
@@ -17,14 +16,13 @@ export async function listBuckets(optsWithGlobals: GlobalOptions) {
 export async function listObjects(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
-    const { items: objects } = await storage
-      .bucket(optsWithGlobals.bucketUuid)
-      .listObjects({
-        ...paginate(optsWithGlobals),
-        directoryUuid: optsWithGlobals.directoryUuid,
-        markedForDeletion: !!optsWithGlobals.deleted,
-      });
-    console.log(objects.map((x) => x.serialize()));
+    const data = await storage.bucket(optsWithGlobals.bucketUuid).listObjects({
+      ...paginate(optsWithGlobals),
+      directoryUuid: optsWithGlobals.directoryUuid,
+      markedForDeletion: !!optsWithGlobals.deleted,
+    });
+    data.items = data.items.map((w) => w.serialize());
+    console.log(data);
   } catch (err) {
     exceptionHandler(err);
   }
@@ -33,10 +31,11 @@ export async function listObjects(optsWithGlobals: GlobalOptions) {
 export async function listFiles(optsWithGlobals: GlobalOptions) {
   const storage = new Storage(optsWithGlobals);
   try {
-    const { items: files } = await storage
+    const data = await storage
       .bucket(optsWithGlobals.bucketUuid)
       .listFiles(paginate(optsWithGlobals));
-    console.log(files.map((x) => x.serialize()));
+    data.items = data.items.map((w) => w.serialize());
+    console.log(data);
   } catch (err) {
     exceptionHandler(err);
   }

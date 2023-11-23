@@ -25,10 +25,10 @@ export class Hosting extends ApillonModule {
     );
 
     return {
+      ...data,
       items: data.items.map(
         (website) => new HostingWebsite(website['websiteUuid'], website),
       ),
-      total: data.total,
     };
   }
 
