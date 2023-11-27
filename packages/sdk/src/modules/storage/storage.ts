@@ -17,7 +17,7 @@ export class Storage extends ApillonModule {
   /**
    * Lists all buckets.
    * @param {ICollectionFilters} params Filter for listing collections.
-   * @returns Array of NftCollection.
+   * @returns Array of StorageBucket objects.
    */
   public async listBuckets(
     params?: IApillonPagination,

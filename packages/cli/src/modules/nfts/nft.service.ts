@@ -94,7 +94,7 @@ export async function nestMintCollectionNft(optsWithGlobals: GlobalOptions) {
         toInteger(optsWithGlobals.parentNft),
         toInteger(optsWithGlobals.quantity),
       );
-    if (data.status === 5) {
+    if (data.success) {
       console.log('NFT nest minted successfully');
     }
   } catch (e: any) {
@@ -109,7 +109,7 @@ export async function burnCollectionNft(optsWithGlobals: GlobalOptions) {
     const data = await nftService
       .collection(optsWithGlobals.uuid)
       .burn(optsWithGlobals.tokenId);
-    if (data.status === 5) {
+    if (data.success) {
       console.log('NFT burned successfully');
     }
   } catch (e: any) {

@@ -11,6 +11,7 @@ export interface IApillonResponse<D> {
 
 export interface IApillonStatus {
   status: number;
+  success: boolean;
 }
 
 export interface IApillonPagination {
