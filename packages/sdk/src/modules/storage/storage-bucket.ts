@@ -47,6 +47,7 @@ export class StorageBucket extends ApillonModel {
 
   /**
    * Gets contents of a bucket.
+   * @returns A a list of File and Directory objects.
    */
   async listObjects(
     params?: IStorageBucketContentRequest,

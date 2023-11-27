@@ -3,10 +3,30 @@ import { ApillonApi } from './apillon-api';
 import { ApillonLogger } from './apillon-logger';
 
 export interface ApillonConfig {
+  /**
+   * Your API key, generated through the Apillon dashboard
+   * @default env.APILLON_API_KEY
+   */
   key?: string;
+  /**
+   * Your API secret, generated through the Apillon dashboard
+   * @default env.APILLON_API_SECRET
+   */
   secret?: string;
+  /**
+   * The API URL to use for executing the queries and actions.
+   * @default https://api.apillon.io
+   */
   apiUrl?: string;
+  /**
+   * The level of logger output to use for the Apillon logger.
+   * @default ERROR
+   */
   logLevel?: LogLevel;
+  /**
+   * Used for CLI - indicates whether to output verbose logs
+   * @default false
+   */
   debug?: boolean;
 }
 
@@ -70,10 +90,16 @@ export class ApillonModel {
     return this;
   }
 
+  /**
+   * Convert object to JSON output, with unnecessary properties excluded
+   */
   public serialize() {
     return JSON.parse(JSON.stringify(this, this.serializeFilter));
   }
 
+  /**
+   * Define and exclude custom keys from serialized object
+   */
   protected serializeFilter(key: string, value: any) {
     const excludedKeys = ['API_PREFIX'];
     return excludedKeys.includes(key) ? undefined : value;
