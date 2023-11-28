@@ -30,7 +30,7 @@ export class File extends ApillonModel {
   public CIDv1: string = null;
 
   /**
-   * File status.
+   * File upload status.
    */
   public status: FileStatus = null;
 
