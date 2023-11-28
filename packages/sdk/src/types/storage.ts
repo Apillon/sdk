@@ -27,7 +27,7 @@ export interface FileMetadata {
   /**
    * File [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
    */
-  contentType: string;
+  contentType?: string;
   /**
    * Virtual file path. Empty for root. Must not contain fileName.
    *
@@ -35,7 +35,7 @@ export interface FileMetadata {
    *
    * For example, an images/icons path creates images directory in a bucket and icons directory inside it. File will then be created in the icons directory.
    */
-  path: string;
+  path?: string;
 }
 
 export interface IFileUploadRequest {
