@@ -1,48 +1,34 @@
 import {
   exceptionHandler,
   ICreateCollection,
-  Nfts,
-  toBoolean,
+  Nft,
   toInteger,
 } from '@apillon/sdk';
 import { readAndParseJson } from '../../lib/files';
-import { GlobalParams, Params } from '../../lib/types';
-
-function initNftService(options: GlobalParams) {
-  return new Nfts({
-    key: options.key,
-    secret: options.secret,
-    apiUrl: options?.apiUrl || undefined,
-  });
-}
+import { GlobalOptions } from '../../lib/types';
+import { paginate } from '../../lib/options';
 
 // COLLECTIONS
-export async function listCollections(
-  options: Params,
-  optsWithGlobals: GlobalParams,
-) {
-  const nftService = initNftService(optsWithGlobals);
+export async function listCollections(optsWithGlobals: GlobalOptions) {
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.listNftCollections({
-      collectionStatus: toInteger(options.status),
-      page: toInteger(options.page),
-      limit: toInteger(options.limit),
-      orderBy: options.orderBy,
-      desc: toBoolean(options.desc),
+    const data = await nftService.listCollections({
+      ...paginate(optsWithGlobals),
+      collectionStatus: toInteger(optsWithGlobals.status),
     });
-    console.log(data);
+    console.log(data.items.map((d) => d.serialize()));
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function getCollection(uuid: string, optsWithGlobals) {
-  const nftService = initNftService(optsWithGlobals);
+export async function getCollection(optsWithGlobals: GlobalOptions) {
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.getCollection(uuid);
-    console.log(data);
+    const data = await nftService.collection(optsWithGlobals.uuid).get();
+    console.log(data.serialize());
   } catch (e: any) {
     exceptionHandler(e);
   }
@@ -50,106 +36,97 @@ export async function getCollection(uuid: string, optsWithGlobals) {
 
 export async function createCollection(
   filePath: string,
-  optsWithGlobals: GlobalParams,
+  optsWithGlobals: GlobalOptions,
 ) {
   let createCollectionData;
   try {
     createCollectionData = readAndParseJson(filePath) as ICreateCollection;
   } catch (e) {
     if (e.code === 'ENOENT') {
-      console.error(`Error: File not found (${filePath}).`);
-      return;
+      return console.error(`Error: File not found (${filePath}).`);
     } else if (
       e.name === 'SyntaxError' &&
       e.message.includes('Unexpected end of JSON input')
     ) {
-      console.error(`Error: Failed to parse JSON file (${filePath}).`);
-      return;
+      return console.error(`Error: Failed to parse JSON file (${filePath}).`);
     } else {
-      console.error(e);
-      return;
+      return console.error(e);
     }
   }
   if (!createCollectionData) {
     return;
   }
 
-  const nftService = initNftService(optsWithGlobals);
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.createCollection(createCollectionData);
-    console.log(data);
+    const data = await nftService.create(createCollectionData);
+    console.log(data.serialize());
+    console.log('NFT collection created successfully!');
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function mintCollectionNft(
-  uuid: string,
-  options: Params,
-  optsWithGlobals: GlobalParams,
-) {
-  const nftService = initNftService(optsWithGlobals);
+export async function mintCollectionNft(optsWithGlobals: GlobalOptions) {
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.mintCollectionNft(uuid, {
-      receivingAddress: options.address,
-      quantity: toInteger(options.quantity),
-    });
-    console.log(data);
+    const data = await nftService
+      .collection(optsWithGlobals.uuid)
+      .mint(optsWithGlobals.address, toInteger(optsWithGlobals.quantity));
+    if (data.success) {
+      console.log('NFT minted successfully');
+    }
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function nestMintCollectionNft(
-  uuid: string,
-  options: Params,
-  optsWithGlobals: GlobalParams,
-) {
-  const nftService = initNftService(optsWithGlobals);
+export async function nestMintCollectionNft(optsWithGlobals: GlobalOptions) {
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.nestMintCollectionNft(uuid, {
-      parentCollectionUuid: options.parentCollectionUuid,
-      parentNftId: toInteger(options.parentNftId),
-      quantity: toInteger(options.quantity),
-    });
-    console.log(data);
+    const data = await nftService
+      .collection(optsWithGlobals.uuid)
+      .nestMint(
+        optsWithGlobals.parentCollection,
+        toInteger(optsWithGlobals.parentNft),
+        toInteger(optsWithGlobals.quantity),
+      );
+    if (data.success) {
+      console.log('NFT nest minted successfully');
+    }
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
-export async function burnCollectionNft(
-  uuid: string,
-  options: Params,
-  optsWithGlobals: GlobalParams,
-) {
-  const nftService = initNftService(optsWithGlobals);
+export async function burnCollectionNft(optsWithGlobals: GlobalOptions) {
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.burnCollectionNft(uuid, {
-      tokenId: toInteger(options.tokenId),
-    });
-    console.log(data);
+    const data = await nftService
+      .collection(optsWithGlobals.uuid)
+      .burn(optsWithGlobals.tokenId);
+    if (data.success) {
+      console.log('NFT burned successfully');
+    }
   } catch (e: any) {
     exceptionHandler(e);
   }
 }
 
 export async function transferCollectionOwnership(
-  uuid: string,
-  options: Params,
-  optsWithGlobals: GlobalParams,
+  optsWithGlobals: GlobalOptions,
 ) {
-  const nftService = initNftService(optsWithGlobals);
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.transferCollectionOwnership(uuid, {
-      address: options.address,
-    });
-    console.log(data);
+    await nftService
+      .collection(optsWithGlobals.uuid)
+      .transferOwnership(optsWithGlobals.address);
+    console.log('NFT ownership transfered successfully');
   } catch (e: any) {
     exceptionHandler(e);
   }
@@ -157,21 +134,18 @@ export async function transferCollectionOwnership(
 
 // TRANSACTIONS
 export async function listCollectionTransactions(
-  uuid: string,
-  options: Params,
-  optsWithGlobals: GlobalParams,
+  optsWithGlobals: GlobalOptions,
 ) {
-  const nftService = initNftService(optsWithGlobals);
+  const nftService = new Nft(optsWithGlobals);
 
   try {
-    const data = await nftService.listCollectionTransactions(uuid, {
-      transactionStatus: toInteger(options.status),
-      transactionType: toInteger(options.type),
-      page: toInteger(options.page),
-      limit: toInteger(options.limit),
-      orderBy: options.orderBy,
-      desc: toBoolean(options.desc),
-    });
+    const data = await nftService
+      .collection(optsWithGlobals.uuid)
+      .listTransactions({
+        ...paginate(optsWithGlobals),
+        transactionStatus: toInteger(optsWithGlobals.status),
+        transactionType: toInteger(optsWithGlobals.type),
+      });
     console.log(data);
   } catch (e: any) {
     exceptionHandler(e);

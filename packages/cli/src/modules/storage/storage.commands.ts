@@ -1,32 +1,92 @@
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
+import { addPaginationOptions } from '../../lib/options';
+import {
+  listBuckets,
+  listObjects,
+  listFiles,
+  uploadFromFolder,
+  getFile,
+  deleteFile,
+} from './storage.service';
+import { FileStatus } from '@apillon/sdk';
+import { enumValues } from '../../lib/utils';
 
 export function createStorageCommands(cli: Command) {
-  const storage = cli.command('storage');
+  const storage = cli
+    .command('storage')
+    .description(
+      'Commands for manipulating buckets and files on Apillon storage.',
+    );
 
-  const storageUploadFolder = storage
-    .command('upload-folder')
-    // .requiredOption('-d <string>, --dir <string>', 'folder with website files')
-    .argument('[path]', 'path to folder with website files', '.')
-    .option('-p, --preview', 'deploys to staging environment')
-    .action(uploadFolder);
+  const listBucketsCommand = storage
+    .command('list-buckets')
+    .description('List project buckets')
+    .action(async function () {
+      await listBuckets(this.optsWithGlobals());
+    });
+  addPaginationOptions(listBucketsCommand);
 
-  const storageUploadFiles = storage
-    .command('upload-files')
-    // .requiredOption('-d <string>, --dir <string>', 'folder with website files')
-    .argument('[path]', 'path to folder with website files', '.')
-    .option('-p, --preview', 'deploys to staging environment')
-    .action(uploadFiles);
-}
+  const listObjectsCommand = storage
+    .command('list-objects')
+    .description('List files and folders in directory')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .option('-d, --directory-uuid <string>', 'Directory UUID')
+    .option('--deleted', 'Include deleted objects')
+    .action(async function () {
+      await listObjects(this.optsWithGlobals());
+    });
+  addPaginationOptions(listObjectsCommand);
 
-function uploadFolder(path: string) {
-  console.log(path);
-  console.log(this.opts().preview);
-  throw Error('Command not implemented!');
-}
+  const listFilesCommand = storage
+    .command('list-files')
+    .description('List all files from a bucket')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .addOption(
+      new Option(
+        '-s, --file-status <integer>',
+        'Filter by file status. Choose from:\n' +
+          `  ${FileStatus.UPLOAD_REQUEST_GENERATED}: Upload request generated\n` +
+          `  ${FileStatus.UPLOADED}: Uploaded\n` +
+          `  ${FileStatus.AVAILABLE_ON_IPFS}: Available on IPFS\n` +
+          `  ${FileStatus.AVAILABLE_ON_IPFS_AND_REPLICATED}: Available on IPFS and replicated\n`,
+      ).choices(enumValues(FileStatus)),
+    )
+    .action(async function () {
+      await listFiles(this.optsWithGlobals());
+    });
+  addPaginationOptions(listFilesCommand);
 
-// eslint-disable-next-line sonarjs/no-identical-functions
-function uploadFiles(path: string) {
-  console.log(path);
-  console.log(this.opts().preview);
-  throw Error('Command not implemented!');
+  storage
+    .command('upload')
+    .description('Upload contents of a local folder to bucket')
+    .argument('<path>', 'path to local folder')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of destination bucket')
+    .action(async function (path: string) {
+      await uploadFromFolder(path, this.optsWithGlobals());
+    });
+
+  storage
+    .command('get-file')
+    .description('Get file info')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .requiredOption('-f, --file-uuid <uuid>', 'UUID or CID of file to get')
+    .action(async function () {
+      await getFile(this.optsWithGlobals());
+    });
+
+  storage
+    .command('delete-file')
+    .description('Mark file for removal from IPFS storage')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .requiredOption('-f, --file-uuid <uuid>', 'UUID or CID of file to delete')
+    .action(async function () {
+      await deleteFile(this.optsWithGlobals());
+    });
+
+  /*
+    TODO:
+    - download file
+    - upload folder
+    - ipns methods
+  */
 }
