@@ -1,7 +1,7 @@
 {
   "name": "@apillon/cli",
   "description": "▶◀ Apillon CLI tools ▶◀",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -24,7 +24,7 @@
     "build": "tsc --declarationMap",
     "dev": "tsc --declarationMap --watch",
     "lint": "tsc --declarationMap && eslint \"{src,test}/**/*.ts\" --fix",
-    "cli-install": "tsc && npm i -g",
+    "cli-install": "tsc && npm uninstall -g ; npm i -g ",
     "publish-package": "npm publish"
   },
   "bin": {

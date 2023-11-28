@@ -1,7 +1,7 @@
 {
   "name": "@apillon/sdk",
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",

@@ -25,7 +25,7 @@ export async function deployWebsite(
   );
   const deploymentData = await hosting.getWebsiteDeployments(
     options.uuid,
-    deployment.id,
+    deployment.deploymentUuid,
   );
   console.log(deploymentData);
 }

@@ -50,6 +50,7 @@ export class ApillonModule {
 
     this.api.interceptors.response.use(
       (response) => {
+        // console.log(response);
         return response;
       },
       (error) => {
