@@ -51,9 +51,9 @@ export interface ICreateCollection {
   royaltiesAddress: string;
   royaltiesFees: number;
   drop: boolean;
-  dropStart: number;
-  dropPrice: number;
-  dropReserve: number;
+  dropStart?: number;
+  dropPrice?: number;
+  dropReserve?: number;
 }
 
 //OUTPUTS

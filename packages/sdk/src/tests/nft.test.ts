@@ -37,9 +37,6 @@ describe('Nft tests', () => {
       isRevokable: true,
       isSoulbound: false,
       drop: false,
-      dropStart: 0,
-      dropPrice: 0,
-      dropReserve: 0,
     });
     expect(collection.uuid).toBeDefined();
   });

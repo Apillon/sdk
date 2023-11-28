@@ -55,6 +55,10 @@ export class Nft extends ApillonModule {
    * @returns A NftCollection instance.
    */
   public async create(data: ICreateCollection) {
+    // If not drop, set drop properties to default 0
+    if (!data.drop) {
+      data.dropStart = data.dropPrice = data.dropReserve = 0;
+    }
     const { data: response } = await ApillonApi.post<
       IApillonResponse<ICollection>
     >(this.API_PREFIX, data);
