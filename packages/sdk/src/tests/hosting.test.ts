@@ -56,13 +56,11 @@ describe('Hosting tests', () => {
           {
             fileName: 'index.html',
             contentType: 'text/html',
-            path: null,
             content: html,
           },
           {
             fileName: 'style.css',
             contentType: 'text/css',
-            path: null,
             content: css,
           },
         ],
