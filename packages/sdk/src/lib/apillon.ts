@@ -32,9 +32,19 @@ export interface ApillonConfig {
 
 export class ApillonModule {
   public constructor(config?: ApillonConfig) {
-    ApillonApi.initialize(config);
+    const defaultConfig: ApillonConfig = {
+      key: process.env.APILLON_API_KEY,
+      secret: process.env.APILLON_API_SECRET,
+      apiUrl: process.env.APILLON_API_URL || 'https://api.apillon.io',
+      logLevel: LogLevel.ERROR,
+      debug: false,
+    };
+
+    const mergedConfig = { ...defaultConfig, ...config };
+
+    ApillonApi.initialize(mergedConfig);
     ApillonLogger.initialize(
-      config.debug ? LogLevel.VERBOSE : config.logLevel || LogLevel.ERROR,
+      mergedConfig.debug ? LogLevel.VERBOSE : mergedConfig.logLevel,
     );
   }
 }
