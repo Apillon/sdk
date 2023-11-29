@@ -11,7 +11,6 @@
     "test": "npx turbo run test",
     "cli-install": "npx turbo run cli-install",
     "dev": "npx turbo run dev",
-    "publish-all": "npx turbo run publish-package",
     "publish-beta": "npx turbo run publish-beta",
     "build": "npx turbo run build",
     "lint": "npx turbo run lint"

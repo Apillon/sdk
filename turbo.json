@@ -19,13 +19,6 @@
       "dependsOn": [],
       "outputs": []
     },
-    "publish-package": {
-      "dependsOn": [
-        "^build",
-        "^publish-package"
-      ],
-      "outputs": []
-    },
     "publish-beta": {
       "dependsOn": [
         "^build",
