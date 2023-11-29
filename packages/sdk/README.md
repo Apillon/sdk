@@ -73,7 +73,6 @@ import * as fs from 'fs';
 const hosting = new Hosting({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  apiUrl: 'https://api.apillon.io',
   logLevel: LogLevel.VERBOSE,
 });
 await hosting.listWebsites({ orderBy: 'createTime' });
@@ -124,7 +123,6 @@ import * as fs from 'fs';
 const storage = new Storage({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  apiUrl: 'https://api.apillon.io',
   logLevel: LogLevel.VERBOSE,
 });
 await storage.listBuckets({ limit: 5 });
@@ -178,7 +176,6 @@ import {
 const nft = new Nft({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  apiUrl: 'https://api.apillon.io',
   logLevel: LogLevel.VERBOSE,
 });
 await nft.create({

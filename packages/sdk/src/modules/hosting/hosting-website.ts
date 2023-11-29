@@ -103,12 +103,12 @@ export class HostingWebsite extends ApillonModel {
       })`,
     );
 
-    ApillonLogger.logWithTime('Deploy start');
+    ApillonLogger.logWithTime('Initiating deployment');
     const { data } = await ApillonApi.post<any>(`${this.API_PREFIX}/deploy`, {
       environment: toEnvironment,
     });
 
-    ApillonLogger.logWithTime('Deploy complete');
+    ApillonLogger.logWithTime('Deployment in progress');
 
     return data;
   }

@@ -9,7 +9,6 @@ export function getConfig(): ApillonConfig {
   dotenv.config({ path: envPath });
 
   return {
-    apiUrl: process.env['APILLON_API_URL'],
     secret: process.env['APILLON_API_SECRET'],
     key: process.env['APILLON_API_KEY'],
     logLevel: LogLevel.VERBOSE,
