@@ -39,10 +39,10 @@ async function uploadFilesToS3(
   for (const link of uploadLinks) {
     // console.log(link.url);
     const file = files.find(
-      (x) => x.fileName === link.fileName && x.path === link.path,
+      (x) => x.fileName === link.fileName && (!x.path || x.path === link.path),
     );
     if (!file) {
-      throw new Error(`Cant find file ${link.path}${link.fileName}!`);
+      throw new Error(`Can't find file ${link.path}${link.fileName}!`);
     }
     uploadWorkers.push(
       new Promise<void>(async (resolve, reject) => {
