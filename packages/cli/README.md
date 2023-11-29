@@ -34,8 +34,6 @@ npx @apillon/cli <command> [options]
 
 ### Global Options
 
-- `--api-url <api url>`: Apillon API URL (default: Production API URL, can be set via the `APILLON_API_URL` environment
-  variable).
 - `--key <api key>`: Apillon API key (can be set via the `APILLON_API_KEY` environment variable).
 - `--secret <api secret>`: Apillon API secret (can be set via the `APILLON_API_SECRET` environment variable).
 - `--debug`: Output execution logs when running commands.
@@ -43,9 +41,8 @@ npx @apillon/cli <command> [options]
 
 ### Environment Variables
 
-You can use environment variables to set the API URL, API key, and API secret:
+You can use environment variables to set an API key, and an API secret:
 
-- `APILLON_API_URL`: Apillon API URL.
 - `APILLON_API_KEY`: Apillon API key.
 - `APILLON_API_SECRET`: Apillon API secret.
 

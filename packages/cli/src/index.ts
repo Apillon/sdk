@@ -31,12 +31,6 @@ cli.addOption(
     .env('APILLON_API_SECRET')
     .makeOptionMandatory(),
 );
-cli.addOption(
-  new Option('--api-url <api url>', 'Apillon API secret')
-    .env('APILLON_API_URL')
-    .default('https://api.apillon.io', 'Production API url')
-    .makeOptionMandatory(),
-);
 
 cli.addOption(
   new Option('--debug', 'Output debug messages').env('APILLON_DEBUG'),

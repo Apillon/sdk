@@ -5,6 +5,5 @@ export interface Options {
 export interface GlobalOptions {
   key: string;
   secret: string;
-  apiUrl?: string;
   [key: string]: string;
 }

@@ -26,6 +26,13 @@
       ],
       "outputs": []
     },
+    "publish-beta": {
+      "dependsOn": [
+        "^build",
+        "^publish-beta"
+      ],
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },

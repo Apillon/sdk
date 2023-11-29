@@ -1,6 +1,6 @@
 {
   "name": "apillon-web3-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Monorepo for Apillon tools",
   "author": "Apillon",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "cli-install": "npx turbo run cli-install",
     "dev": "npx turbo run dev",
     "publish-all": "npx turbo run publish-package",
+    "publish-beta": "npx turbo run publish-beta",
     "build": "npx turbo run build",
     "lint": "npx turbo run lint"
   },
