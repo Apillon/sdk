@@ -78,15 +78,9 @@ export async function uploadFiles(
   files?: FileMetadata[],
 ): Promise<void> {
   if (folderPath) {
-    ApillonLogger.log(
-      `Preparing to upload files from ${folderPath}...`,
-      LogLevel.VERBOSE,
-    );
+    ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {
-    ApillonLogger.log(
-      `Preparing to upload ${files.length} files...`,
-      LogLevel.VERBOSE,
-    );
+    ApillonLogger.log(`Preparing to upload ${files.length} files...`);
   } else {
     throw new Error('Invalid upload parameters received');
   }
@@ -95,12 +89,12 @@ export async function uploadFiles(
     try {
       files = listFilesRecursive(folderPath);
     } catch (err) {
-      console.error(err);
+      ApillonLogger.log(err.message, LogLevel.ERROR);
       throw new Error(`Error reading files in ${folderPath}`);
     }
   }
 
-  console.log(`Total files to upload: ${files.length}`);
+  ApillonLogger.log(`Total files to upload: ${files.length}`);
 
   // Split files into chunks for parallel uploading
   const fileChunkSize = 50;

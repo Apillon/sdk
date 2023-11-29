@@ -35,12 +35,15 @@ export async function deployWebsite(
   const hosting = new Hosting(optsWithGlobals);
   try {
     const website = hosting.website(optsWithGlobals.uuid);
+
+    console.log(`Uploading files from folder: ${path}`);
     await website.uploadFromFolder(path);
     const deployment = await website.deploy(
       optsWithGlobals.preview
         ? DeployToEnvironment.TO_STAGING
         : DeployToEnvironment.DIRECTLY_TO_PRODUCTION,
     );
+
     console.log(`Deployment started!`);
     const deploymentData = await website
       .deployment(deployment.deploymentUuid)
