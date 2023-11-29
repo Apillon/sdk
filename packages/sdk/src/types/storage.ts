@@ -58,3 +58,8 @@ export interface IFileUploadRequest {
    */
   directoryPath: string;
 }
+
+export interface IFileUploadResponse {
+  files: FileMetadata[];
+  sessionUuid: string;
+}

@@ -48,6 +48,7 @@ export async function uploadFromFolder(
 ) {
   const storage = new Storage(optsWithGlobals);
   try {
+    console.log(`Uploading files from folder: ${path}`);
     await storage.bucket(optsWithGlobals.bucketUuid).uploadFromFolder(path);
   } catch (err) {
     exceptionHandler(err);

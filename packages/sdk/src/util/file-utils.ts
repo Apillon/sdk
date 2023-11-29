@@ -4,10 +4,15 @@ import * as path from 'path';
 import axios from 'axios';
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
-import { FileMetadata, IFileUploadRequest } from '../types/storage';
-import { LogLevel } from '../types/apillon';
+import {
+  FileMetadata,
+  IFileUploadRequest,
+  IFileUploadResponse,
+} from '../types/storage';
+import { IApillonResponse, LogLevel } from '../types/apillon';
+import { randomBytes } from 'crypto';
 
-export function listFilesRecursive(
+function listFilesRecursive(
   folderPath: string,
   fileList = [],
   relativePath = '',
@@ -24,17 +29,20 @@ export function listFilesRecursive(
   return fileList.sort((a, b) => a.fileName.localeCompare(b.fileName));
 }
 
-export async function uploadFilesToS3(uploadLinks: any[], files: any[]) {
+async function uploadFilesToS3(
+  uploadLinks: (FileMetadata & { url?: string })[],
+  files: (FileMetadata & { index?: string })[],
+) {
   const s3Api = axios.create();
   const uploadWorkers = [];
 
   for (const link of uploadLinks) {
     // console.log(link.url);
     const file = files.find(
-      (x) => x.fileName === link.fileName && x.path === link.path,
+      (x) => x.fileName === link.fileName && (!x.path || x.path === link.path),
     );
     if (!file) {
-      throw new Error(`Cant find file ${link.path}${link.fileName}!`);
+      throw new Error(`Can't find file ${link.path}${link.fileName}!`);
     }
     uploadWorkers.push(
       new Promise<void>(async (resolve, reject) => {
@@ -48,12 +56,12 @@ export async function uploadFilesToS3(uploadLinks: any[], files: any[]) {
             await s3Api.put(link.url, data);
             // console.log(respS3);
 
-            console.log(`File uploaded: ${file.fileName} `);
+            ApillonLogger.log(`File uploaded: ${file.fileName}`);
             resolve();
           });
         } else if (file.content) {
           await s3Api.put(link.url, file.content);
-          console.log(`File uploaded: ${file.fileName} `);
+          ApillonLogger.log(`File uploaded: ${file.fileName}`);
           resolve();
         }
       }),
@@ -70,15 +78,9 @@ export async function uploadFiles(
   files?: FileMetadata[],
 ): Promise<void> {
   if (folderPath) {
-    ApillonLogger.log(
-      `Preparing to upload files from ${folderPath}...`,
-      LogLevel.VERBOSE,
-    );
+    ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {
-    ApillonLogger.log(
-      `Preparing to upload ${files.length} files...`,
-      LogLevel.VERBOSE,
-    );
+    ApillonLogger.log(`Preparing to upload ${files.length} files...`);
   } else {
     throw new Error('Invalid upload parameters received');
   }
@@ -87,49 +89,59 @@ export async function uploadFiles(
     try {
       files = listFilesRecursive(folderPath);
     } catch (err) {
-      console.error(err);
+      ApillonLogger.log(err.message, LogLevel.ERROR);
       throw new Error(`Error reading files in ${folderPath}`);
     }
   }
 
   ApillonLogger.log(`Total files to upload: ${files.length}`);
 
-  const { data } = await ApillonApi.post<any>(`${apiPrefix}/upload`, {
-    files,
-  });
-
-  const fileChunks = chunkify(
-    files,
-    data.files.sort((a, b) => a.fileName.localeCompare(b.fileName)),
-  );
+  // Split files into chunks for parallel uploading
+  const fileChunkSize = 50;
+  const sessionUuid = uuidv4();
 
   await Promise.all(
-    fileChunks.map(({ chunkFiles, chunkLinks }) =>
-      uploadFilesToS3(chunkLinks, chunkFiles),
-    ),
+    chunkify(files, fileChunkSize).map(async (fileGroup) => {
+      const { data } = await ApillonApi.post<
+        IApillonResponse<IFileUploadResponse>
+      >(`${apiPrefix}/upload`, {
+        files: fileGroup,
+        sessionUuid,
+      });
+
+      await uploadFilesToS3(data.files, fileGroup);
+    }),
   );
-  ApillonLogger.logWithTime('File upload complete');
+
+  ApillonLogger.logWithTime('File upload complete.');
 
   ApillonLogger.log('Closing upload session...');
-  const { data: endSession } = await ApillonApi.post<any>(
-    `${apiPrefix}/upload/${data.sessionUuid}/end`,
-    params,
-  );
+  await ApillonApi.post<any>(`${apiPrefix}/upload/${sessionUuid}/end`, params);
   ApillonLogger.logWithTime('Session ended.');
-
-  if (!endSession) {
-    throw new Error('Failure when trying to end file upload session');
-  }
 }
 
-function chunkify(files: any[], links: any[], chunkSize = 10) {
+function chunkify(files: FileMetadata[], chunkSize = 10): FileMetadata[][] {
   // Divide files into chunks for parallel processing and uploading
-  const fileChunks = [];
+  const fileChunks: FileMetadata[][] = [];
   for (let i = 0; i < files.length; i += chunkSize) {
-    const chunkFiles = files.slice(i, i + chunkSize);
-    const chunkLinks = links.slice(i, i + chunkSize);
-    fileChunks.push({ chunkFiles, chunkLinks });
+    fileChunks.push(files.slice(i, i + chunkSize));
   }
 
   return fileChunks;
+}
+
+function uuidv4() {
+  const bytes = randomBytes(16);
+
+  // Set the version (4) and variant (8, 9, A, or B) bits
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant (8, 9, A, or B)
+
+  // Convert bytes to hexadecimal and format the UUID
+  const uuid = bytes.toString('hex');
+
+  return `${uuid.substr(0, 8)}-${uuid.substr(8, 4)}-${uuid.substr(
+    12,
+    4,
+  )}-${uuid.substr(16, 4)}-${uuid.substr(20)}`;
 }
