@@ -34,7 +34,7 @@ export class ApillonModule {
   public constructor(config?: ApillonConfig) {
     ApillonApi.initialize(config);
     ApillonLogger.initialize(
-      config.debug ? LogLevel.VERBOSE : config.logLevel || LogLevel.ERROR,
+      config?.debug ? LogLevel.VERBOSE : config?.logLevel || LogLevel.ERROR,
     );
   }
 }
