@@ -42,7 +42,7 @@ export class Directory extends ApillonModel {
   public content: (File | Directory)[] = [];
 
   /**
-   * Constructor which should only be called via HostingWebsite class.
+   * Constructor which should only be called via StorageBucket class.
    * @param bucketUuid Unique identifier of the directory's bucket.
    * @param directoryUuid Unique identifier of the directory.
    * @param data Data to populate the directory with.
@@ -54,7 +54,7 @@ export class Directory extends ApillonModel {
   ) {
     super(directoryUuid);
     this.bucketUuid = bucketUuid;
-    this.API_PREFIX = `/storage/${bucketUuid}`;
+    this.API_PREFIX = `/storage/buckets/${bucketUuid}`;
     this.populate(data);
   }
 

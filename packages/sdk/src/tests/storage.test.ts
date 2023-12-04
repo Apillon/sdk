@@ -128,6 +128,7 @@ describe('Storage tests', () => {
     const storage = new Storage(config);
     await storage
       .bucket(bucketUUID)
-      .deleteFile('cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc');
+      .file('eddc52cf-92d2-436e-b6de-52d7cad621c2')
+      .delete();
   });
 });

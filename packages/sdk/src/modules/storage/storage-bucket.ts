@@ -41,7 +41,7 @@ export class StorageBucket extends ApillonModel {
    */
   constructor(uuid: string, data?: Partial<StorageBucket>) {
     super(uuid);
-    this.API_PREFIX = `/storage/${uuid}`;
+    this.API_PREFIX = `/storage/buckets/${uuid}`;
     this.populate(data);
   }
 
@@ -123,11 +123,11 @@ export class StorageBucket extends ApillonModel {
 
   /**
    * Gets file instance.
-   * @param fileUuid Uuid of the file.
+   * @param fileUuid UUID of the file.
    * @returns Instance of file.
    */
   file(fileUuid: string): File {
-    return new File(this.uuid, null, fileUuid, {});
+    return new File(this.uuid, null, fileUuid);
   }
 
   /**

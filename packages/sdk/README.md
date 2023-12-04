@@ -151,7 +151,7 @@ await bucket.listObjects({
 });
 await bucket.listFiles({ fileStatus: FileStatus.UPLOADED });
 const file = await bucket.file('2195521d-15cc-4f6e-abf2-13866f9c6e03').get();
-await bucket.deleteFile('2195521d-15cc-4f6e-abf2-13866f9c6e03');
+await bucket.file('2195521d-15cc-4f6e-abf2-13866f9c6e03').delete();
 ```
 
 ### Detailed Storage docs
