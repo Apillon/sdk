@@ -131,4 +131,12 @@ describe('Storage tests', () => {
       .file('eddc52cf-92d2-436e-b6de-52d7cad621c2')
       .delete();
   });
+
+  test.skip('delete a directory', async () => {
+    const storage = new Storage(config);
+    await storage
+      .bucket(bucketUUID)
+      .directory('eddc52cf-92d2-436e-b6de-52d7cad621c2')
+      .delete();
+  });
 });

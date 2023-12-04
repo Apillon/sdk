@@ -124,17 +124,18 @@ export class StorageBucket extends ApillonModel {
   /**
    * Gets file instance.
    * @param fileUuid UUID of the file.
-   * @returns Instance of file.
+   * @returns File instance.
    */
   file(fileUuid: string): File {
     return new File(this.uuid, null, fileUuid);
   }
 
   /**
-   * Deletes a file from the bucket.
-   * @param fileUuid Uuid of the file.
+   * Gets a directory instance.
+   * @param directoryUuid UUID of the directory.
+   * @returns Directory instance.
    */
-  async deleteFile(fileUuid: string): Promise<void> {
-    await ApillonApi.delete(`/storage/buckets/${this.uuid}/files/${fileUuid}`);
+  directory(directoryUuid: string): Directory {
+    return new Directory(this.uuid, directoryUuid);
   }
 }
