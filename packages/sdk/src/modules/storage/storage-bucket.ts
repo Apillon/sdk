@@ -8,7 +8,11 @@ import {
 } from '../../types/storage';
 import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList, IApillonListResponse } from '../../types/apillon';
+import {
+  IApillonList,
+  IApillonListResponse,
+  IApillonResponse,
+} from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { uploadFiles } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
