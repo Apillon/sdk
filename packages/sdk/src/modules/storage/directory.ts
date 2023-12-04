@@ -67,7 +67,7 @@ export class Directory extends ApillonModel {
     this.content = [];
     params.directoryUuid = this.uuid;
     const url = constructUrlWithQueryParams(
-      `${this.API_PREFIX}/content`,
+      `/storage/buckets/${this.bucketUuid}/content`,
       params,
     );
     const { data } = await ApillonApi.get<
