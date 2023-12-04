@@ -1,7 +1,7 @@
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
+import { IApillonResponse } from '../../types/apillon';
 import { FileStatus, StorageContentType } from '../../types/storage';
-import { IApillonResponse } from '../../docs-index';
 
 export class File extends ApillonModel {
   /**
