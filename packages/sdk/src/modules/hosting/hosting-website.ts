@@ -94,7 +94,7 @@ export class HostingWebsite extends ApillonModel {
    * @param {DeployToEnvironment} toEnvironment The environment to deploy to
    * @returns The new deployment instance
    */
-  public async deploy(toEnvironment: DeployToEnvironment): Promise<any> {
+  public async deploy(toEnvironment: DeployToEnvironment) {
     ApillonLogger.log(
       `Deploying website ${this.uuid} to IPFS (${
         toEnvironment === DeployToEnvironment.TO_STAGING
@@ -104,9 +104,10 @@ export class HostingWebsite extends ApillonModel {
     );
 
     ApillonLogger.logWithTime('Initiating deployment');
-    const { data } = await ApillonApi.post<any>(`${this.API_PREFIX}/deploy`, {
-      environment: toEnvironment,
-    });
+    const { data } = await ApillonApi.post<IApillonResponse<Deployment>>(
+      `${this.API_PREFIX}/deploy`,
+      { environment: toEnvironment },
+    );
 
     ApillonLogger.logWithTime('Deployment in progress');
 
