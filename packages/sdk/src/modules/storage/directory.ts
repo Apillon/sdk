@@ -54,7 +54,7 @@ export class Directory extends ApillonModel {
   ) {
     super(directoryUuid);
     this.bucketUuid = bucketUuid;
-    this.API_PREFIX = `/storage/buckets/${bucketUuid}/directories/${directoryUuid}`;
+    this.API_PREFIX = `/storage/buckets/${bucketUuid}`;
     this.populate(data);
   }
 
@@ -67,7 +67,7 @@ export class Directory extends ApillonModel {
     this.content = [];
     params.directoryUuid = this.uuid;
     const url = constructUrlWithQueryParams(
-      `/storage/buckets/${this.bucketUuid}/content`,
+      `${this.API_PREFIX}/content`,
       params,
     );
     const { data } = await ApillonApi.get<
@@ -94,7 +94,7 @@ export class Directory extends ApillonModel {
    * Deletes a directory from the bucket.
    */
   async delete(): Promise<void> {
-    await ApillonApi.delete(this.API_PREFIX);
+    await ApillonApi.delete(`${this.API_PREFIX}/directories/${this.uuid}`);
   }
 
   protected serializeFilter(key: string, value: string) {
