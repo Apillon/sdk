@@ -68,11 +68,11 @@ export interface IPNSListRequest extends IApillonPagination {
   /**
    * IPNS name, that is used to access ipns content on ipfs gateway
    */
-  ipnsName: string;
+  ipnsName?: string;
   /**
    * IPFS value (CID), to which this ipns points
    */
-  ipnsValue: string;
+  ipnsValue?: string;
 }
 
 export interface ICreateIpns {

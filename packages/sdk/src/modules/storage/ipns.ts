@@ -1,5 +1,6 @@
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
 import { IApillonResponse } from '../../types/apillon';
 
 export class Ipns extends ApillonModel {
@@ -66,6 +67,7 @@ export class Ipns extends ApillonModel {
       `${this.API_PREFIX}/publish`,
       { cid },
     );
+    ApillonLogger.log('IPNS record published successfully');
     return this.populate(data);
   }
 
@@ -77,6 +79,7 @@ export class Ipns extends ApillonModel {
     const { data } = await ApillonApi.delete<IApillonResponse<Ipns>>(
       this.API_PREFIX,
     );
+    ApillonLogger.log('IPNS record deleted successfully');
     return this.populate(data);
   }
 }
