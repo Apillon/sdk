@@ -73,8 +73,22 @@ export async function deleteFile(optsWithGlobals: GlobalOptions) {
   try {
     await storage
       .bucket(optsWithGlobals.bucketUuid)
-      .deleteFile(optsWithGlobals.fileUuid);
+      .file(optsWithGlobals.fileUuid)
+      .delete();
     console.log('File deleted successfully');
+  } catch (err) {
+    exceptionHandler(err);
+  }
+}
+
+export async function deleteDirectory(optsWithGlobals: GlobalOptions) {
+  const storage = new Storage(optsWithGlobals);
+  try {
+    await storage
+      .bucket(optsWithGlobals.bucketUuid)
+      .directory(optsWithGlobals.directoryUuid)
+      .delete();
+    console.log('Directory deleted successfully');
   } catch (err) {
     exceptionHandler(err);
   }

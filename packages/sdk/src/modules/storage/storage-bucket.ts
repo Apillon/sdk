@@ -2,16 +2,23 @@ import { Directory } from './directory';
 import {
   FileMetadata,
   IBucketFilesRequest,
+  ICreateIpns,
   IFileUploadRequest,
+  IPNSListRequest,
   IStorageBucketContentRequest,
   StorageContentType,
 } from '../../types/storage';
 import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList, IApillonListResponse } from '../../types/apillon';
+import {
+  IApillonList,
+  IApillonListResponse,
+  IApillonResponse,
+} from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { uploadFiles } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
+import { Ipns } from './ipns';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -138,4 +145,48 @@ export class StorageBucket extends ApillonModel {
   directory(directoryUuid: string): Directory {
     return new Directory(this.uuid, directoryUuid);
   }
+
+  //#region IPNS methods
+
+  /**
+   * Gets an IPNS record instance.
+   * @param ipnsUuid UUID of the IPNS record.
+   * @returns Ipns instance.
+   */
+  ipns(ipnsUuid: string): Ipns {
+    return new Ipns(this.uuid, ipnsUuid);
+  }
+
+  /**
+   * List all IPNS records for this bucket
+   * @param {IPNSListRequest?} [params] - Listing query filters
+   */
+  async listIpnsNames(params?: IPNSListRequest) {
+    const url = constructUrlWithQueryParams(
+      `/storage/buckets/${this.uuid}/ipns`,
+      params,
+    );
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<Ipns & { ipnsUuid: string }>
+    >(url);
+
+    return {
+      ...data,
+      items: data.items.map((ipns) => new Ipns(this.uuid, ipns.ipnsUuid, ipns)),
+    };
+  }
+
+  /**
+   * Create a new IPNS record for this bucket
+   * @param {ICreateIpns} body
+   * @returns {Promise<Ipns>}
+   */
+  async createIpns(body: ICreateIpns): Promise<Ipns> {
+    const url = `/storage/buckets/${this.uuid}/ipns`;
+    const { data } = await ApillonApi.post<
+      IApillonResponse<Ipns & { ipnsUuid: string }>
+    >(url, body);
+    return new Ipns(this.uuid, data.ipnsUuid, data);
+  }
+  //#endregion
 }

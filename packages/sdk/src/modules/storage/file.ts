@@ -1,5 +1,6 @@
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
 import { IApillonResponse } from '../../types/apillon';
 import { FileStatus, StorageContentType } from '../../types/storage';
 
@@ -86,6 +87,7 @@ export class File extends ApillonModel {
    */
   async delete(): Promise<void> {
     await ApillonApi.delete(this.API_PREFIX);
+    ApillonLogger.log('File deleted successfully');
   }
 
   protected override serializeFilter(key: string, value: any) {

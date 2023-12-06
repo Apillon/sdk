@@ -7,6 +7,7 @@ import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonApi } from '../../lib/apillon-api';
 import { IApillonListResponse } from '../../types/apillon';
 import { ApillonModel } from '../../lib/apillon';
+import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class Directory extends ApillonModel {
   /**
@@ -95,6 +96,7 @@ export class Directory extends ApillonModel {
    */
   async delete(): Promise<void> {
     await ApillonApi.delete(`${this.API_PREFIX}/directories/${this.uuid}`);
+    ApillonLogger.log('Directory deleted successfully');
   }
 
   protected serializeFilter(key: string, value: string) {

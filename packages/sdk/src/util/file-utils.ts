@@ -116,7 +116,7 @@ export async function uploadFiles(
   ApillonLogger.logWithTime('File upload complete.');
 
   ApillonLogger.log('Closing upload session...');
-  await ApillonApi.post<any>(`${apiPrefix}/upload/${sessionUuid}/end`, params);
+  await ApillonApi.post(`${apiPrefix}/upload/${sessionUuid}/end`, params);
   ApillonLogger.logWithTime('Session ended.');
 }
 
