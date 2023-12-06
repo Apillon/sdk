@@ -14,7 +14,7 @@ export class Identity extends ApillonModule {
   /**
    * Base API url for identity.
    */
-  private API_PREFIX = '/identity';
+  private API_PREFIX = '/wallet-identity';
 
   /**
    * Generate a message presented to the user when requested to sign using their wallet
@@ -26,23 +26,16 @@ export class Identity extends ApillonModule {
   }
 
   /**
-   * Get a wallet's online profile, including data from Subsocial, Polkadot Identity and Litentry
+   * Get a wallet's online identity profile, including data from Subsocial and Polkadot Identity
    * @param {string} walletAddress - Wallet address to retreive data for
-   * @param {string} message - The message that has been signed by the wallet
-   * @param {string} signature - The wallet's signature, used for validation
    * @returns Identity data fetched from Polkadot Identity and Subsocial
    */
-  public async getWalletProfile(
+  public async getWalletIdentity(
     walletAddress: string,
-    message: string | Uint8Array,
-    signature: string | Uint8Array,
   ): Promise<WalletIdentityData> {
-    const { data } = await ApillonApi.post<
-      IApillonResponse<WalletIdentityData>
-    >(`${this.API_PREFIX}/${walletAddress}`, {
-      message,
-      signature,
-    });
+    const { data } = await ApillonApi.get<IApillonResponse<WalletIdentityData>>(
+      `${this.API_PREFIX}?address=${walletAddress}`,
+    );
 
     return data;
   }
