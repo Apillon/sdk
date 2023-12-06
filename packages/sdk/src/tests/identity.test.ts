@@ -37,4 +37,20 @@ describe('IPNS tests for StorageBucket', () => {
     expect(res.isValid).toBeTruthy();
     expect(res.address.toLowerCase()).toEqual(wallet.address.toLowerCase());
   });
+
+  test('Get wallet identity profile', async () => {
+    const identity = new Identity(config);
+
+    const { subsocial } = await identity.getWalletIdentity(
+      '3rJriA6MiYj7oFXv5hgxvSuacenm8fk76Kb5TEEHcWWQVvii',
+    );
+    expect(subsocial.content.name).toBe('dev only');
+    expect(subsocial.content.interests).toContain('crypto');
+
+    const { polkadot } = await identity.getWalletIdentity(
+      '5HqHQDGcHqSQELAyr5PbJNAcQJew4vsoNCf5kkSpXcUGMtCK',
+    );
+    expect(polkadot.display.Raw).toBe('Web 3.0 Technologies Foundation');
+    expect(polkadot.web.Raw).toBe('https://web3.foundation/');
+  });
 });
