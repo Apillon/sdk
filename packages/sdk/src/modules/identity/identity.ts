@@ -9,6 +9,7 @@ import {
   keccak256,
   publicToAddress,
 } from 'ethereumjs-util';
+import { signatureVerify, encodeAddress } from '@polkadot/util-crypto';
 
 export class Identity extends ApillonModule {
   /**
@@ -77,5 +78,25 @@ export class Identity extends ApillonModule {
       isValid: address.toLowerCase() === walletAddress.toLowerCase(),
       address,
     };
+  }
+
+  /**
+   * Check if a signed message from a Polkadot wallet address is valid
+   * @param {string} walletAddress - Wallet address which signed the message
+   * @param {string} message - The message that has been signed by the wallet
+   * @param {string} signature - The wallet's signature, used for validation
+   * @returns {{isValid: boolean; address: string;}}
+   */
+  public validatePolkadotWalletSignature(
+    walletAddress: string,
+    message: string | Uint8Array,
+    signature: string,
+  ): { isValid: boolean; address: string } {
+    const { isValid, publicKey } = signatureVerify(
+      message,
+      signature,
+      walletAddress,
+    );
+    return { isValid, address: encodeAddress(publicKey) };
   }
 }

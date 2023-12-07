@@ -53,4 +53,18 @@ describe('IPNS tests for StorageBucket', () => {
     expect(polkadot.display.Raw).toBe('Web 3.0 Technologies Foundation');
     expect(polkadot.web.Raw).toBe('https://web3.foundation/');
   });
+
+  test('Validate Polkadot wallet signature', async () => {
+    const identity = new Identity(config);
+    const wallet = '5FNpf1ARUkrjBwrTncyCbPndg915YfaAnzToMkEcddiXWLyd';
+    const res = identity.validatePolkadotWalletSignature(
+      wallet,
+      'Please sign this message.',
+      // Fill the below value with you own signature
+      // you can obtain a sample with wallet login at https://app.apillon.io/login
+      '',
+    );
+    expect(res.isValid).toBeTruthy();
+    expect(res.address.toLowerCase()).toEqual(wallet.toLowerCase());
+  });
 });
