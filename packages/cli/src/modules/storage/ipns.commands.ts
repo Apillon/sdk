@@ -27,7 +27,7 @@ export function createIpnsCommands(storageCli: Command) {
     .description('Create a new IPNS record for this bucket')
     .requiredOption('-n, --name <name>', 'Name of the IPNS record')
     .option('-d, --description <description>', 'Description of the IPNS record')
-    .option('-c, --cid <cid>', 'CID to which this IPNS name will point')
+    .option('-c, --cid <cid>', 'Targeted CID')
     .action(async function () {
       await createIpns(this.optsWithGlobals());
     });
@@ -44,10 +44,7 @@ export function createIpnsCommands(storageCli: Command) {
     .command('publish')
     .description('Publish an IPNS record to IPFS and link it to a CID')
     .requiredOption('-i, --ipns-uuid <uuid>', 'UUID of the IPNS record')
-    .requiredOption(
-      '-c, --cid <string>',
-      'CID to which this IPNS name will point',
-    )
+    .requiredOption('-c, --cid <string>', 'Targeted CID')
     .action(async function () {
       await publishIpns(this.optsWithGlobals());
     });
