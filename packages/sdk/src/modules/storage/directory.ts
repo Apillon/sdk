@@ -7,6 +7,7 @@ import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonApi } from '../../lib/apillon-api';
 import { IApillonListResponse } from '../../types/apillon';
 import { ApillonModel } from '../../lib/apillon';
+import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class Directory extends ApillonModel {
   /**
@@ -42,7 +43,7 @@ export class Directory extends ApillonModel {
   public content: (File | Directory)[] = [];
 
   /**
-   * Constructor which should only be called via HostingWebsite class.
+   * Constructor which should only be called via StorageBucket class.
    * @param bucketUuid Unique identifier of the directory's bucket.
    * @param directoryUuid Unique identifier of the directory.
    * @param data Data to populate the directory with.
@@ -54,7 +55,7 @@ export class Directory extends ApillonModel {
   ) {
     super(directoryUuid);
     this.bucketUuid = bucketUuid;
-    this.API_PREFIX = `/storage/${bucketUuid}`;
+    this.API_PREFIX = `/storage/buckets/${bucketUuid}`;
     this.populate(data);
   }
 
@@ -88,6 +89,14 @@ export class Directory extends ApillonModel {
     }
 
     return this.content;
+  }
+
+  /**
+   * Deletes a directory from the bucket.
+   */
+  async delete(): Promise<void> {
+    await ApillonApi.delete(`${this.API_PREFIX}/directories/${this.uuid}`);
+    ApillonLogger.log('Directory deleted successfully');
   }
 
   protected serializeFilter(key: string, value: string) {

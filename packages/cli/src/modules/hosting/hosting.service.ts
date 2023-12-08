@@ -45,9 +45,7 @@ export async function deployWebsite(
     );
 
     console.log(`Deployment started!`);
-    const deploymentData = await website
-      .deployment(deployment.deploymentUuid)
-      .get();
+    const deploymentData = await website.deployment(deployment.uuid).get();
     console.log(deploymentData.serialize());
   } catch (err) {
     exceptionHandler(err);

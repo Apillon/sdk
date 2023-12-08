@@ -24,7 +24,9 @@ export class Storage extends ApillonModule {
   ): Promise<IApillonList<StorageBucket>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const { data } = await ApillonApi.get<IApillonListResponse<any>>(url);
+    const { data } = await ApillonApi.get<
+      IApillonListResponse<StorageBucket & { bucketUuid: string }>
+    >(url);
 
     return {
       ...data,

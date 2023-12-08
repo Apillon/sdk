@@ -7,9 +7,11 @@ import {
   uploadFromFolder,
   getFile,
   deleteFile,
+  deleteDirectory,
 } from './storage.service';
 import { FileStatus } from '@apillon/sdk';
 import { enumValues } from '../../lib/utils';
+import { createIpnsCommands } from './ipns.commands';
 
 export function createStorageCommands(cli: Command) {
   const storage = cli
@@ -17,6 +19,8 @@ export function createStorageCommands(cli: Command) {
     .description(
       'Commands for manipulating buckets and files on Apillon storage.',
     );
+
+  createIpnsCommands(storage);
 
   const listBucketsCommand = storage
     .command('list-buckets')
@@ -83,10 +87,15 @@ export function createStorageCommands(cli: Command) {
       await deleteFile(this.optsWithGlobals());
     });
 
-  /*
-    TODO:
-    - download file
-    - upload folder
-    - ipns methods
-  */
+  storage
+    .command('delete-directory')
+    .description('Delete a directory from a storage bucket')
+    .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of bucket')
+    .requiredOption(
+      '-d, --directory-uuid <uuid>',
+      'UUID of directory to delete',
+    )
+    .action(async function () {
+      await deleteDirectory(this.optsWithGlobals());
+    });
 }
