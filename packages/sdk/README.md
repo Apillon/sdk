@@ -308,16 +308,18 @@ const identity = new Identity({
 });
 
 // generate a custom message to be signed by the user's wallet
-const message = await identity.generateSigningMessage(
+const { message, timestamp } = await identity.generateSigningMessage(
   'Custom display message here',
 );
 
 // validate an EVM wallet's signature for a given message
-const { isValid } = await identity.validateEvmWalletSignature(
-  walletAddress,
-  signature,
+const { isValid } = await identity.validateEvmWalletSignature({
   message,
-);
+  signature,
+  walletAddress: '0xa79bg13g2...',
+  timestamp,
+  signatureValidityMinutes: 15,
+});
 
 // validate a Polkadot wallet's signature for a given message
 const { isValid, address } = await identity.validatePolkadotWalletSignature(

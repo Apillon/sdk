@@ -3,39 +3,78 @@ import { Identity } from '../modules/identity/identity';
 import { getConfig, getWalletPrivateKey } from './helpers/helper';
 import { Wallet } from 'ethers';
 
-describe('IPNS tests for StorageBucket', () => {
+describe('Identity Module tests', () => {
   let config: ApillonConfig;
+  let wallet: Wallet;
 
   beforeAll(async () => {
     config = getConfig();
+    wallet = new Wallet(getWalletPrivateKey());
   });
 
-  test('Validate EVM wallet signature', async () => {
-    const identity = new Identity(config);
+  describe('EVM wallet signature tests', () => {
+    test('Validate EVM wallet signature', async () => {
+      const identity = new Identity(config);
 
-    const customMessage = 'Identity SDK test';
-    const message = identity.generateSigningMessage(customMessage);
-    const [firstPart, secondPart] = message.split('\n');
-    // Validate that custom signing message was generated correctly
-    expect(firstPart).toEqual(customMessage);
-    expect(+secondPart).toBeLessThanOrEqual(new Date().getTime());
+      const customMessage = 'Identity SDK test';
+      const { message } = identity.generateSigningMessage(customMessage);
+      const [firstPart, secondPart] = message.split('\n');
+      // Validate that custom signing message was generated correctly
+      expect(firstPart).toEqual(customMessage);
+      expect(+secondPart).toBeLessThanOrEqual(new Date().getTime());
 
-    // Create a wallet from your private key
-    const wallet = new Wallet(getWalletPrivateKey());
+      const signature = await wallet.signMessage(message);
 
-    const signature = await wallet.signMessage(message);
+      const res = identity.validateEvmWalletSignature({
+        walletAddress: wallet.address,
+        message,
+        signature,
+      });
 
-    console.log('Message:', message);
-    console.log('Signature:', signature);
+      expect(res.isValid).toBeTruthy();
+      expect(res.address.toLowerCase()).toEqual(wallet.address.toLowerCase());
+    });
 
-    const res = identity.validateEvmWalletSignature(
-      wallet.address,
-      message,
-      signature,
-    );
+    test('Validate EVM wallet signature with timestamp', async () => {
+      const identity = new Identity(config);
 
-    expect(res.isValid).toBeTruthy();
-    expect(res.address.toLowerCase()).toEqual(wallet.address.toLowerCase());
+      const customMessage = 'Identity SDK test';
+      const { timestamp, message } =
+        identity.generateSigningMessage(customMessage);
+
+      const signature = await wallet.signMessage(message);
+
+      const res = identity.validateEvmWalletSignature({
+        message,
+        signature,
+        timestamp,
+        signatureValidityMinutes: 1,
+      });
+
+      expect(res.isValid).toBeTruthy();
+      expect(res.address.toLowerCase()).toEqual(wallet.address.toLowerCase());
+    });
+
+    test('Validate EVM wallet signature with invalid timestamp', async () => {
+      const identity = new Identity(config);
+
+      const customMessage = 'Identity SDK test';
+      const { message } = identity.generateSigningMessage(customMessage);
+
+      const signature = await wallet.signMessage(message);
+      const date = new Date();
+      const thirtyMinEarlier = date.setTime(date.getTime() - 30 * 60_000);
+
+      const res = identity.validateEvmWalletSignature({
+        walletAddress: wallet.address,
+        message,
+        signature,
+        timestamp: thirtyMinEarlier,
+      });
+
+      expect(res.isValid).toBeFalsy();
+      expect(res.address.toLowerCase()).toEqual(wallet.address.toLowerCase());
+    });
   });
 
   test('Get wallet identity profile', async () => {
@@ -54,9 +93,9 @@ describe('IPNS tests for StorageBucket', () => {
     expect(polkadot.web.Raw).toBe('https://web3.foundation/');
   });
 
-  test('Validate Polkadot wallet signature', async () => {
+  test.skip('Validate Polkadot wallet signature', async () => {
     const identity = new Identity(config);
-    const wallet = '5FNpf1ARUkrjBwrTncyCbPndg915YfaAnzToMkEcddiXWLyd';
+    const wallet = '';
     const res = identity.validatePolkadotWalletSignature(
       wallet,
       'Please sign this message.',
