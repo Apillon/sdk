@@ -290,3 +290,43 @@ await collection.transferOwnership(
   '0x5BA8B0c24bA5307b67E619ad500a635204F73bF1'
 );
 ```
+
+
+## Identity
+
+Identity module encapsulates functionalities for validating EVM and Polkadot wallet signatures, as well as fetching Polkadot Identity data for any wallet.
+
+For detailed hosting SDK method, class and property documentation visit [SDK identity docs](https://sdk-docs.apillon.io/classes/Identity.html).
+
+### Usage example
+
+```ts
+const identity = new Identity({
+  key: 'yourApiKey',
+  secret: 'yourApiSecret',
+  logLevel: LogLevel.NONE,
+});
+
+// generate a custom message to be signed by the user's wallet
+const message = await identity.generateSigningMessage(
+  'Custom display message here',
+);
+
+// validate an EVM wallet's signature for a given message
+const { isValid } = await identity.validateEvmWalletSignature(
+  walletAddress,
+  signature,
+  message,
+);
+
+// validate a Polkadot wallet's signature for a given message
+const { isValid, address } = await identity.validatePolkadotWalletSignature(
+  walletAddress,
+  signature,
+  message,
+);
+
+// obtain on-chain identity data for a Polkadot wallet
+const { polkadot, subsocial } = await identity.getWalletIdentity(address);
+```
+

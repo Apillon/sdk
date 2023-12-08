@@ -27,7 +27,7 @@ export class Identity extends ApillonModule {
   }
 
   /**
-   * Get a wallet's online identity profile, including data from Subsocial and Polkadot Identity
+   * Get a wallet's on-chain identity data, including Subsocial and Polkadot Identity data
    * @param {string} walletAddress - Wallet address to retreive data for
    * @returns Identity data fetched from Polkadot Identity and Subsocial
    */

@@ -18,7 +18,7 @@ describe('IPNS tests for StorageBucket', () => {
     const [firstPart, secondPart] = message.split('\n');
     // Validate that custom signing message was generated correctly
     expect(firstPart).toEqual(customMessage);
-    expect(+secondPart).toBeLessThan(new Date().getTime());
+    expect(+secondPart).toBeLessThanOrEqual(new Date().getTime());
 
     // Create a wallet from your private key
     const wallet = new Wallet(getWalletPrivateKey());
