@@ -1,6 +1,7 @@
-import { AxiosResponse } from 'axios';
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
+import { IApillonResponse } from '../../types/apillon';
 import { FileStatus, StorageContentType } from '../../types/storage';
 
 export class File extends ApillonModel {
@@ -50,7 +51,7 @@ export class File extends ApillonModel {
   public path: string = null;
 
   /**
-   * Constructor which should only be called via HostingWebsite class.
+   * Constructor which should only be called via StorageBucket class.
    * @param bucketUuid Unique identifier of the file's bucket.
    * @param directoryUuid Unique identifier of the file's directory.
    * @param fileUuid Unique identifier of the file.
@@ -65,7 +66,7 @@ export class File extends ApillonModel {
     super(fileUuid);
     this.bucketUuid = bucketUuid;
     this.directoryUuid = directoryUuid;
-    this.API_PREFIX = `/storage/${bucketUuid}/file/${fileUuid}`;
+    this.API_PREFIX = `/storage/buckets/${bucketUuid}/files/${fileUuid}`;
     this.status = data?.fileStatus;
     this.populate(data);
   }
@@ -75,10 +76,18 @@ export class File extends ApillonModel {
    */
   async get(): Promise<File> {
     const { data } = await ApillonApi.get<
-      AxiosResponse<File & { fileStatus: number }>
-    >(`${this.API_PREFIX}/detail`);
+      IApillonResponse<File & { fileStatus: number }>
+    >(this.API_PREFIX);
     this.status = data.fileStatus;
     return this.populate(data);
+  }
+
+  /**
+   * Deletes a file from the bucket.
+   */
+  async delete(): Promise<void> {
+    await ApillonApi.delete(this.API_PREFIX);
+    ApillonLogger.log('File deleted successfully');
   }
 
   protected override serializeFilter(key: string, value: any) {

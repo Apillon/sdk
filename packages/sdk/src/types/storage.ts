@@ -63,3 +63,24 @@ export interface IFileUploadResponse {
   files: FileMetadata[];
   sessionUuid: string;
 }
+
+export interface IPNSListRequest extends IApillonPagination {
+  /**
+   * IPNS name, that is used to access ipns content on ipfs gateway
+   */
+  ipnsName?: string;
+  /**
+   * IPFS value (CID), to which this ipns points
+   */
+  ipnsValue?: string;
+}
+
+export interface ICreateIpns {
+  name: string;
+  description?: string;
+  /**
+   * CID to which this IPNS name will point.
+   * If this property is specified, API executes ipns publish which sets ipnsName and ipnsValue properties
+   */
+  cid?: string;
+}
