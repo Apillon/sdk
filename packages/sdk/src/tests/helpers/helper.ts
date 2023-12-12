@@ -30,7 +30,3 @@ export function getWebsiteUUID() {
 export function getMintAddress() {
   return process.env['MINT_ADDRESS'];
 }
-
-export function getWalletPrivateKey() {
-  return process.env['WALLET_PRIVATE_KEY'];
-}

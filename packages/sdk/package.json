@@ -49,6 +49,7 @@
     "ethereumjs-util": "^7.1.5"
   },
   "devDependencies": {
+    "@polkadot/keyring": "^12.6.1",
     "@types/jest": "^29.5.11",
     "dotenv": "^16.0.3",
     "eslint-config-common": "*",
