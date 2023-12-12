@@ -3,6 +3,7 @@ import { ApillonApi } from '../../lib/apillon-api';
 import { IApillonResponse } from '../../types/apillon';
 import {
   IValidateEvmWalletSignature,
+  IValidatePolkadotWalletSignature,
   VerifySignedMessageResult,
   WalletIdentityData,
 } from '../../types/identity';
@@ -52,7 +53,7 @@ export class Identity extends ApillonModule {
 
   /**
    * Check if a signed message from an EVM wallet address is valid
-   * @param {IValidateEvmWalletSignature} data - The data used to validate the EVM signature
+   * @param {IValidateWalletSignature} data - The data used to validate the EVM signature
    * @returns {VerifySignedMessageResult}
    */
   public validateEvmWalletSignature(
@@ -74,45 +75,52 @@ export class Identity extends ApillonModule {
       ),
     );
     // Split the signature into its components
-    const signatureParams = fromRpcSig(data.signature);
+    const { v, r, s } = fromRpcSig(data.signature);
 
     // Recover the public key
-    const publicKey = ecrecover(
-      prefixedMessage,
-      signatureParams.v,
-      signatureParams.r,
-      signatureParams.s,
-    );
+    const publicKey = ecrecover(prefixedMessage, v, r, s);
 
     // Recover the address from the signature and public key
     const address = bufferToHex(publicToAddress(publicKey));
 
+    const isValidAddress = walletAddress
+      ? address.toLowerCase() === walletAddress.toLowerCase()
+      : true;
+
     return {
-      isValid: walletAddress
-        ? isValidTimestamp &&
-          address.toLowerCase() === walletAddress.toLowerCase()
-        : true,
+      isValid: isValidTimestamp && isValidAddress,
       address,
     };
   }
 
   /**
    * Check if a signed message from a Polkadot wallet address is valid
-   * @param {string} walletAddress - Wallet address which signed the message
-   * @param {string | Uint8Array} message - The message that has been signed by the wallet
-   * @param {string | Uint8Array} signature - The wallet's signature, used for validation
+   * @param {IValidatePolkadotWalletSignature} data - The data used to validate the Polkadot signature
    * @returns {{isValid: boolean; address: string;}}
    */
   public validatePolkadotWalletSignature(
-    walletAddress: string,
-    message: string | Uint8Array,
-    signature: string | Uint8Array,
-  ): { isValid: boolean; address: string } {
+    data: IValidatePolkadotWalletSignature,
+  ): {
+    isValid: boolean;
+    address: string;
+  } {
+    const { message, signature, walletAddress, timestamp } = data;
+
+    // Check if the timestamp is within the valid time range (default 10 minutes)
+    const isValidTimestamp = timestamp
+      ? new Date().getTime() - timestamp <=
+        (data.signatureValidityMinutes || 10) * 60_000
+      : true;
+
     const { isValid, publicKey } = signatureVerify(
       message,
       signature,
       walletAddress,
     );
-    return { isValid, address: encodeAddress(publicKey) };
+
+    return {
+      isValid: isValidTimestamp && isValid,
+      address: encodeAddress(publicKey),
+    };
   }
 }

@@ -10,9 +10,10 @@ export interface WalletIdentityData {
 }
 
 /**
- * Represents the parameters checking the validity of a signed message from an EVM wallet address.
+ * Represents the parameters for checking validity of a signed message from an EVM wallet address.
  */
-export interface IValidateEvmWalletSignature {
+export interface IValidateEvmWalletSignature
+  extends IValidateSignatureTimestamp {
   /**
    * The message that has been signed by the wallet.
    */
@@ -25,12 +26,34 @@ export interface IValidateEvmWalletSignature {
    * (Optional) Wallet address parameter, used to check if address obtained from signature matches the parameter address
    */
   walletAddress?: string;
+}
+
+/**
+ * Represents the parameters for checking validity of a signed message from a Polkadot wallet address.
+ */
+export interface IValidatePolkadotWalletSignature
+  extends IValidateSignatureTimestamp {
+  /**
+   * The message that has been signed by the wallet.
+   */
+  message: string | Uint8Array;
+  /**
+   * The wallet's signature for the given message
+   */
+  signature: string | Uint8Array;
+  /**
+   * Wallet address parameter, used to check if address obtained from signature matches the parameter address
+   */
+  walletAddress: string | Uint8Array;
+}
+
+interface IValidateSignatureTimestamp {
   /**
    * The timestamp when the message was generated, for added security (optional).
    */
   timestamp?: number;
   /**
-   * For how many minutes the wallet signature is valid.
+   * For how many minutes the wallet signature is valid (default 10).
    */
   signatureValidityMinutes?: number;
 }
