@@ -313,20 +313,26 @@ const { message, timestamp } = await identity.generateSigningMessage(
 );
 
 // validate an EVM wallet's signature for a given message
-const { isValid } = await identity.validateEvmWalletSignature({
+const { isValid, address } = await identity.validateEvmWalletSignature({
   message,
-  signature,
+  signature, // signature obtained from the user's wallet by the client app
   walletAddress: '0xa79bg13g2...',
+  /*
+    * optional - check signature time validity by providing a timestamp
+    * which indicates when the signature was generated
+    */
   timestamp,
+  // additionally, specify for how many minutes the timestamp is valid
   signatureValidityMinutes: 15,
 });
 
 // validate a Polkadot wallet's signature for a given message
-const { isValid, address } = await identity.validatePolkadotWalletSignature(
-  walletAddress,
-  signature,
-  message,
-);
+const { isValid: isPolkadotValid } =
+  await identity.validatePolkadotWalletSignature({
+    message,
+    signature, // signature obtained from the user's wallet by the client app
+    walletAddress: '5HqHQDGcHqS...',
+  });
 
 // obtain on-chain identity data for a Polkadot wallet
 const { polkadot, subsocial } = await identity.getWalletIdentity(address);
