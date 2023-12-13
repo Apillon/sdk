@@ -50,6 +50,9 @@ export interface IValidatePolkadotWalletSignature
 interface IValidateSignatureTimestamp {
   /**
    * The timestamp when the message was generated, for added security (optional).
+   *
+   * If you are generating the message yourself and you wish to validate the timestamp,
+   * append `\n${timestamp}` to the end of the message with your own timestamp.
    */
   timestamp?: number;
   /**

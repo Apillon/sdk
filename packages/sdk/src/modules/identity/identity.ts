@@ -61,6 +61,9 @@ export class Identity extends ApillonModule {
   ): VerifySignedMessageResult {
     const { walletAddress, message, timestamp } = data;
 
+    if (timestamp && message?.split('\n').at(-1) !== `${timestamp}`) {
+      throw new Error('Message does not contain a valid timestamp');
+    }
     // Check if the timestamp is within the valid time range (default 10 minutes)
     const isValidTimestamp = timestamp
       ? new Date().getTime() - timestamp <=
@@ -105,6 +108,15 @@ export class Identity extends ApillonModule {
     address: string;
   } {
     const { message, signature, walletAddress, timestamp } = data;
+
+    const signingMessage =
+      message instanceof Uint8Array
+        ? Buffer.from(message).toString('base64')
+        : message;
+
+    if (timestamp && signingMessage?.split('\n').at(-1) !== `${timestamp}`) {
+      throw new Error('Message does not contain a valid timestamp');
+    }
 
     // Check if the timestamp is within the valid time range (default 10 minutes)
     const isValidTimestamp = timestamp

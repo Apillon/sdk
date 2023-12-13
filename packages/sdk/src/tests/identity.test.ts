@@ -80,15 +80,15 @@ describe('Identity Module tests', () => {
       const date = new Date();
       const thirtyMinEarlier = date.setTime(date.getTime() - 30 * 60_000);
 
-      const { isValid, address } = identity.validateEvmWalletSignature({
-        walletAddress,
-        message,
-        signature,
-        timestamp: thirtyMinEarlier,
-      });
+      const validate = () =>
+        identity.validateEvmWalletSignature({
+          walletAddress,
+          message,
+          signature,
+          timestamp: thirtyMinEarlier,
+        });
 
-      expect(isValid).toBeFalsy();
-      expect(address.toLowerCase()).toEqual(walletAddress.toLowerCase());
+      expect(validate).toThrow('Message does not contain a valid timestamp');
     });
   });
 
@@ -154,17 +154,15 @@ describe('Identity Module tests', () => {
       const date = new Date();
       const thirtyMinEarlier = date.setTime(date.getTime() - 30 * 60_000);
 
-      const { isValid, address } = identity.validatePolkadotWalletSignature({
-        walletAddress,
-        message,
-        signature,
-        timestamp: thirtyMinEarlier,
-      });
+      const validate = () =>
+        identity.validatePolkadotWalletSignature({
+          walletAddress,
+          message,
+          signature,
+          timestamp: thirtyMinEarlier,
+        });
 
-      expect(isValid).toBeFalsy();
-      expect(address.toLowerCase()).toEqual(
-        encodeAddress(walletAddress).toLowerCase(),
-      );
+      expect(validate).toThrow();
     });
   });
 
