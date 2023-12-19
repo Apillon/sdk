@@ -17,11 +17,27 @@ function listFilesRecursive(
   fileList = [],
   relativePath = '',
 ) {
+  const gitignorePath = path.join(folderPath, '.gitignore');
+  const gitignorePatterns = fs.existsSync(gitignorePath)
+    ? fs.readFileSync(gitignorePath, 'utf-8').split('\n')
+    : [];
+
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
     const fullPath = path.join(folderPath, file);
+    const relativeFilePath = path.join(relativePath, file);
+
+    // Skip file if it matches .gitignore patterns
+    if (
+      gitignorePatterns.some((pattern) =>
+        new RegExp(pattern).test(relativeFilePath),
+      )
+    ) {
+      continue;
+    }
+
     if (fs.statSync(fullPath).isDirectory()) {
-      listFilesRecursive(fullPath, fileList, `${relativePath + file}/`);
+      listFilesRecursive(fullPath, fileList, `${relativeFilePath}/`);
     } else {
       fileList.push({ fileName: file, path: relativePath, index: fullPath });
     }
