@@ -23,11 +23,11 @@
   "devDependencies": {
     "eslint-config-common": "*",
     "prettier": "latest",
-    "rimraf": "^4.4.0",
+    "rimraf": "^5.0.5",
     "turbo": "latest",
     "jest": "29.7.0",
     "ts-jest": "29.1.1",
-    "@types/jest": "^29.5.5"
+    "@types/jest": "^29.5.11"
   },
   "jest": {
     "testTimeout": 1800000,
