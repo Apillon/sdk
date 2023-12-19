@@ -1,7 +1,6 @@
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
-import { IApillonResponse } from '../../types/apillon';
 
 export class Ipns extends ApillonModel {
   /**
@@ -51,9 +50,7 @@ export class Ipns extends ApillonModel {
    * Gets IPNS details.
    */
   async get(): Promise<Ipns> {
-    const { data } = await ApillonApi.get<IApillonResponse<Ipns>>(
-      this.API_PREFIX,
-    );
+    const data = await ApillonApi.get<Ipns>(this.API_PREFIX);
     return this.populate(data);
   }
 
@@ -63,10 +60,9 @@ export class Ipns extends ApillonModel {
    * @returns {Promise<Ipns>}
    */
   async publish(cid: string): Promise<Ipns> {
-    const { data } = await ApillonApi.post<IApillonResponse<Ipns>>(
-      `${this.API_PREFIX}/publish`,
-      { cid },
-    );
+    const data = await ApillonApi.post<Ipns>(`${this.API_PREFIX}/publish`, {
+      cid,
+    });
     ApillonLogger.log('IPNS record published successfully');
     return this.populate(data);
   }
@@ -76,9 +72,7 @@ export class Ipns extends ApillonModel {
    * @returns {Promise<Ipns>}
    */
   async delete(): Promise<Ipns> {
-    const { data } = await ApillonApi.delete<IApillonResponse<Ipns>>(
-      this.API_PREFIX,
-    );
+    const data = await ApillonApi.delete<Ipns>(this.API_PREFIX);
     ApillonLogger.log('IPNS record deleted successfully');
     return this.populate(data);
   }

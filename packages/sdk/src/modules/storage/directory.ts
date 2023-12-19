@@ -5,7 +5,7 @@ import {
 import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonApi } from '../../lib/apillon-api';
-import { IApillonListResponse } from '../../types/apillon';
+import { IApillonList } from '../../types/apillon';
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonLogger } from '../../lib/apillon-logger';
 
@@ -71,9 +71,7 @@ export class Directory extends ApillonModel {
       `${this.API_PREFIX}/content`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<File | Directory>
-    >(url);
+    const data = await ApillonApi.get<IApillonList<File | Directory>>(url);
 
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {

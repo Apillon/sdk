@@ -1,5 +1,5 @@
 import { ApillonModel } from '../../lib/apillon';
-import { IApillonResponse } from '../../types/apillon';
+
 import { ApillonApi } from '../../lib/apillon-api';
 import { DeployToEnvironment, DeploymentStatus } from '../../types/hosting';
 
@@ -60,9 +60,7 @@ export class Deployment extends ApillonModel {
    * Gets deployment details.
    */
   async get(): Promise<Deployment> {
-    const { data } = await ApillonApi.get<IApillonResponse<Deployment>>(
-      this.API_PREFIX,
-    );
+    const data = await ApillonApi.get<Deployment>(this.API_PREFIX);
     return this.populate(data);
   }
 

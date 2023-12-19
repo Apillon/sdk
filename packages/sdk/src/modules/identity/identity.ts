@@ -1,6 +1,6 @@
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
-import { IApillonResponse } from '../../types/apillon';
+
 import {
   IValidateEvmWalletSignature,
   IValidatePolkadotWalletSignature,
@@ -30,11 +30,9 @@ export class Identity extends ApillonModule {
   public async getWalletIdentity(
     walletAddress: string,
   ): Promise<WalletIdentityData> {
-    const { data } = await ApillonApi.get<IApillonResponse<WalletIdentityData>>(
+    return await ApillonApi.get<WalletIdentityData>(
       `${this.API_PREFIX}?address=${walletAddress}`,
     );
-
-    return data;
   }
 
   /**

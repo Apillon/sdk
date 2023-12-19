@@ -1,10 +1,6 @@
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { DeployToEnvironment, IDeploymentFilters } from '../../types/hosting';
-import {
-  IApillonList,
-  IApillonListResponse,
-  IApillonResponse,
-} from '../../types/apillon';
+import { IApillonList } from '../../types/apillon';
 import { Deployment } from './deployment';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
@@ -59,9 +55,7 @@ export class HostingWebsite extends ApillonModel {
    * @returns An instance of HostingWebsite class with filled properties.
    */
   public async get(): Promise<HostingWebsite> {
-    const { data } = await ApillonApi.get<IApillonResponse<HostingWebsite>>(
-      this.API_PREFIX,
-    );
+    const data = await ApillonApi.get<HostingWebsite>(this.API_PREFIX);
     return this.populate(data);
   }
 
@@ -104,9 +98,10 @@ export class HostingWebsite extends ApillonModel {
     );
 
     ApillonLogger.logWithTime('Initiating deployment');
-    const { data } = await ApillonApi.post<
-      IApillonResponse<Deployment & { deploymentUuid: string }>
-    >(`${this.API_PREFIX}/deploy`, { environment: toEnvironment });
+    const data = await ApillonApi.post<Deployment & { deploymentUuid: string }>(
+      `${this.API_PREFIX}/deploy`,
+      { environment: toEnvironment },
+    );
 
     ApillonLogger.logWithTime('Deployment in progress');
 
@@ -125,8 +120,8 @@ export class HostingWebsite extends ApillonModel {
       params,
     );
 
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<Deployment & { deploymentUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<Deployment & { deploymentUuid: string }>
     >(url);
 
     return {

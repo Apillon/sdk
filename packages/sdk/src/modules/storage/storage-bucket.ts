@@ -10,11 +10,7 @@ import {
 } from '../../types/storage';
 import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import {
-  IApillonList,
-  IApillonListResponse,
-  IApillonResponse,
-} from '../../types/apillon';
+import { IApillonList } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { uploadFiles } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
@@ -64,9 +60,7 @@ export class StorageBucket extends ApillonModel {
       `${this.API_PREFIX}/content`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<File | Directory>
-    >(url);
+    const data = await ApillonApi.get<IApillonList<File | Directory>>(url);
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
         const file = item as File;
@@ -92,8 +86,8 @@ export class StorageBucket extends ApillonModel {
       `/storage/buckets/${this.uuid}/files`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<File & { fileUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<File & { fileUuid: string }>
     >(url);
 
     return {
@@ -166,8 +160,8 @@ export class StorageBucket extends ApillonModel {
       `/storage/buckets/${this.uuid}/ipns`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<Ipns & { ipnsUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<Ipns & { ipnsUuid: string }>
     >(url);
 
     return {
@@ -183,9 +177,7 @@ export class StorageBucket extends ApillonModel {
    */
   async createIpns(body: ICreateIpns): Promise<Ipns> {
     const url = `/storage/buckets/${this.uuid}/ipns`;
-    const { data } = await ApillonApi.post<
-      IApillonResponse<Ipns & { ipnsUuid: string }>
-    >(url, body);
+    const data = await ApillonApi.post<Ipns & { ipnsUuid: string }>(url, body);
     return new Ipns(this.uuid, data.ipnsUuid, data);
   }
   //#endregion
