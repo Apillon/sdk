@@ -304,6 +304,7 @@ For detailed hosting SDK method, class and property documentation visit [SDK ide
 import { Identity } from './modules/identity/identity';
 import { LogLevel } from './types/apillon';
 
+// Note: for signature-related methods API config is not required
 const identity = new Identity({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
@@ -318,6 +319,12 @@ async function validateEvmWalletSignature() {
   const { message, timestamp } = await identity.generateSigningMessage(
     'Custom display message here',
   );
+
+  // alternatively, you can generate you own signing message with timestamp like this:
+  // const timestamp = new Date().getTime();
+  // const message = 'Message from my Dapp';
+  // const signingMessage = `${message}\n${timestamp}`;
+
   const walletAddress = '0xa79bg13g2...';
 
   // validate an EVM wallet's signature for a given message
