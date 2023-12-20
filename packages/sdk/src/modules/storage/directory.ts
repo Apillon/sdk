@@ -61,6 +61,7 @@ export class Directory extends ApillonModel {
 
   /**
    * Gets contents of a directory.
+   * @returns Directory data and content (files and subfolders)
    */
   async get(
     params: IStorageBucketContentRequest = {},

@@ -80,6 +80,8 @@ export class StorageBucket extends ApillonModel {
 
   /**
    * Gets all files in a bucket.
+   * @param {?IBucketFilesRequest} [params] - query filter parameters
+   * @returns List of files in the bucket
    */
   async listFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(
@@ -154,6 +156,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * List all IPNS records for this bucket
    * @param {IPNSListRequest?} [params] - Listing query filters
+   * @returns List of IPNS names in the bucket
    */
   async listIpnsNames(params?: IPNSListRequest) {
     const url = constructUrlWithQueryParams(
@@ -173,7 +176,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * Create a new IPNS record for this bucket
    * @param {ICreateIpns} body
-   * @returns {Promise<Ipns>}
+   * @returns New IPNS instance
    */
   async createIpns(body: ICreateIpns): Promise<Ipns> {
     const url = `/storage/buckets/${this.uuid}/ipns`;

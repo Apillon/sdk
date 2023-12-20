@@ -44,7 +44,7 @@ export interface IFileUploadRequest {
    *
    * Files in session can be wrapped to CID on IPFS via wrapWithDirectory parameter. This means that the directory gets its own CID and its content cannot be modified afterwards.
    *
-   * Read more on the [IPFS docs](https://dweb-primer.ipfs.io/files-on-ipfs/wrap-directories-around-content#explanation)
+   * @docs [IPFS docs](https://dweb-primer.ipfs.io/files-on-ipfs/wrap-directories-around-content#explanation)
    */
   wrapWithDirectory: boolean;
   /**

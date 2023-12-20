@@ -73,6 +73,7 @@ export class File extends ApillonModel {
 
   /**
    * Gets file details.
+   * @returns File instance
    */
   async get(): Promise<File> {
     const data = await ApillonApi.get<File & { fileStatus: number }>(

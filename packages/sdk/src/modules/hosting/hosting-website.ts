@@ -86,7 +86,7 @@ export class HostingWebsite extends ApillonModel {
   /**
    * Deploy a website to a new environment.
    * @param {DeployToEnvironment} toEnvironment The environment to deploy to
-   * @returns {Deployment}
+   * @returns Newly created deployment
    */
   public async deploy(toEnvironment: DeployToEnvironment) {
     ApillonLogger.log(

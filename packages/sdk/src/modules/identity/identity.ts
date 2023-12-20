@@ -38,7 +38,7 @@ export class Identity extends ApillonModule {
   /**
    * Generate a message presented to the user when requested to sign using their wallet
    * @param {string} [customText='Please sign this message']
-   * @returns {{message: string, timestamp: number}}
+   * @returns Generated message and timestamp
    */
   public generateSigningMessage(customText = 'Please sign this message'): {
     message: string;

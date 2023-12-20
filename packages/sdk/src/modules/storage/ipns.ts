@@ -48,6 +48,7 @@ export class Ipns extends ApillonModel {
 
   /**
    * Gets IPNS details.
+   * @returns IPNS record
    */
   async get(): Promise<Ipns> {
     const data = await ApillonApi.get<Ipns>(this.API_PREFIX);
@@ -57,7 +58,7 @@ export class Ipns extends ApillonModel {
   /**
    * Publish an IPNS record to IPFS and link it to a CID.
    * @param {string} cid - CID to which this ipns name will point.
-   * @returns {Promise<Ipns>}
+   * @returns IPNS record with updated data after publish
    */
   async publish(cid: string): Promise<Ipns> {
     const data = await ApillonApi.post<Ipns>(`${this.API_PREFIX}/publish`, {
@@ -69,7 +70,7 @@ export class Ipns extends ApillonModel {
 
   /**
    * Delete an IPNS record from the bucket.
-   * @returns {Promise<Ipns>}
+   * @returns Deleted IPNS record
    */
   async delete(): Promise<Ipns> {
     const data = await ApillonApi.delete<Ipns>(this.API_PREFIX);
