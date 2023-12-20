@@ -10,7 +10,6 @@
         "${relativeFile}",
         "--config=${workspaceFolder}/package.json",
         "--runInBand",
-        "--detectOpenHandles",
         "--forceExit"
       ],
       "cwd": "${workspaceFolder}",
