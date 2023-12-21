@@ -22,6 +22,13 @@ describe('Storage tests', () => {
     items.forEach((item) => expect(item.name).toBeTruthy());
   });
 
+  test('Get bucket', async () => {
+    const bucket = await storage.bucket(bucketUuid).get();
+    expect(bucket.uuid).toEqual(bucketUuid);
+    expect(bucket.name).toBeTruthy();
+    expect(bucket.size).toBeGreaterThan(0);
+  });
+
   test('get bucket content', async () => {
     const { items } = await storage.bucket(bucketUuid).listObjects();
     for (const item of items) {

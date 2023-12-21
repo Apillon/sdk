@@ -49,6 +49,17 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
+   * Gets bucket details.
+   * @returns Bucket instance
+   */
+  async get(): Promise<StorageBucket> {
+    const data = await ApillonApi.get<StorageBucket & { bucketUuid: string }>(
+      this.API_PREFIX,
+    );
+    return new StorageBucket(data.bucketUuid, data);
+  }
+
+  /**
    * Gets contents of a bucket.
    * @returns A a list of File and Directory objects.
    */
