@@ -5,19 +5,16 @@ import {
   ed25519PairFromSeed,
   encodeAddress,
 } from '@polkadot/util-crypto';
-import { ApillonConfig } from '../lib/apillon';
 import { Identity } from '../modules/identity/identity';
 import { getConfig } from './helpers/helper';
 import { Wallet } from 'ethers';
 import { Keyring } from '@polkadot/keyring';
 
 describe('Identity Module tests', () => {
-  let config: ApillonConfig;
   let identity: Identity;
 
   beforeAll(async () => {
-    config = getConfig();
-    identity = new Identity(config);
+    identity = new Identity(getConfig());
     await cryptoWaitReady();
   });
 
@@ -45,8 +42,6 @@ describe('Identity Module tests', () => {
     });
 
     test('Validate EVM wallet signature with timestamp', async () => {
-      const identity = new Identity(config);
-
       const customMessage = 'Identity EVM SDK test';
       const { timestamp, message } =
         identity.generateSigningMessage(customMessage);
@@ -68,8 +63,6 @@ describe('Identity Module tests', () => {
     });
 
     test('Validate EVM wallet signature with invalid timestamp', async () => {
-      const identity = new Identity(config);
-
       const customMessage = 'Identity EVM SDK test';
       const { message } = identity.generateSigningMessage(customMessage);
 
@@ -94,8 +87,6 @@ describe('Identity Module tests', () => {
 
   describe('Polkadot wallet signature tests', () => {
     test('Validate Polkadot wallet signature', async () => {
-      const identity = new Identity(config);
-
       const customMessage = 'Identity Polkadot SDK test';
       const { message } = identity.generateSigningMessage(customMessage);
       const [firstPart, secondPart] = message.split('\n');
@@ -119,8 +110,6 @@ describe('Identity Module tests', () => {
     });
 
     test('Validate Polkadot wallet signature with timestamp', async () => {
-      const identity = new Identity(config);
-
       const customMessage = 'Identity Polkadot SDK test';
       const { timestamp, message } =
         identity.generateSigningMessage(customMessage);
@@ -144,8 +133,6 @@ describe('Identity Module tests', () => {
     });
 
     test('Validate Polkadot wallet signature with invalid timestamp', async () => {
-      const identity = new Identity(config);
-
       const customMessage = 'Identity Polkadot SDK test';
       const { message } = identity.generateSigningMessage(customMessage);
 
@@ -167,8 +154,6 @@ describe('Identity Module tests', () => {
   });
 
   test('Get wallet identity profile', async () => {
-    const identity = new Identity(config);
-
     const { subsocial } = await identity.getWalletIdentity(
       '3rJriA6MiYj7oFXv5hgxvSuacenm8fk76Kb5TEEHcWWQVvii',
     );

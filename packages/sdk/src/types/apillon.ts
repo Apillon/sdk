@@ -3,12 +3,6 @@ export interface IApillonList<I> {
   total: number;
 }
 
-export interface IApillonResponse<D> {
-  id: string;
-  status: number;
-  data: D;
-}
-
 export interface IApillonStatus {
   status: number;
   success: boolean;
@@ -21,10 +15,6 @@ export interface IApillonPagination {
   orderBy?: string;
   desc?: boolean;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface IApillonListResponse<T>
-  extends IApillonResponse<IApillonList<T>> {}
 
 export interface IApillonBoolResponse {
   success: boolean;

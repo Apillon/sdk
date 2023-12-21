@@ -1,11 +1,7 @@
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import {
-  IApillonList,
-  IApillonListResponse,
-  IApillonPagination,
-} from '../../types/apillon';
+import { IApillonList, IApillonPagination } from '../../types/apillon';
 import { StorageBucket } from './storage-bucket';
 
 export class Storage extends ApillonModule {
@@ -24,8 +20,8 @@ export class Storage extends ApillonModule {
   ): Promise<IApillonList<StorageBucket>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<StorageBucket & { bucketUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<StorageBucket & { bucketUuid: string }>
     >(url);
 
     return {

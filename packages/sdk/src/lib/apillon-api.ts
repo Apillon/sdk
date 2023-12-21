@@ -8,6 +8,11 @@ import {
   ApillonRequestError,
 } from './common';
 
+type IApillonResponse<T> = {
+  id: string;
+  status: number;
+  data: T;
+};
 export class ApillonApi {
   private static instance: AxiosInstance;
 
@@ -59,8 +64,8 @@ export class ApillonApi {
   }
 
   public static async get<T>(url: string, config?: any): Promise<T> {
-    const { data } = await this.instance.get<T>(url, config);
-    return data;
+    const { data } = await this.instance.get<IApillonResponse<T>>(url, config);
+    return data.data;
   }
 
   public static async post<T>(
@@ -68,12 +73,19 @@ export class ApillonApi {
     body?: any,
     config?: any,
   ): Promise<T> {
-    const { data } = await this.instance.post<T>(url, body, config);
-    return data;
+    const { data } = await this.instance.post<IApillonResponse<T>>(
+      url,
+      body,
+      config,
+    );
+    return data.data;
   }
 
   public static async delete<T>(url: string, config?: any): Promise<T> {
-    const { data } = await this.instance.delete<T>(url, config);
-    return data;
+    const { data } = await this.instance.delete<IApillonResponse<T>>(
+      url,
+      config,
+    );
+    return data.data;
   }
 }

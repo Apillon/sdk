@@ -9,7 +9,7 @@ import {
   IFileUploadRequest,
   IFileUploadResponse,
 } from '../types/storage';
-import { IApillonResponse, LogLevel } from '../types/apillon';
+import { LogLevel } from '../types/apillon';
 import { randomBytes } from 'crypto';
 
 function listFilesRecursive(
@@ -118,12 +118,13 @@ export async function uploadFiles(
 
   await Promise.all(
     chunkify(files, fileChunkSize).map(async (fileGroup) => {
-      const { data } = await ApillonApi.post<
-        IApillonResponse<IFileUploadResponse>
-      >(`${apiPrefix}/upload`, {
-        files: fileGroup,
-        sessionUuid,
-      });
+      const data = await ApillonApi.post<IFileUploadResponse>(
+        `${apiPrefix}/upload`,
+        {
+          files: fileGroup,
+          sessionUuid,
+        },
+      );
 
       await uploadFilesToS3(data.files, fileGroup);
     }),
