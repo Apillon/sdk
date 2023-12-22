@@ -10,11 +10,12 @@ import {
 } from '../../types/storage';
 import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList } from '../../types/apillon';
+import { IApillonList, LogLevel } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { uploadFiles } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
 import { Ipns } from './ipns';
+import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -119,8 +120,36 @@ export class StorageBucket extends ApillonModel {
   public async uploadFromFolder(
     folderPath: string,
     params?: IFileUploadRequest,
-  ): Promise<void> {
-    await uploadFiles(folderPath, this.API_PREFIX, params);
+  ): Promise<FileMetadata[]> {
+    const uploadedFiles = await uploadFiles(
+      folderPath,
+      this.API_PREFIX,
+      params,
+    );
+
+    if (!params?.awaitCid) {
+      return uploadedFiles;
+    }
+
+    // Resolve CIDs for each file
+    let retryTimes = 0;
+    ApillonLogger.log('Resolving file CIDs...');
+    while (!uploadedFiles.every((f) => !!f.CID)) {
+      for (const uploadedFile of uploadedFiles) {
+        const file = await new File(
+          this.uuid,
+          null,
+          uploadedFile.fileUuid,
+        ).get();
+        uploadedFile.CID = file.CID;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (++retryTimes >= 10) {
+        ApillonLogger.log('Unable to resolve file CIDs', LogLevel.ERROR);
+        return uploadedFiles;
+      }
+    }
   }
 
   /**
@@ -131,8 +160,8 @@ export class StorageBucket extends ApillonModel {
   public async uploadFiles(
     files: FileMetadata[],
     params?: IFileUploadRequest,
-  ): Promise<void> {
-    await uploadFiles(null, this.API_PREFIX, params, files);
+  ): Promise<FileMetadata[]> {
+    return await uploadFiles(null, this.API_PREFIX, params, files);
   }
 
   /**

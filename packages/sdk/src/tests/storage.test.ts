@@ -76,12 +76,35 @@ describe('Storage tests', () => {
     expect(file.name).toBeTruthy();
   });
 
-  test.skip('upload files from folder', async () => {
+  test('upload files from folder', async () => {
     try {
       const uploadDir = resolve(__dirname, './helpers/website/');
+
       console.time('File upload complete');
-      await storage.bucket(bucketUuid).uploadFromFolder(uploadDir);
+      const files = await storage
+        .bucket(bucketUuid)
+        .uploadFromFolder(uploadDir);
       console.timeEnd('File upload complete');
+
+      expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
+
+      // console.log(content);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  test('upload files from folder with awaitCid', async () => {
+    try {
+      const uploadDir = resolve(__dirname, './helpers/website/');
+
+      console.time('File upload complete');
+      const files = await storage
+        .bucket(bucketUuid)
+        .uploadFromFolder(uploadDir, { awaitCid: true });
+      console.timeEnd('File upload complete');
+
+      expect(files.every((f) => !!f.CID)).toBeTruthy();
 
       // console.log(content);
     } catch (e) {

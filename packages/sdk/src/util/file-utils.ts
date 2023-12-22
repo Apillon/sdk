@@ -92,7 +92,7 @@ export async function uploadFiles(
   apiPrefix: string,
   params?: IFileUploadRequest,
   files?: FileMetadata[],
-): Promise<void> {
+): Promise<FileMetadata[]> {
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {
@@ -116,7 +116,7 @@ export async function uploadFiles(
   const fileChunkSize = 50;
   const sessionUuid = uuidv4();
 
-  await Promise.all(
+  const uploadedFiles = await Promise.all(
     chunkify(files, fileChunkSize).map(async (fileGroup) => {
       const data = await ApillonApi.post<IFileUploadResponse>(
         `${apiPrefix}/upload`,
@@ -127,6 +127,7 @@ export async function uploadFiles(
       );
 
       await uploadFilesToS3(data.files, fileGroup);
+      return data.files;
     }),
   );
 
@@ -134,7 +135,9 @@ export async function uploadFiles(
 
   ApillonLogger.log('Closing upload session...');
   await ApillonApi.post(`${apiPrefix}/upload/${sessionUuid}/end`, params);
-  ApillonLogger.logWithTime('Session ended.');
+  ApillonLogger.logWithTime('Upload session ended.');
+
+  return uploadedFiles.flatMap((f) => f);
 }
 
 function chunkify(files: FileMetadata[], chunkSize = 10): FileMetadata[][] {

@@ -36,6 +36,14 @@ export interface FileMetadata {
    * For example, an images/icons path creates images directory in a bucket and icons directory inside it. File will then be created in the icons directory.
    */
   path?: string;
+  /**
+   * The file's UUID, obtained after uploadig
+   */
+  fileUuid?: string;
+  /**
+   * The file's CID on IPFS
+   */
+  CID?: string;
 }
 
 export interface IFileUploadRequest {
@@ -46,17 +54,22 @@ export interface IFileUploadRequest {
    *
    * @docs [IPFS docs](https://dweb-primer.ipfs.io/files-on-ipfs/wrap-directories-around-content#explanation)
    */
-  wrapWithDirectory: boolean;
+  wrapWithDirectory?: boolean;
   /**
    * Path to wrapped directory inside bucket.
    *
    * Mandatory when `wrapWithDirectory` is true.
    *
-   * **Example**: `main-dir` --> Files get uploaded to a folder named `main-dir` in the bucket.
+   * @example `main-dir` --> Files get uploaded to a folder named `main-dir` in the bucket.
    *
-   * **Example 2**: `main-dir/sub-dir` --> Files get uploaded to a subfolder in the location `/main-dir/sub-dir`.
+   * @example `main-dir/sub-dir` --> Files get uploaded to a subfolder in the location `/main-dir/sub-dir`.
    */
-  directoryPath: string;
+  directoryPath?: string;
+
+  /**
+   * If set to true, the upload action will wait until files receive a CID from IPFS before returning a result
+   */
+  awaitCid?: boolean;
 }
 
 export interface IFileUploadResponse {
