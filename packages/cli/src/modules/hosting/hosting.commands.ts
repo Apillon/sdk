@@ -101,7 +101,9 @@ export function createHostingCommands(cli: Command) {
         '--status <deployment-status>',
         'Status of the deployment (optional) Choose from:\n' +
           `  ${DeploymentStatus.INITIATED}: Initiated\n` +
-          `  ${DeploymentStatus.IN_PROCESS}: In process\n` +
+          `  ${DeploymentStatus.IN_PROGRESS}: In process\n` +
+          `  ${DeploymentStatus.IN_REVIEW}: In review\n` +
+          `  ${DeploymentStatus.APPROVED}: Approved\n` +
           `  ${DeploymentStatus.SUCCESSFUL}: Successful\n` +
           `  ${DeploymentStatus.FAILED}: Failed\n`,
       ).choices(enumValues(DeploymentStatus)),

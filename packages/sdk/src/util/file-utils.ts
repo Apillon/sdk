@@ -160,8 +160,8 @@ function uuidv4() {
   // Convert bytes to hexadecimal and format the UUID
   const uuid = bytes.toString('hex');
 
-  return `${uuid.substr(0, 8)}-${uuid.substr(8, 4)}-${uuid.substr(
+  return `${uuid.substring(0, 8)}-${uuid.substring(8, 12)}-${uuid.substring(
     12,
-    4,
-  )}-${uuid.substr(16, 4)}-${uuid.substr(20)}`;
+    16,
+  )}-${uuid.substring(16, 20)}-${uuid.substring(20)}`;
 }

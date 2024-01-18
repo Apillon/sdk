@@ -1,5 +1,9 @@
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { DeployToEnvironment, IDeploymentFilters } from '../../types/hosting';
+import {
+  DeployToEnvironment,
+  DeploymentStatus,
+  IDeploymentFilters,
+} from '../../types/hosting';
 import { IApillonList } from '../../types/apillon';
 import { Deployment } from './deployment';
 import { ApillonApi } from '../../lib/apillon-api';
@@ -38,6 +42,26 @@ export class HostingWebsite extends ApillonModel {
    * IPNS CID for production environment.
    */
   public ipnsProduction: string = null;
+
+  /**
+   * Link to staging version of the website
+   */
+  public w3StagingLink: string = null;
+
+  /**
+   * Link to production version of the website
+   */
+  public w3ProductionLink: string = null;
+
+  /**
+   * Website last deployment (to any environment) unique identifier
+   */
+  public lastDeploymentUuid: string = null;
+
+  /**
+   * Status of last deployment
+   */
+  public lastDeploymentStatus: DeploymentStatus = null;
 
   /**
    * Constructor which should only be called via Hosting class.
@@ -139,5 +163,13 @@ export class HostingWebsite extends ApillonModel {
    */
   deployment(deploymentUuid: string): Deployment {
     return new Deployment(this.uuid, deploymentUuid, {});
+  }
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      lastDeploymentStatus: DeploymentStatus[value],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }
