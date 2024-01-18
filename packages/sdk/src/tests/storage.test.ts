@@ -95,55 +95,44 @@ describe('Storage tests', () => {
   });
 
   test('upload files from folder with awaitCid', async () => {
-    try {
-      const uploadDir = resolve(__dirname, './helpers/website/');
+    const uploadDir = resolve(__dirname, './helpers/website/');
 
-      console.time('File upload complete');
-      const files = await storage
-        .bucket(bucketUuid)
-        .uploadFromFolder(uploadDir, { awaitCid: true });
-      console.timeEnd('File upload complete');
+    console.time('File upload complete');
+    const files = await storage
+      .bucket(bucketUuid)
+      .uploadFromFolder(uploadDir, { awaitCid: true });
+    console.timeEnd('File upload complete');
 
-      expect(files.every((f) => !!f.CID)).toBeTruthy();
-
-      // console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    expect(files.length).toBeGreaterThan(0);
+    expect(files.every((f) => !!f.CID)).toBeTruthy();
   });
 
-  test.skip('upload files from buffer', async () => {
+  test('upload files from buffer', async () => {
     const html = fs.readFileSync(
       resolve(__dirname, './helpers/website/index.html'),
     );
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
-    try {
-      console.time('File upload complete');
-      await storage.bucket(bucketUuid).uploadFiles(
-        [
-          {
-            fileName: 'index.html',
-            contentType: 'text/html',
-            path: null,
-            content: html,
-          },
-          {
-            fileName: 'style.css',
-            contentType: 'text/css',
-            path: null,
-            content: css,
-          },
-        ],
-        { wrapWithDirectory: true, directoryPath: 'main/subdir' },
-      );
-      console.timeEnd('File upload complete');
-
-      // console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    console.time('File upload complete');
+    await storage.bucket(bucketUuid).uploadFiles(
+      [
+        {
+          fileName: 'index.html',
+          contentType: 'text/html',
+          path: null,
+          content: html,
+        },
+        {
+          fileName: 'style.css',
+          contentType: 'text/css',
+          path: null,
+          content: css,
+        },
+      ],
+      { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+    );
+    console.timeEnd('File upload complete');
   });
 
   test.skip('delete a file', async () => {

@@ -116,12 +116,13 @@ export class StorageBucket extends ApillonModel {
    * Uploads files inside a local folder via path.
    * @param folderPath Path to the folder to upload.
    * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
+   * @returns List of uploaded files with their properties
    */
   public async uploadFromFolder(
     folderPath: string,
     params?: IFileUploadRequest,
   ): Promise<FileMetadata[]> {
-    const uploadedFiles = await uploadFiles(
+    const { files: uploadedFiles, sessionUuid } = await uploadFiles(
       folderPath,
       this.API_PREFIX,
       params,
@@ -131,25 +132,7 @@ export class StorageBucket extends ApillonModel {
       return uploadedFiles;
     }
 
-    // Resolve CIDs for each file
-    let retryTimes = 0;
-    ApillonLogger.log('Resolving file CIDs...');
-    while (!uploadedFiles.every((f) => !!f.CID)) {
-      for (const uploadedFile of uploadedFiles) {
-        const file = await new File(
-          this.uuid,
-          null,
-          uploadedFile.fileUuid,
-        ).get();
-        uploadedFile.CID = file.CID;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (++retryTimes >= 10) {
-        ApillonLogger.log('Unable to resolve file CIDs', LogLevel.ERROR);
-        return uploadedFiles;
-      }
-    }
+    return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
   }
 
   /**
@@ -161,7 +144,18 @@ export class StorageBucket extends ApillonModel {
     files: FileMetadata[],
     params?: IFileUploadRequest,
   ): Promise<FileMetadata[]> {
-    return await uploadFiles(null, this.API_PREFIX, params, files);
+    const { files: uploadedFiles, sessionUuid } = await uploadFiles(
+      null,
+      this.API_PREFIX,
+      params,
+      files,
+    );
+
+    if (!params?.awaitCid) {
+      return uploadedFiles;
+    }
+
+    return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
   }
 
   /**
@@ -180,6 +174,34 @@ export class StorageBucket extends ApillonModel {
    */
   directory(directoryUuid: string): Directory {
     return new Directory(this.uuid, directoryUuid);
+  }
+
+  private async resolveFileCIDs(
+    sessionUuid: string,
+    limit: number,
+  ): Promise<FileMetadata[]> {
+    let resolvedFiles: FileMetadata[] = [];
+
+    // Resolve CIDs for each file
+    let retryTimes = 0;
+    ApillonLogger.log('Resolving file CIDs...');
+    while (resolvedFiles.length === 0 || !resolvedFiles.every((f) => !!f.CID)) {
+      resolvedFiles = (await this.listFiles({ sessionUuid, limit })).items.map(
+        (file) => ({
+          fileName: file.name,
+          fileUuid: file.uuid,
+          CID: file.CID,
+          content: null,
+        }),
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (++retryTimes >= 15) {
+        ApillonLogger.log('Unable to resolve file CIDs', LogLevel.ERROR);
+        return resolvedFiles;
+      }
+    }
+    return resolvedFiles;
   }
 
   //#region IPNS methods

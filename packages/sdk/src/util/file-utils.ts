@@ -92,7 +92,7 @@ export async function uploadFiles(
   apiPrefix: string,
   params?: IFileUploadRequest,
   files?: FileMetadata[],
-): Promise<FileMetadata[]> {
+): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {
@@ -137,7 +137,7 @@ export async function uploadFiles(
   await ApillonApi.post(`${apiPrefix}/upload/${sessionUuid}/end`, params);
   ApillonLogger.logWithTime('Upload session ended.');
 
-  return uploadedFiles.flatMap((f) => f);
+  return { sessionUuid, files: uploadedFiles.flatMap((f) => f) };
 }
 
 function chunkify(files: FileMetadata[], chunkSize = 10): FileMetadata[][] {

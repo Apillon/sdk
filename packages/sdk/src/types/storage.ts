@@ -19,6 +19,10 @@ export interface IStorageBucketContentRequest extends IApillonPagination {
 
 export interface IBucketFilesRequest extends IApillonPagination {
   fileStatus?: FileStatus;
+  /**
+   * Search files by upload session UUID
+   */
+  sessionUuid: string;
 }
 
 export interface FileMetadata {
