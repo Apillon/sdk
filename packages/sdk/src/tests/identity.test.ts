@@ -158,7 +158,8 @@ describe('Identity Module tests', () => {
       '3rJriA6MiYj7oFXv5hgxvSuacenm8fk76Kb5TEEHcWWQVvii',
     );
     expect(subsocial.content.name).toBe('dev only');
-    expect(subsocial.content.interests).toContain('crypto');
+    expect(subsocial.content.summary).toBeDefined();
+    expect(subsocial.content.about).toBeDefined();
 
     const { polkadot } = await identity.getWalletIdentity(
       '5HqHQDGcHqSQELAyr5PbJNAcQJew4vsoNCf5kkSpXcUGMtCK',

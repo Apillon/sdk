@@ -24,8 +24,9 @@ describe('Nft tests', () => {
     const collection = await nft.create({
       chain: EvmChain.MOONBASE,
       collectionType: CollectionType.GENERIC,
-      name: 'created from sdk tests',
-      symbol: 'cfst',
+      name: 'sdk test',
+      description: 'created from sdk tests',
+      symbol: 'sdkt',
       royaltiesFees: 0,
       royaltiesAddress: '0x0000000000000000000000000000000000000000',
       baseUri: 'https://test.com/metadata/',
@@ -36,6 +37,11 @@ describe('Nft tests', () => {
       drop: false,
     });
     expect(collection.uuid).toBeDefined();
+    expect(collection.contractAddress).toBeDefined();
+    expect(collection.symbol).toEqual('sdkt');
+    expect(collection.name).toEqual('sdk test');
+    expect(collection.description).toEqual('created from sdk tests');
+
     collectionUuid = collection.uuid;
   });
 
@@ -56,7 +62,7 @@ describe('Nft tests', () => {
   test('get nft collection details', async () => {
     const collection = await nft.collection(collectionUuid).get();
     console.log(collection);
-    expect(collection.name).toBe('created from sdk tests');
+    expect(collection.name).toBe('sdk test');
   });
 
   test('should fail nest minting for collection that is not nestable if collection populated', async () => {

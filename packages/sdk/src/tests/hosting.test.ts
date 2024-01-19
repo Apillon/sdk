@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { Hosting } from '../modules/hosting/hosting';
-import { DeployToEnvironment } from '../types/hosting';
+import { DeployToEnvironment, DeploymentStatus } from '../types/hosting';
 import { getConfig, getWebsiteUUID } from './helpers/helper';
 import { HostingWebsite } from '../modules/hosting/hosting-website';
 import * as fs from 'fs';
@@ -37,6 +37,9 @@ describe('Hosting tests', () => {
     const deployment = await website.deploy(DeployToEnvironment.TO_STAGING);
     expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
     deploymentUuid = deployment.uuid;
+
+    await website.get();
+    expect(website.lastDeploymentStatus).toEqual(DeploymentStatus.INITIATED);
   });
 
   test.skip('upload files from buffer', async () => {
