@@ -21,6 +21,7 @@ function listFilesRecursive(
   const gitignorePatterns = fs.existsSync(gitignorePath)
     ? fs.readFileSync(gitignorePath, 'utf-8').split('\n')
     : [];
+  gitignorePatterns.push('.git'); // Always ignore .git folder.
 
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
