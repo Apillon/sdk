@@ -1,12 +1,8 @@
-import { TransactionStatus } from './../../types/nfts';
+import { INftActionResponse, TransactionStatus } from './../../types/nfts';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import {
-  IApillonList,
-  IApillonStatus,
-  IApillonBoolResponse,
-} from '../../types/apillon';
+import { IApillonList } from '../../types/apillon';
 import {
   ICollection,
   ITransactionFilters,
@@ -148,7 +144,7 @@ export class NftCollection extends ApillonModel {
    * @returns Call status.
    */
   public async mint(receiver: string, quantity: number) {
-    const data = await ApillonApi.post<IApillonBoolResponse>(
+    const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/mint`,
       { receivingAddress: receiver, quantity },
     );
@@ -170,14 +166,14 @@ export class NftCollection extends ApillonModel {
     parentCollectionUuid: string,
     parentNftId: number,
     quantity: number,
-  ): Promise<IApillonStatus> {
+  ): Promise<INftActionResponse> {
     if (
       this.collectionType != null &&
       this.collectionType != CollectionType.NESTABLE
     ) {
       throw new Error('Collection is not nestable.');
     }
-    const data = await ApillonApi.post<IApillonStatus>(
+    const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/nest-mint`,
       { parentCollectionUuid, parentNftId, quantity },
     );
@@ -192,11 +188,11 @@ export class NftCollection extends ApillonModel {
    * @param tokenId Token ID of the NFT we want to burn.
    * @returns Status.
    */
-  public async burn(tokenId: string): Promise<IApillonStatus> {
+  public async burn(tokenId: string): Promise<INftActionResponse> {
     if (this.isRevokable != null && !this.isRevokable) {
       throw new Error('Collection is not revokable.');
     }
-    const data = await ApillonApi.post<IApillonStatus>(
+    const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/burn`,
       { tokenId },
     );

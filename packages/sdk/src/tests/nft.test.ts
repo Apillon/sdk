@@ -49,6 +49,7 @@ describe('Nft tests', () => {
     const collection = nft.collection(collectionUuid);
     const res = await collection.mint(receiverAddress, 1);
     expect(res.success).toBe(true);
+    expect(res.transactionHash).toBeDefined();
   });
 
   test('get nft collection transactions', async () => {

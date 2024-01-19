@@ -86,6 +86,11 @@ export interface ICollectionFilters extends IApillonPagination {
   collectionStatus?: CollectionStatus;
 }
 
+export interface INftActionResponse {
+  success: boolean;
+  transactionHash: string;
+}
+
 export interface ITransactionFilters extends IApillonPagination {
   transactionStatus?: TransactionStatus;
   transactionType?: TransactionType;
