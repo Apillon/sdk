@@ -141,12 +141,13 @@ export class NftCollection extends ApillonModel {
    * Mints new nfts to a receiver.
    * @param receiver Address of the receiver.
    * @param quantity Amount of nfts to mint.
+   * @param idsToMint Custom token IDs for minted NFTs. Only when collection.isAutoIncrement=false.
    * @returns Call status.
    */
-  public async mint(receiver: string, quantity: number) {
+  public async mint(receiver: string, quantity: number, idsToMint?: number[]) {
     const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/mint`,
-      { receivingAddress: receiver, quantity },
+      { receivingAddress: receiver, quantity, idsToMint },
     );
 
     ApillonLogger.log(`NFT minted successfully to ${receiver}`);
