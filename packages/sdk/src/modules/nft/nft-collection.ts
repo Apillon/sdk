@@ -1,4 +1,8 @@
-import { INftActionResponse, TransactionStatus } from './../../types/nfts';
+import {
+  IMintNftData,
+  INftActionResponse,
+  TransactionStatus,
+} from './../../types/nfts';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
@@ -138,19 +142,22 @@ export class NftCollection extends ApillonModel {
   }
 
   /**
-   * Mints new nfts to a receiver.
-   * @param receiver Address of the receiver.
-   * @param quantity Amount of nfts to mint.
-   * @param idsToMint Custom token IDs for minted NFTs. Only when collection.isAutoIncrement=false.
-   * @returns Call status.
+   * @param {IMintNftData} params - NFT mint parameters
+   * @returns {INftActionResponse} - success status and transaction hash of the mint
    */
-  public async mint(receiver: string, quantity: number, idsToMint?: number[]) {
+  public async mint(params: IMintNftData) {
+    if (params.idsToMint?.length) {
+      params.quantity = params.idsToMint.length;
+    }
+
     const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/mint`,
-      { receivingAddress: receiver, quantity, idsToMint },
+      params,
     );
 
-    ApillonLogger.log(`NFT minted successfully to ${receiver}`);
+    ApillonLogger.log(
+      `${params.quantity} NFTs minted successfully to ${params.receivingAddress}`,
+    );
 
     return data;
   }

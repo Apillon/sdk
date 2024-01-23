@@ -6,12 +6,12 @@ import { getCollectionUUID, getConfig, getMintAddress } from './helpers/helper';
 describe('Nft tests', () => {
   let nft: Nft;
   let collectionUuid: string;
-  let receiverAddress: string;
+  let receivingAddress: string;
 
   beforeAll(async () => {
     nft = new Nft(getConfig());
     collectionUuid = getCollectionUUID();
-    receiverAddress = getMintAddress();
+    receivingAddress = getMintAddress();
   });
 
   test('list nft collections', async () => {
@@ -47,7 +47,10 @@ describe('Nft tests', () => {
 
   test('mints a new nft', async () => {
     const collection = nft.collection(collectionUuid);
-    const res = await collection.mint(receiverAddress, 1);
+    const res = await collection.mint({
+      receivingAddress,
+      quantity: 1,
+    });
     expect(res.success).toBe(true);
     expect(res.transactionHash).toBeDefined();
   });

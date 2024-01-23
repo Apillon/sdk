@@ -95,3 +95,19 @@ export interface ITransactionFilters extends IApillonPagination {
   transactionStatus?: TransactionStatus;
   transactionType?: TransactionType;
 }
+
+export interface IMintNftData {
+  /**
+   * Address to receive the minted NFT
+   */
+  receivingAddress: string;
+  /**
+   * How many NFTs to mint to the receiver
+   */
+  quantity?: number;
+  /**
+   * If collection is set as isAutoIncrement=false,
+   * use this parameter to define the custom minted NFT token IDS
+   */
+  idsToMint?: number[];
+}
