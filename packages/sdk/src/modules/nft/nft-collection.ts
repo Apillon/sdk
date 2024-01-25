@@ -62,6 +62,12 @@ export class NftCollection extends ApillonModel {
   public isSoulbound: boolean = null;
 
   /**
+   * If true, NFT token IDs are always sequential.
+   * If false, custom token IDs can be provided when minting.
+   */
+  public isAutoIncrement: boolean = null;
+
+  /**
    * If collection owner can burn / destroy a NFT.
    */
   public isRevokable: boolean = null;
@@ -145,7 +151,7 @@ export class NftCollection extends ApillonModel {
    * @param {IMintNftData} params - NFT mint parameters
    * @returns {INftActionResponse} - success status and transaction hash of the mint
    */
-  public async mint(params: IMintNftData) {
+  public async mint(params: IMintNftData): Promise<INftActionResponse> {
     if (params.idsToMint?.length) {
       params.quantity = params.idsToMint.length;
     }

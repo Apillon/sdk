@@ -3,6 +3,22 @@ import { NftCollection } from '../modules/nft/nft-collection';
 import { CollectionType, EvmChain } from '../types/nfts';
 import { getCollectionUUID, getConfig, getMintAddress } from './helpers/helper';
 
+const nftData = {
+  chain: EvmChain.MOONBASE,
+  collectionType: CollectionType.GENERIC,
+  name: 'SDK Test',
+  description: 'Created from SDK tests',
+  symbol: 'SDKT',
+  royaltiesFees: 0,
+  royaltiesAddress: '0x0000000000000000000000000000000000000000',
+  baseUri: 'https://test.com/metadata/',
+  baseExtension: '.json',
+  maxSupply: 5,
+  isRevokable: false,
+  isSoulbound: false,
+  drop: false,
+};
+
 describe('Nft tests', () => {
   let nft: Nft;
   let collectionUuid: string;
@@ -21,26 +37,13 @@ describe('Nft tests', () => {
   });
 
   test('creates a new collection', async () => {
-    const collection = await nft.create({
-      chain: EvmChain.MOONBASE,
-      collectionType: CollectionType.GENERIC,
-      name: 'sdk test',
-      description: 'created from sdk tests',
-      symbol: 'sdkt',
-      royaltiesFees: 0,
-      royaltiesAddress: '0x0000000000000000000000000000000000000000',
-      baseUri: 'https://test.com/metadata/',
-      baseExtension: '.json',
-      maxSupply: 5,
-      isRevokable: false,
-      isSoulbound: false,
-      drop: false,
-    });
+    const collection = await nft.create(nftData);
     expect(collection.uuid).toBeDefined();
     expect(collection.contractAddress).toBeDefined();
-    expect(collection.symbol).toEqual('sdkt');
-    expect(collection.name).toEqual('sdk test');
-    expect(collection.description).toEqual('created from sdk tests');
+    expect(collection.symbol).toEqual('SDKT');
+    expect(collection.name).toEqual('SDK Test');
+    expect(collection.description).toEqual('Created from SDK tests');
+    expect(collection.isAutoIncrement).toEqual(true);
 
     collectionUuid = collection.uuid;
   });
@@ -66,7 +69,7 @@ describe('Nft tests', () => {
   test('get nft collection details', async () => {
     const collection = await nft.collection(collectionUuid).get();
     console.log(collection);
-    expect(collection.name).toBe('sdk test');
+    expect(collection.name).toBe('SDK Test');
   });
 
   test('should fail nest minting for collection that is not nestable if collection populated', async () => {
@@ -88,5 +91,34 @@ describe('Nft tests', () => {
     await expect(collection.burn('1')).rejects.toThrow(
       'Collection is not revokable.',
     );
+  });
+
+  describe('NFT with custom IDs mint', () => {
+    test('creates a new collection', async () => {
+      const collection = await nft.create({
+        ...nftData,
+        name: 'SDK Test isAutoIncrement=false',
+        isAutoIncrement: false,
+      });
+      expect(collection.uuid).toBeDefined();
+      expect(collection.contractAddress).toBeDefined();
+      expect(collection.symbol).toEqual('SDKT');
+      expect(collection.name).toEqual('SDK Test isAutoIncrement=false');
+      expect(collection.description).toEqual('Created from SDK tests');
+      expect(collection.isAutoIncrement).toEqual(false);
+
+      collectionUuid = collection.uuid;
+    });
+
+    test('mints new nfts with custom IDs', async () => {
+      const collection = nft.collection(collectionUuid);
+      const res = await collection.mint({
+        receivingAddress,
+        quantity: 2,
+        idsToMint: [10, 20],
+      });
+      expect(res.success).toBe(true);
+      expect(res.transactionHash).toBeDefined();
+    });
   });
 });
