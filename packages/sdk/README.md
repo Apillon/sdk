@@ -247,6 +247,7 @@ const collection1 = await nft.create({
   description: 'A collection of unique space exploration NFTs.',
   baseUri: 'https://moonbeamnfts.com/collections/spaceexplorers/',
   baseExtension: 'json',
+  // If you omit the maxSupply parameter, the max supply will be unlimited
   maxSupply: 1000,
   isRevokable: false,
   isSoulbound: false,

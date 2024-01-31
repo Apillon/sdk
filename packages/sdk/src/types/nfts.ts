@@ -44,7 +44,7 @@ export interface ICreateCollection {
   description?: string;
   baseUri: string;
   baseExtension: string;
-  maxSupply: number;
+  maxSupply?: number;
   isRevokable: boolean;
   isSoulbound: boolean;
   royaltiesAddress: string;
