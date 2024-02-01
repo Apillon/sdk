@@ -191,6 +191,7 @@ export class StorageBucket extends ApillonModel {
           fileName: file.name,
           fileUuid: file.uuid,
           CID: file.CID,
+          CIDv1: file.CIDv1,
           content: null,
         }),
       );

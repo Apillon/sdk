@@ -22,7 +22,7 @@ export interface IBucketFilesRequest extends IApillonPagination {
   /**
    * Search files by upload session UUID
    */
-  sessionUuid: string;
+  sessionUuid?: string;
 }
 
 export interface FileMetadata {
