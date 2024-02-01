@@ -1,13 +1,12 @@
-import { TransactionStatus } from './../../types/nfts';
+import {
+  IMintNftData,
+  INftActionResponse,
+  TransactionStatus,
+} from './../../types/nfts';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import {
-  IApillonResponse,
-  IApillonList,
-  IApillonStatus,
-  IApillonBoolResponse,
-} from '../../types/apillon';
+import { IApillonList } from '../../types/apillon';
 import {
   ICollection,
   ITransactionFilters,
@@ -61,6 +60,12 @@ export class NftCollection extends ApillonModel {
    * If nft is transferable.
    */
   public isSoulbound: boolean = null;
+
+  /**
+   * If true, NFT token IDs are always sequential.
+   * If false, custom token IDs can be provided when minting.
+   */
+  public isAutoIncrement: boolean = null;
 
   /**
    * If collection owner can burn / destroy a NFT.
@@ -138,24 +143,27 @@ export class NftCollection extends ApillonModel {
    * @returns Collection instance.
    */
   public async get(): Promise<NftCollection> {
-    const { data } = await ApillonApi.get<IApillonResponse<ICollection>>(
-      this.API_PREFIX,
-    );
+    const data = await ApillonApi.get<ICollection>(this.API_PREFIX);
     return this.populate(data);
   }
 
   /**
-   * Mints new nfts to a receiver.
-   * @param receiver Address of the receiver.
-   * @param quantity Amount of nfts to mint.
-   * @returns Call status.
+   * @param {IMintNftData} params - NFT mint parameters
+   * @returns {INftActionResponse} - success status and transaction hash of the mint
    */
-  public async mint(receiver: string, quantity: number) {
-    const { data } = await ApillonApi.post<
-      IApillonResponse<IApillonBoolResponse>
-    >(`${this.API_PREFIX}/mint`, { receivingAddress: receiver, quantity });
+  public async mint(params: IMintNftData): Promise<INftActionResponse> {
+    if (params.idsToMint?.length) {
+      params.quantity = params.idsToMint.length;
+    }
 
-    ApillonLogger.log(`NFT minted successfully to ${receiver}`);
+    const data = await ApillonApi.post<INftActionResponse>(
+      `${this.API_PREFIX}/mint`,
+      params,
+    );
+
+    ApillonLogger.log(
+      `${params.quantity} NFTs minted successfully to ${params.receivingAddress}`,
+    );
 
     return data;
   }
@@ -172,14 +180,14 @@ export class NftCollection extends ApillonModel {
     parentCollectionUuid: string,
     parentNftId: number,
     quantity: number,
-  ): Promise<IApillonStatus> {
+  ): Promise<INftActionResponse> {
     if (
       this.collectionType != null &&
       this.collectionType != CollectionType.NESTABLE
     ) {
       throw new Error('Collection is not nestable.');
     }
-    const { data } = await ApillonApi.post<IApillonResponse<IApillonStatus>>(
+    const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/nest-mint`,
       { parentCollectionUuid, parentNftId, quantity },
     );
@@ -194,11 +202,11 @@ export class NftCollection extends ApillonModel {
    * @param tokenId Token ID of the NFT we want to burn.
    * @returns Status.
    */
-  public async burn(tokenId: string): Promise<IApillonStatus> {
+  public async burn(tokenId: string): Promise<INftActionResponse> {
     if (this.isRevokable != null && !this.isRevokable) {
       throw new Error('Collection is not revokable.');
     }
-    const { data } = await ApillonApi.post<IApillonResponse<IApillonStatus>>(
+    const data = await ApillonApi.post<INftActionResponse>(
       `${this.API_PREFIX}/burn`,
       { tokenId },
     );
@@ -215,7 +223,7 @@ export class NftCollection extends ApillonModel {
    * @returns Collection data.
    */
   public async transferOwnership(address: string): Promise<NftCollection> {
-    const { data } = await ApillonApi.post<IApillonResponse<ICollection>>(
+    const data = await ApillonApi.post<ICollection>(
       `${this.API_PREFIX}/transfer`,
       { address },
     );
@@ -239,9 +247,7 @@ export class NftCollection extends ApillonModel {
       params,
     );
 
-    const { data } = await ApillonApi.get<
-      IApillonResponse<IApillonList<ITransaction>>
-    >(url);
+    const data = await ApillonApi.get<IApillonList<ITransaction>>(url);
 
     return {
       ...data,

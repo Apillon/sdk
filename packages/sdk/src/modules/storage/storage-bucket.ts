@@ -10,15 +10,12 @@ import {
 } from '../../types/storage';
 import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
-import {
-  IApillonList,
-  IApillonListResponse,
-  IApillonResponse,
-} from '../../types/apillon';
+import { IApillonList, LogLevel } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { uploadFiles } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
 import { Ipns } from './ipns';
+import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -53,6 +50,17 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
+   * Gets bucket details.
+   * @returns Bucket instance
+   */
+  async get(): Promise<StorageBucket> {
+    const data = await ApillonApi.get<StorageBucket & { bucketUuid: string }>(
+      this.API_PREFIX,
+    );
+    return new StorageBucket(data.bucketUuid, data);
+  }
+
+  /**
    * Gets contents of a bucket.
    * @returns A a list of File and Directory objects.
    */
@@ -64,9 +72,7 @@ export class StorageBucket extends ApillonModel {
       `${this.API_PREFIX}/content`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<File | Directory>
-    >(url);
+    const data = await ApillonApi.get<IApillonList<File | Directory>>(url);
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
         const file = item as File;
@@ -86,14 +92,16 @@ export class StorageBucket extends ApillonModel {
 
   /**
    * Gets all files in a bucket.
+   * @param {?IBucketFilesRequest} [params] - query filter parameters
+   * @returns List of files in the bucket
    */
   async listFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(
       `/storage/buckets/${this.uuid}/files`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<File & { fileUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<File & { fileUuid: string }>
     >(url);
 
     return {
@@ -108,12 +116,23 @@ export class StorageBucket extends ApillonModel {
    * Uploads files inside a local folder via path.
    * @param folderPath Path to the folder to upload.
    * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
+   * @returns List of uploaded files with their properties
    */
   public async uploadFromFolder(
     folderPath: string,
     params?: IFileUploadRequest,
-  ): Promise<void> {
-    await uploadFiles(folderPath, this.API_PREFIX, params);
+  ): Promise<FileMetadata[]> {
+    const { files: uploadedFiles, sessionUuid } = await uploadFiles(
+      folderPath,
+      this.API_PREFIX,
+      params,
+    );
+
+    if (!params?.awaitCid) {
+      return uploadedFiles;
+    }
+
+    return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
   }
 
   /**
@@ -124,8 +143,19 @@ export class StorageBucket extends ApillonModel {
   public async uploadFiles(
     files: FileMetadata[],
     params?: IFileUploadRequest,
-  ): Promise<void> {
-    await uploadFiles(null, this.API_PREFIX, params, files);
+  ): Promise<FileMetadata[]> {
+    const { files: uploadedFiles, sessionUuid } = await uploadFiles(
+      null,
+      this.API_PREFIX,
+      params,
+      files,
+    );
+
+    if (!params?.awaitCid) {
+      return uploadedFiles;
+    }
+
+    return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
   }
 
   /**
@@ -146,6 +176,35 @@ export class StorageBucket extends ApillonModel {
     return new Directory(this.uuid, directoryUuid);
   }
 
+  private async resolveFileCIDs(
+    sessionUuid: string,
+    limit: number,
+  ): Promise<FileMetadata[]> {
+    let resolvedFiles: FileMetadata[] = [];
+
+    // Resolve CIDs for each file
+    let retryTimes = 0;
+    ApillonLogger.log('Resolving file CIDs...');
+    while (resolvedFiles.length === 0 || !resolvedFiles.every((f) => !!f.CID)) {
+      resolvedFiles = (await this.listFiles({ sessionUuid, limit })).items.map(
+        (file) => ({
+          fileName: file.name,
+          fileUuid: file.uuid,
+          CID: file.CID,
+          CIDv1: file.CIDv1,
+          content: null,
+        }),
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (++retryTimes >= 15) {
+        ApillonLogger.log('Unable to resolve file CIDs', LogLevel.ERROR);
+        return resolvedFiles;
+      }
+    }
+    return resolvedFiles;
+  }
+
   //#region IPNS methods
 
   /**
@@ -160,14 +219,15 @@ export class StorageBucket extends ApillonModel {
   /**
    * List all IPNS records for this bucket
    * @param {IPNSListRequest?} [params] - Listing query filters
+   * @returns List of IPNS names in the bucket
    */
   async listIpnsNames(params?: IPNSListRequest) {
     const url = constructUrlWithQueryParams(
       `/storage/buckets/${this.uuid}/ipns`,
       params,
     );
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<Ipns & { ipnsUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<Ipns & { ipnsUuid: string }>
     >(url);
 
     return {
@@ -179,13 +239,11 @@ export class StorageBucket extends ApillonModel {
   /**
    * Create a new IPNS record for this bucket
    * @param {ICreateIpns} body
-   * @returns {Promise<Ipns>}
+   * @returns New IPNS instance
    */
   async createIpns(body: ICreateIpns): Promise<Ipns> {
     const url = `/storage/buckets/${this.uuid}/ipns`;
-    const { data } = await ApillonApi.post<
-      IApillonResponse<Ipns & { ipnsUuid: string }>
-    >(url, body);
+    const data = await ApillonApi.post<Ipns & { ipnsUuid: string }>(url, body);
     return new Ipns(this.uuid, data.ipnsUuid, data);
   }
   //#endregion

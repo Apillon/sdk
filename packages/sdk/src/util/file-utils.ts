@@ -9,7 +9,7 @@ import {
   IFileUploadRequest,
   IFileUploadResponse,
 } from '../types/storage';
-import { IApillonResponse, LogLevel } from '../types/apillon';
+import { LogLevel } from '../types/apillon';
 import { randomBytes } from 'crypto';
 
 function listFilesRecursive(
@@ -17,11 +17,28 @@ function listFilesRecursive(
   fileList = [],
   relativePath = '',
 ) {
+  const gitignorePath = path.join(folderPath, '.gitignore');
+  const gitignorePatterns = fs.existsSync(gitignorePath)
+    ? fs.readFileSync(gitignorePath, 'utf-8').split('\n')
+    : [];
+  gitignorePatterns.push('.git'); // Always ignore .git folder.
+
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
     const fullPath = path.join(folderPath, file);
+    const relativeFilePath = path.join(relativePath, file);
+
+    // Skip file if it matches .gitignore patterns
+    if (
+      gitignorePatterns.some((pattern) =>
+        new RegExp(pattern).test(relativeFilePath),
+      )
+    ) {
+      continue;
+    }
+
     if (fs.statSync(fullPath).isDirectory()) {
-      listFilesRecursive(fullPath, fileList, `${relativePath + file}/`);
+      listFilesRecursive(fullPath, fileList, `${relativeFilePath}/`);
     } else {
       fileList.push({ fileName: file, path: relativePath, index: fullPath });
     }
@@ -76,7 +93,7 @@ export async function uploadFiles(
   apiPrefix: string,
   params?: IFileUploadRequest,
   files?: FileMetadata[],
-): Promise<void> {
+): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {
@@ -100,16 +117,18 @@ export async function uploadFiles(
   const fileChunkSize = 50;
   const sessionUuid = uuidv4();
 
-  await Promise.all(
+  const uploadedFiles = await Promise.all(
     chunkify(files, fileChunkSize).map(async (fileGroup) => {
-      const { data } = await ApillonApi.post<
-        IApillonResponse<IFileUploadResponse>
-      >(`${apiPrefix}/upload`, {
-        files: fileGroup,
-        sessionUuid,
-      });
+      const data = await ApillonApi.post<IFileUploadResponse>(
+        `${apiPrefix}/upload`,
+        {
+          files: fileGroup,
+          sessionUuid,
+        },
+      );
 
       await uploadFilesToS3(data.files, fileGroup);
+      return data.files;
     }),
   );
 
@@ -117,7 +136,9 @@ export async function uploadFiles(
 
   ApillonLogger.log('Closing upload session...');
   await ApillonApi.post(`${apiPrefix}/upload/${sessionUuid}/end`, params);
-  ApillonLogger.logWithTime('Session ended.');
+  ApillonLogger.logWithTime('Upload session ended.');
+
+  return { sessionUuid, files: uploadedFiles.flatMap((f) => f) };
 }
 
 function chunkify(files: FileMetadata[], chunkSize = 10): FileMetadata[][] {
@@ -140,8 +161,8 @@ function uuidv4() {
   // Convert bytes to hexadecimal and format the UUID
   const uuid = bytes.toString('hex');
 
-  return `${uuid.substr(0, 8)}-${uuid.substr(8, 4)}-${uuid.substr(
+  return `${uuid.substring(0, 8)}-${uuid.substring(8, 12)}-${uuid.substring(
     12,
-    4,
-  )}-${uuid.substr(16, 4)}-${uuid.substr(20)}`;
+    16,
+  )}-${uuid.substring(16, 20)}-${uuid.substring(20)}`;
 }

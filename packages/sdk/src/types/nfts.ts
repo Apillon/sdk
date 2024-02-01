@@ -3,7 +3,6 @@ import { IApillonPagination } from './apillon';
 export enum EvmChain {
   MOONBEAM = 1284,
   MOONBASE = 1287,
-  ASTAR_SHIBUYA = 81,
   ASTAR = 592,
 }
 
@@ -45,7 +44,7 @@ export interface ICreateCollection {
   description?: string;
   baseUri: string;
   baseExtension: string;
-  maxSupply: number;
+  maxSupply?: number;
   isRevokable: boolean;
   isSoulbound: boolean;
   royaltiesAddress: string;
@@ -54,6 +53,7 @@ export interface ICreateCollection {
   dropStart?: number;
   dropPrice?: number;
   dropReserve?: number;
+  isAutoIncrement?: boolean;
 }
 
 //OUTPUTS
@@ -86,7 +86,28 @@ export interface ICollectionFilters extends IApillonPagination {
   collectionStatus?: CollectionStatus;
 }
 
+export interface INftActionResponse {
+  success: boolean;
+  transactionHash: string;
+}
+
 export interface ITransactionFilters extends IApillonPagination {
   transactionStatus?: TransactionStatus;
   transactionType?: TransactionType;
+}
+
+export interface IMintNftData {
+  /**
+   * Address to receive the minted NFT
+   */
+  receivingAddress: string;
+  /**
+   * How many NFTs to mint to the receiver
+   */
+  quantity?: number;
+  /**
+   * If collection is set as isAutoIncrement=false,
+   * use this parameter to define the custom minted NFT token IDS
+   */
+  idsToMint?: number[];
 }

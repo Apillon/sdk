@@ -1,7 +1,7 @@
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
-import { IApillonResponse } from '../../types/apillon';
+
 import { FileStatus, StorageContentType } from '../../types/storage';
 
 export class File extends ApillonModel {
@@ -73,11 +73,12 @@ export class File extends ApillonModel {
 
   /**
    * Gets file details.
+   * @returns File instance
    */
   async get(): Promise<File> {
-    const { data } = await ApillonApi.get<
-      IApillonResponse<File & { fileStatus: number }>
-    >(this.API_PREFIX);
+    const data = await ApillonApi.get<File & { fileStatus: number }>(
+      this.API_PREFIX,
+    );
     this.status = data.fileStatus;
     return this.populate(data);
   }

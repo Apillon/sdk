@@ -46,16 +46,16 @@
     "decentralized"
   ],
   "devDependencies": {
-    "nodemon": "^2.0.20",
-    "ts-node": "^10.9.1",
     "eslint-config-common": "*",
-    "tsconfig": "*",
-    "rimraf": "^5.0.5"
+    "nodemon": "^3.0.2",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "tsconfig": "*"
   },
   "dependencies": {
-    "axios": "^1.3.4",
+    "@apillon/sdk": "*",
+    "axios": "^1.6.2",
     "chalk": "^4.1.2",
-    "commander": "^10.0.0",
-    "@apillon/sdk": "*"
+    "commander": "^11.1.0"
   }
 }

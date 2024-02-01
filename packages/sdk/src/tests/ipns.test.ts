@@ -1,31 +1,28 @@
-import { ApillonConfig } from '../lib/apillon';
 import { Ipns } from '../modules/storage/ipns';
 import { Storage } from '../modules/storage/storage';
 import { getBucketUUID, getConfig } from './helpers/helper';
 
 describe('IPNS tests for StorageBucket', () => {
-  let config: ApillonConfig;
-  let bucketUUID: string;
+  let storage: Storage;
+  let bucketUuid: string;
   let newIpnsUuid: string;
 
   beforeAll(async () => {
-    config = getConfig();
-    bucketUUID = getBucketUUID();
+    storage = new Storage(getConfig());
+    bucketUuid = getBucketUUID();
   });
 
   test('List IPNS records in a bucket', async () => {
-    const storage = new Storage(config);
-    const response = await storage.bucket(bucketUUID).listIpnsNames();
+    const response = await storage.bucket(bucketUuid).listIpnsNames();
     expect(response.items).toBeInstanceOf(Array<Ipns>);
     expect(response.items.length).toBeGreaterThanOrEqual(0);
   });
 
   test('Create a new IPNS record', async () => {
-    const storage = new Storage(config);
     const name = 'Test IPNS';
     const description = 'This is a test description';
     const cid = 'QmUxtfFfWFguxSWUUy2FiBsGuH6Px4KYFxJqNYJRiDpemj';
-    const ipns = await storage.bucket(bucketUUID).createIpns({
+    const ipns = await storage.bucket(bucketUuid).createIpns({
       name,
       description,
       cid,
@@ -38,18 +35,16 @@ describe('IPNS tests for StorageBucket', () => {
   });
 
   test('Get a specific IPNS record', async () => {
-    const storage = new Storage(config);
-    const ipns = await storage.bucket(bucketUUID).ipns(newIpnsUuid).get();
+    const ipns = await storage.bucket(bucketUuid).ipns(newIpnsUuid).get();
     expect(ipns).toBeDefined();
     expect(ipns.name).toEqual('Test IPNS');
     expect(ipns.uuid).toEqual(newIpnsUuid);
   });
 
   test('Publish an IPNS record', async () => {
-    const storage = new Storage(config);
     const cid = 'Qmakf2aN7wzt5u9H3RadGjfotu62JsDfBq8hHzGsV2LZFx';
     const ipns = await storage
-      .bucket(bucketUUID)
+      .bucket(bucketUuid)
       .ipns(newIpnsUuid)
       .publish(cid);
     expect(ipns).toBeDefined();
@@ -58,8 +53,7 @@ describe('IPNS tests for StorageBucket', () => {
   });
 
   test('Delete an IPNS record', async () => {
-    const storage = new Storage(config);
-    const ipns = await storage.bucket(bucketUUID).ipns(newIpnsUuid).delete();
+    const ipns = await storage.bucket(bucketUuid).ipns(newIpnsUuid).delete();
     expect(ipns).toBeDefined();
     expect(ipns.name).toEqual('Test IPNS');
     expect(ipns.uuid).toEqual(newIpnsUuid);

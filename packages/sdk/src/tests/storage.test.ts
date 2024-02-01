@@ -1,28 +1,36 @@
 import { resolve } from 'path';
-import { ApillonConfig } from '../lib/apillon';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
 import { getBucketUUID, getConfig } from './helpers/helper';
 import * as fs from 'fs';
 
 describe('Storage tests', () => {
-  let config: ApillonConfig;
-  let bucketUUID: string;
+  let storage: Storage;
+  let bucketUuid: string;
+  // For get and delete tests
+  const directoryUuid = '6c9c6ab1-801d-4915-a63e-120eed21fee0';
+  const fileUuid = 'cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc';
 
   beforeAll(async () => {
-    config = getConfig();
-    bucketUUID = getBucketUUID();
+    storage = new Storage(getConfig());
+    bucketUuid = getBucketUUID();
   });
 
   test('List buckets', async () => {
-    const { items } = await new Storage(config).listBuckets();
+    const { items } = await storage.listBuckets();
     expect(items.length).toBeGreaterThanOrEqual(0);
     items.forEach((item) => expect(item.name).toBeTruthy());
   });
 
+  test('Get bucket', async () => {
+    const bucket = await storage.bucket(bucketUuid).get();
+    expect(bucket.uuid).toEqual(bucketUuid);
+    expect(bucket.name).toBeTruthy();
+    expect(bucket.size).toBeGreaterThan(0);
+  });
+
   test('get bucket content', async () => {
-    const storage = new Storage(config);
-    const { items } = await storage.bucket(bucketUUID).listObjects();
+    const { items } = await storage.bucket(bucketUuid).listObjects();
     for (const item of items) {
       if (item.type == StorageContentType.DIRECTORY) {
         await item.get();
@@ -34,8 +42,7 @@ describe('Storage tests', () => {
   });
 
   test('get bucket files', async () => {
-    const storage = new Storage(config);
-    const { items } = await storage.bucket(bucketUUID).listFiles();
+    const { items } = await storage.bucket(bucketUuid).listFiles();
     for (const item of items) {
       console.log(`${item.type}: ${item.name}`);
     }
@@ -44,18 +51,16 @@ describe('Storage tests', () => {
   });
 
   test('get bucket files markedForDeletion=true', async () => {
-    const storage = new Storage(config);
     const { items } = await storage
-      .bucket(bucketUUID)
+      .bucket(bucketUuid)
       .listObjects({ markedForDeletion: true });
     expect(items.some((file) => file['status'] == 8));
   });
 
   test('get bucket directory content', async () => {
-    const storage = new Storage(config);
     const { items } = await storage
-      .bucket(bucketUUID)
-      .listObjects({ directoryUuid: '6c9c6ab1-801d-4915-a63e-120eed21fee0' });
+      .bucket(bucketUuid)
+      .listObjects({ directoryUuid });
 
     for (const item of items) {
       if (item.type == StorageContentType.DIRECTORY) {
@@ -67,21 +72,21 @@ describe('Storage tests', () => {
   });
 
   test('get file details', async () => {
-    const storage = new Storage(config);
-    const file = await storage
-      .bucket(bucketUUID)
-      .file('cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc')
-      .get();
+    const file = await storage.bucket(bucketUuid).file(fileUuid).get();
     expect(file.name).toBeTruthy();
   });
 
-  test.skip('upload files from folder', async () => {
-    const storage = new Storage(config);
+  test('upload files from folder', async () => {
     try {
       const uploadDir = resolve(__dirname, './helpers/website/');
+
       console.time('File upload complete');
-      await storage.bucket(bucketUUID).uploadFromFolder(uploadDir);
+      const files = await storage
+        .bucket(bucketUuid)
+        .uploadFromFolder(uploadDir);
       console.timeEnd('File upload complete');
+
+      expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
 
       // console.log(content);
     } catch (e) {
@@ -89,54 +94,52 @@ describe('Storage tests', () => {
     }
   });
 
-  test.skip('upload files from buffer', async () => {
-    const storage = new Storage(config);
+  test('upload files from folder with awaitCid', async () => {
+    const uploadDir = resolve(__dirname, './helpers/website/');
+
+    console.time('File upload complete');
+    const files = await storage
+      .bucket(bucketUuid)
+      .uploadFromFolder(uploadDir, { awaitCid: true });
+    console.timeEnd('File upload complete');
+
+    expect(files.length).toBeGreaterThan(0);
+    expect(files.every((f) => !!f.CID)).toBeTruthy();
+  });
+
+  test('upload files from buffer', async () => {
     const html = fs.readFileSync(
       resolve(__dirname, './helpers/website/index.html'),
     );
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
-    try {
-      console.time('File upload complete');
-      await storage.bucket(bucketUUID).uploadFiles(
-        [
-          {
-            fileName: 'index.html',
-            contentType: 'text/html',
-            path: null,
-            content: html,
-          },
-          {
-            fileName: 'style.css',
-            contentType: 'text/css',
-            path: null,
-            content: css,
-          },
-        ],
-        { wrapWithDirectory: true, directoryPath: 'main/subdir' },
-      );
-      console.timeEnd('File upload complete');
-
-      // console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    console.time('File upload complete');
+    await storage.bucket(bucketUuid).uploadFiles(
+      [
+        {
+          fileName: 'index.html',
+          contentType: 'text/html',
+          path: null,
+          content: html,
+        },
+        {
+          fileName: 'style.css',
+          contentType: 'text/css',
+          path: null,
+          content: css,
+        },
+      ],
+      { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+    );
+    console.timeEnd('File upload complete');
   });
 
   test.skip('delete a file', async () => {
-    const storage = new Storage(config);
-    await storage
-      .bucket(bucketUUID)
-      .file('cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc')
-      .delete();
+    await storage.bucket(bucketUuid).file(fileUuid).delete();
   });
 
   test.skip('delete a directory', async () => {
-    const storage = new Storage(config);
-    await storage
-      .bucket(bucketUUID)
-      .directory('eddc52cf-92d2-436e-b6de-52d7cad621c2')
-      .delete();
+    await storage.bucket(bucketUuid).directory(directoryUuid).delete();
   });
 });

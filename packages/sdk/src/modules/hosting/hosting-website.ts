@@ -1,10 +1,10 @@
 import { constructUrlWithQueryParams } from '../../lib/common';
-import { DeployToEnvironment, IDeploymentFilters } from '../../types/hosting';
 import {
-  IApillonList,
-  IApillonListResponse,
-  IApillonResponse,
-} from '../../types/apillon';
+  DeployToEnvironment,
+  DeploymentStatus,
+  IDeploymentFilters,
+} from '../../types/hosting';
+import { IApillonList } from '../../types/apillon';
 import { Deployment } from './deployment';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
@@ -44,6 +44,26 @@ export class HostingWebsite extends ApillonModel {
   public ipnsProduction: string = null;
 
   /**
+   * Link to staging version of the website
+   */
+  public w3StagingLink: string = null;
+
+  /**
+   * Link to production version of the website
+   */
+  public w3ProductionLink: string = null;
+
+  /**
+   * Website last deployment (to any environment) unique identifier
+   */
+  public lastDeploymentUuid: string = null;
+
+  /**
+   * Status of last deployment
+   */
+  public lastDeploymentStatus: DeploymentStatus = null;
+
+  /**
    * Constructor which should only be called via Hosting class.
    * @param uuid Unique identifier of the website.
    * @param data Data to populate the website with.
@@ -59,9 +79,7 @@ export class HostingWebsite extends ApillonModel {
    * @returns An instance of HostingWebsite class with filled properties.
    */
   public async get(): Promise<HostingWebsite> {
-    const { data } = await ApillonApi.get<IApillonResponse<HostingWebsite>>(
-      this.API_PREFIX,
-    );
+    const data = await ApillonApi.get<HostingWebsite>(this.API_PREFIX);
     return this.populate(data);
   }
 
@@ -92,7 +110,7 @@ export class HostingWebsite extends ApillonModel {
   /**
    * Deploy a website to a new environment.
    * @param {DeployToEnvironment} toEnvironment The environment to deploy to
-   * @returns {Deployment}
+   * @returns Newly created deployment
    */
   public async deploy(toEnvironment: DeployToEnvironment) {
     ApillonLogger.log(
@@ -104,9 +122,10 @@ export class HostingWebsite extends ApillonModel {
     );
 
     ApillonLogger.logWithTime('Initiating deployment');
-    const { data } = await ApillonApi.post<
-      IApillonResponse<Deployment & { deploymentUuid: string }>
-    >(`${this.API_PREFIX}/deploy`, { environment: toEnvironment });
+    const data = await ApillonApi.post<Deployment & { deploymentUuid: string }>(
+      `${this.API_PREFIX}/deploy`,
+      { environment: toEnvironment },
+    );
 
     ApillonLogger.logWithTime('Deployment in progress');
 
@@ -125,8 +144,8 @@ export class HostingWebsite extends ApillonModel {
       params,
     );
 
-    const { data } = await ApillonApi.get<
-      IApillonListResponse<Deployment & { deploymentUuid: string }>
+    const data = await ApillonApi.get<
+      IApillonList<Deployment & { deploymentUuid: string }>
     >(url);
 
     return {
@@ -144,5 +163,13 @@ export class HostingWebsite extends ApillonModel {
    */
   deployment(deploymentUuid: string): Deployment {
     return new Deployment(this.uuid, deploymentUuid, {});
+  }
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      lastDeploymentStatus: DeploymentStatus[value],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
 }

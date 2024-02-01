@@ -1,22 +1,21 @@
 import { resolve } from 'path';
-import { ApillonConfig } from '../lib/apillon';
 import { Hosting } from '../modules/hosting/hosting';
-import { DeployToEnvironment } from '../types/hosting';
+import { DeployToEnvironment, DeploymentStatus } from '../types/hosting';
 import { getConfig, getWebsiteUUID } from './helpers/helper';
 import { HostingWebsite } from '../modules/hosting/hosting-website';
 import * as fs from 'fs';
 
 describe('Hosting tests', () => {
-  let config: ApillonConfig;
-  let websiteUUID: string;
+  let hosting: Hosting;
+  let websiteUuid: string;
+  let deploymentUuid: string;
 
   beforeAll(async () => {
-    config = getConfig();
-    websiteUUID = getWebsiteUUID();
+    hosting = new Hosting(getConfig());
+    websiteUuid = getWebsiteUUID();
   });
 
   test('get all websites', async () => {
-    const hosting = new Hosting(config);
     const { items } = await hosting.listWebsites();
     expect(items.length).toBeGreaterThan(0);
     expect(items[0]).toBeInstanceOf(HostingWebsite);
@@ -24,25 +23,26 @@ describe('Hosting tests', () => {
   });
 
   test('get website info', async () => {
-    const hosting = new Hosting(config);
-    const website = await hosting.website(websiteUUID).get();
+    const website = await hosting.website(websiteUuid).get();
     expect(website).toBeInstanceOf(HostingWebsite);
     expect(website.name).toBeTruthy();
     expect(website.uuid).toBeTruthy();
   });
 
-  test.skip('upload website from folder', async () => {
-    const hosting = new Hosting(config);
-    const website = hosting.website(websiteUUID);
+  test('upload website from folder', async () => {
+    const website = hosting.website(websiteUuid);
 
     const uploadDir = resolve(__dirname, './helpers/website/');
     await website.uploadFromFolder(uploadDir);
     const deployment = await website.deploy(DeployToEnvironment.TO_STAGING);
     expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
+    deploymentUuid = deployment.uuid;
+
+    await website.get();
+    expect(website.lastDeploymentStatus).toEqual(DeploymentStatus.INITIATED);
   });
 
   test.skip('upload files from buffer', async () => {
-    const hosting = new Hosting(config);
     const html = fs.readFileSync(
       resolve(__dirname, './helpers/website/index.html'),
     );
@@ -51,7 +51,7 @@ describe('Hosting tests', () => {
     );
     try {
       console.time('File upload complete');
-      await hosting.website(websiteUUID).uploadFiles(
+      await hosting.website(websiteUuid).uploadFiles(
         [
           {
             fileName: 'index.html',
@@ -74,8 +74,7 @@ describe('Hosting tests', () => {
   });
 
   test('list all deployments', async () => {
-    const hosting = new Hosting(config);
-    const website = hosting.website(websiteUUID);
+    const website = hosting.website(websiteUuid);
 
     const { items } = await website.listDeployments({
       environment: DeployToEnvironment.TO_STAGING,
@@ -86,12 +85,9 @@ describe('Hosting tests', () => {
   });
 
   test('get deployment status', async () => {
-    const hosting = new Hosting(config);
-    const website = hosting.website(websiteUUID);
+    const website = hosting.website(websiteUuid);
 
-    const deployment = await website
-      .deployment('e21a8e4e-bfce-4e63-b65b-59404d4fc6b4')
-      .get();
+    const deployment = await website.deployment(deploymentUuid).get();
     expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
   });
 });
