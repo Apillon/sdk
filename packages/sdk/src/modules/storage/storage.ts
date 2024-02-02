@@ -12,7 +12,7 @@ export class Storage extends ApillonModule {
 
   /**
    * Lists all buckets.
-   * @param {ICollectionFilters} params Filter for listing collections.
+   * @param {IApillonPagination} params Filter for listing collections.
    * @returns Array of StorageBucket objects.
    */
   public async listBuckets(

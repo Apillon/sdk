@@ -30,3 +30,7 @@ export function getWebsiteUUID() {
 export function getMintAddress() {
   return process.env['MINT_ADDRESS'];
 }
+
+export function getComputingContractUUID() {
+  return process.env['COMPUTING_CONTRACT_UUID'];
+}
