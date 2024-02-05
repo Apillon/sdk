@@ -3,7 +3,7 @@ import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList } from '../../types/apillon';
 import {
-  IContractFilters,
+  IContractListFilters,
   ICreateComputingContract,
 } from '../../types/computing';
 import { ComputingContract } from './computing-contract';
@@ -16,11 +16,11 @@ export class Computing extends ApillonModule {
 
   /**
    * Lists all computing contracts.
-   * @param {IContractFilters} params Filter for listing collections.
+   * @param {IContractListFilters} params Filter for listing collections.
    * @returns Array of ComputingContract objects.
    */
   public async listContracts(
-    params?: IContractFilters,
+    params?: IContractListFilters,
   ): Promise<IApillonList<ComputingContract>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 

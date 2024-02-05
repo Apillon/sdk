@@ -14,6 +14,13 @@ export enum ComputingContractStatus {
   FAILED = 6,
 }
 
+export enum ComputingTransactionType {
+  DEPLOY_CONTRACT = 1,
+  TRANSFER_CONTRACT_OWNERSHIP = 2,
+  DEPOSIT_TO_CONTRACT_CLUSTER = 3,
+  ASSIGN_CID_TO_NFT = 4,
+}
+
 export type ComputingContractData = {
   nftContractAddress: string;
   nftChainRpcUrl: string;
@@ -22,7 +29,7 @@ export type ComputingContractData = {
   clusterId: string;
 };
 
-export interface IContractFilters extends IApillonPagination {
+export interface IContractListFilters extends IApillonPagination {
   contractStatus?: ComputingContractStatus;
 }
 
@@ -47,4 +54,32 @@ export interface ICreateComputingContract {
    * @default false
    */
   restrictToOwner?: boolean;
+}
+
+export interface IComputingTransaction {
+  walletAddress: string;
+  transactionType: ComputingTransactionType;
+  transactionStatus: ComputingContractStatus;
+  transactionStatusMessage: string;
+  transactionHash: string;
+  updateTime: string;
+  createTime: string;
+}
+
+export interface IEncryptData {
+  /**
+   * Base64 string of file contents.
+   */
+  content: string;
+}
+
+export interface IAssignCidToNftData {
+  /**
+   * CID of the encrypted file stored in a bucket
+   */
+  cid: string;
+  /**
+   * Token ID of the NFT which will be used to decrypt the file's content
+   */
+  nftId: number;
 }

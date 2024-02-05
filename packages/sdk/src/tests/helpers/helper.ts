@@ -31,6 +31,10 @@ export function getMintAddress() {
   return process.env['MINT_ADDRESS'];
 }
 
+export function getPhalaAddress() {
+  return process.env['PHALA_ADDRESS'];
+}
+
 export function getComputingContractUUID() {
   return process.env['COMPUTING_CONTRACT_UUID'];
 }

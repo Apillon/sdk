@@ -1,7 +1,15 @@
 import { ChainRpcUrl } from '../docs-index';
 import { Computing } from '../modules/computing/computing';
 import { ComputingContract } from '../modules/computing/computing-contract';
-import { getComputingContractUUID, getConfig } from './helpers/helper';
+import {
+  ComputingContractStatus,
+  ComputingTransactionType,
+} from '../types/computing';
+import {
+  getComputingContractUUID,
+  getConfig,
+  getPhalaAddress,
+} from './helpers/helper';
 
 describe('Computing tests', () => {
   let computing: Computing;
@@ -9,10 +17,12 @@ describe('Computing tests', () => {
   const name = 'Schrodinger SDK Test';
   const description = 'Schrodinger SDK Test computing contract';
   const nftContractAddress = '0xe6C61ef02729a190Bd940A3077f8464c27C2E593';
+  let receivingAddress: string;
 
   beforeAll(() => {
     computing = new Computing(getConfig());
     contractUuid = getComputingContractUUID();
+    receivingAddress = getPhalaAddress();
   });
 
   test('Create new contracts', async () => {
@@ -54,5 +64,49 @@ describe('Computing tests', () => {
     expect(contract.uuid).toEqual(contractUuid);
     expect(contract.data.nftContractAddress).toEqual(nftContractAddress);
     expect(contract.data.nftChainRpcUrl).toEqual(ChainRpcUrl.MOONBASE);
+  });
+
+  test('List all transactions for computing contract', async () => {
+    const { items } = await computing
+      .contract(contractUuid)
+      .listTransactions({ limit: 10 });
+    expect(items.length).toBeGreaterThanOrEqual(0);
+    items.forEach((transaction) => {
+      expect(transaction).toBeDefined();
+      expect(transaction.transactionHash).toBeDefined();
+      expect(
+        Object.keys(ComputingContractStatus).includes(
+          transaction.transactionStatus.toString(),
+        ),
+      );
+      expect(
+        Object.keys(ComputingTransactionType).includes(
+          transaction.transactionType.toString(),
+        ),
+      );
+    });
+  });
+
+  test.skip('Encrypt data using computing contract', async () => {
+    const encryptedData = await computing
+      .contract(contractUuid)
+      .encrypt({ content: 'Test content' });
+    expect(encryptedData).toHaveProperty('encryptedContent');
+    expect(typeof encryptedData.encryptedContent).toBe('string');
+  });
+
+  test.skip('Assign CID to NFT', async () => {
+    const success = await computing.contract(contractUuid).assignCidToNft({
+      nftId: 1,
+      cid: 'QmTestCid',
+    });
+    expect(success).toBeTruthy();
+  });
+
+  test.skip('Transfer ownership of computing contract', async () => {
+    const success = await computing
+      .contract(contractUuid)
+      .transferOwnership(receivingAddress);
+    expect(success).toBeTruthy();
   });
 });

@@ -247,14 +247,7 @@ export class NftCollection extends ApillonModel {
       params,
     );
 
-    const data = await ApillonApi.get<IApillonList<ITransaction>>(url);
-
-    return {
-      ...data,
-      items: data.items.map((t) =>
-        JSON.parse(JSON.stringify(t, this.serializeFilter)),
-      ),
-    };
+    return await ApillonApi.get<IApillonList<ITransaction>>(url);
   }
 
   protected override serializeFilter(key: string, value: any) {
