@@ -16,3 +16,9 @@ export enum LogLevel {
   ERROR = 2,
   VERBOSE = 3,
 }
+
+export enum ChainRpcUrl {
+  ASTAR = 'https://evm.astar.network',
+  MOONBASE = 'https://rpc.api.moonbase.moonbeam.network',
+  MOONBEAM = 'https://rpc.api.moonbeam.network',
+}

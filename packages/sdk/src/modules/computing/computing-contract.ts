@@ -59,7 +59,7 @@ export class ComputingContract extends ApillonModel {
   }
 
   /**
-   * Gets a computing contract.
+   * Gets a computing contract's details.
    * @returns ComputingContract instance
    */
   async get(): Promise<ComputingContract> {

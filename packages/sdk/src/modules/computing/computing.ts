@@ -2,7 +2,10 @@ import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList } from '../../types/apillon';
-import { IContractFilters } from '../../types/computing';
+import {
+  IContractFilters,
+  ICreateComputingContract,
+} from '../../types/computing';
 import { ComputingContract } from './computing-contract';
 
 export class Computing extends ApillonModule {
@@ -31,6 +34,24 @@ export class Computing extends ApillonModule {
         (contract) => new ComputingContract(contract.contractUuid, contract),
       ),
     };
+  }
+
+  /**
+   * Creates a new computing contract based on the provided data.
+   * @param {ICreateComputingContract} data Data for creating the contract.
+   * @returns {ComputingContract} Newly created computing contract.
+   */
+  public async createContract(
+    data: ICreateComputingContract,
+  ): Promise<ComputingContract> {
+    const contract = await ApillonApi.post<
+      ComputingContract & { contractUuid: string }
+    >(this.API_PREFIX, {
+      ...data,
+      restrictToOwner: data.restrictToOwner || false,
+      contractType: 1, // Hardcoded until new type is added
+    });
+    return new ComputingContract(contract.contractUuid, contract);
   }
 
   /**
