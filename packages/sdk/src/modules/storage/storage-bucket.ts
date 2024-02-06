@@ -1,6 +1,7 @@
 import { Directory } from './directory';
 import {
   FileMetadata,
+  FileUploadResult,
   IBucketFilesRequest,
   ICreateIpns,
   IFileUploadRequest,
@@ -121,7 +122,7 @@ export class StorageBucket extends ApillonModel {
   public async uploadFromFolder(
     folderPath: string,
     params?: IFileUploadRequest,
-  ): Promise<FileMetadata[]> {
+  ): Promise<FileUploadResult[]> {
     const { files: uploadedFiles, sessionUuid } = await uploadFiles(
       folderPath,
       this.API_PREFIX,
@@ -143,7 +144,7 @@ export class StorageBucket extends ApillonModel {
   public async uploadFiles(
     files: FileMetadata[],
     params?: IFileUploadRequest,
-  ): Promise<FileMetadata[]> {
+  ): Promise<FileUploadResult[]> {
     const { files: uploadedFiles, sessionUuid } = await uploadFiles(
       null,
       this.API_PREFIX,
@@ -179,8 +180,8 @@ export class StorageBucket extends ApillonModel {
   private async resolveFileCIDs(
     sessionUuid: string,
     limit: number,
-  ): Promise<FileMetadata[]> {
-    let resolvedFiles: FileMetadata[] = [];
+  ): Promise<FileUploadResult[]> {
+    let resolvedFiles: FileUploadResult[] = [];
 
     // Resolve CIDs for each file
     let retryTimes = 0;
@@ -192,7 +193,6 @@ export class StorageBucket extends ApillonModel {
           fileUuid: file.uuid,
           CID: file.CID,
           CIDv1: file.CIDv1,
-          content: null,
         }),
       );
 

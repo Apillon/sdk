@@ -65,6 +65,9 @@ export function createStorageCommands(cli: Command) {
     .description('Upload contents of a local folder to bucket')
     .argument('<path>', 'path to local folder')
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of destination bucket')
+    .option('-w, --wrap', 'Wrap uploaded files to an IPFS directory')
+    .option('-p, --path <string>', 'Path to upload files to')
+    .option('--await', 'await file CIDs to be resolved')
     .action(async function (path: string) {
       await uploadFromFolder(path, this.optsWithGlobals());
     });
