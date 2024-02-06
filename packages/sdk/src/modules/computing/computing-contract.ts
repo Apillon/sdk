@@ -97,7 +97,7 @@ export class ComputingContract extends ApillonModel {
   /**
    * Gets list of transactions for this computing contract.
    * @param {IApillonPagination} params Pagination filters.
-   * @returns List of transactions.
+   * @returns {IComputingTransaction[]} List of transactions.
    */
   public async listTransactions(
     params?: IApillonPagination,
@@ -132,7 +132,7 @@ export class ComputingContract extends ApillonModel {
    * - Uploads the encrypted file to the bucket
    * - Assigns the encrypted file's CID to the NFT used for decryption authentication
    * @param {IEncryptData} data The data to use for encryption.
-   * @returns The encrypted data in the form of a string.
+   * @returns The uploaded encrypted file metadata
    */
   async encryptFile(data: IEncryptData): Promise<FileMetadata[]> {
     ApillonLogger.log(`Encrypting file...`);

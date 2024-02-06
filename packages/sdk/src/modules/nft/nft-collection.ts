@@ -200,7 +200,7 @@ export class NftCollection extends ApillonModel {
    * Burns a nft.
    * @warn Can only burn NFTs if the collection is revokable.
    * @param tokenId Token ID of the NFT we want to burn.
-   * @returns Status.
+   * @returns Success status and transaction hash.
    */
   public async burn(tokenId: string): Promise<INftActionResponse> {
     if (this.isRevokable != null && !this.isRevokable) {
@@ -237,7 +237,7 @@ export class NftCollection extends ApillonModel {
   /**
    * Gets list of transactions that occurred on this collection through Apillon.
    * @param params Filters.
-   * @returns List of transactions.
+   * @returns {ITransaction[]} List of transactions.
    */
   public async listTransactions(
     params?: ITransactionFilters,

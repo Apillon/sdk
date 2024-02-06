@@ -22,10 +22,25 @@ export enum ComputingTransactionType {
 }
 
 export type ComputingContractData = {
+  /**
+   * Contract address of NFT which will be used to authenticate decryption
+   */
   nftContractAddress: string;
+  /**
+   * RPC URL of the chain the NFT collection exists on
+   */
   nftChainRpcUrl: string;
-  restrictToOwner: string;
+  /**
+   * If true, only the owner is able to use the contract for data encryption/decryption
+   */
+  restrictToOwner: boolean;
+  /**
+   * The IPFS gateway where the encrypted files are stored on
+   */
   ipfsGatewayUrl: string;
+  /**
+   * Identifier of the Phala computing cluster the contract runs on
+   */
   clusterId: string;
 };
 
