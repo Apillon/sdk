@@ -31,7 +31,8 @@ export class Computing extends ApillonModule {
     return {
       ...data,
       items: data.items.map(
-        (contract) => new ComputingContract(contract.contractUuid, contract),
+        (contract) =>
+          new ComputingContract(contract.contractUuid, contract, this.config),
       ),
     };
   }
@@ -51,7 +52,7 @@ export class Computing extends ApillonModule {
       restrictToOwner: data.restrictToOwner || false,
       contractType: 1, // Hardcoded until new type is added
     });
-    return new ComputingContract(contract.contractUuid, contract);
+    return new ComputingContract(contract.contractUuid, contract, this.config);
   }
 
   /**
@@ -59,6 +60,6 @@ export class Computing extends ApillonModule {
    * @returns An instance of ComputingContract.
    */
   public contract(uuid: string): ComputingContract {
-    return new ComputingContract(uuid);
+    return new ComputingContract(uuid, null, this.config);
   }
 }

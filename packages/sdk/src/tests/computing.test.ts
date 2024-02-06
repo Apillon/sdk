@@ -6,10 +6,13 @@ import {
   ComputingTransactionType,
 } from '../types/computing';
 import {
+  getBucketUUID,
   getComputingContractUUID,
   getConfig,
   getPhalaAddress,
 } from './helpers/helper';
+import { resolve } from 'path';
+import * as fs from 'fs';
 
 describe('Computing tests', () => {
   let computing: Computing;
@@ -18,11 +21,13 @@ describe('Computing tests', () => {
   const description = 'Schrodinger SDK Test computing contract';
   const nftContractAddress = '0xe6C61ef02729a190Bd940A3077f8464c27C2E593';
   let receivingAddress: string;
+  let bucket_uuid: string;
 
   beforeAll(() => {
     computing = new Computing(getConfig());
     contractUuid = getComputingContractUUID();
     receivingAddress = getPhalaAddress();
+    bucket_uuid = getBucketUUID();
   });
 
   test('Create new contracts', async () => {
@@ -31,11 +36,13 @@ describe('Computing tests', () => {
       description,
       nftContractAddress,
       nftChainRpcUrl: ChainRpcUrl.MOONBASE,
+      bucket_uuid,
     });
     expect(contract).toBeInstanceOf(ComputingContract);
     expect(contract.name).toEqual(name);
     expect(contract.description).toEqual(description);
     expect(contract.uuid).toBeTruthy();
+    expect(contract.bucketUuid).toEqual(bucket_uuid);
     expect(contract.data.nftContractAddress).toEqual(nftContractAddress);
     expect(contract.data.nftChainRpcUrl).toEqual(ChainRpcUrl.MOONBASE);
 
@@ -88,19 +95,17 @@ describe('Computing tests', () => {
   });
 
   test.skip('Encrypt data using computing contract', async () => {
-    const encryptedData = await computing
+    const html = fs.readFileSync(
+      resolve(__dirname, './helpers/website/index.html'),
+    );
+    const files = await computing
       .contract(contractUuid)
-      .encrypt({ content: 'Test content' });
-    expect(encryptedData).toHaveProperty('encryptedContent');
-    expect(typeof encryptedData.encryptedContent).toBe('string');
-  });
+      .encryptFile({ content: html, fileName: 'index.html', nftId: 5 });
 
-  test.skip('Assign CID to NFT', async () => {
-    const success = await computing.contract(contractUuid).assignCidToNft({
-      nftId: 1,
-      cid: 'QmTestCid',
-    });
-    expect(success).toBeTruthy();
+    expect(files).toHaveLength(1);
+    expect(files[0].fileName).toBe('index.html');
+    expect(files[0].CID).toBeDefined();
+    expect(files[0].CIDv1).toBeDefined();
   });
 
   test.skip('Transfer ownership of computing contract', async () => {

@@ -48,6 +48,10 @@ export interface FileMetadata {
    * The file's CID on IPFS
    */
   CID?: string;
+  /**
+   * The file's CIDv1 on IPFS
+   */
+  CIDv1?: string;
 }
 
 export interface IFileUploadRequest {

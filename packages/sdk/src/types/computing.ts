@@ -68,18 +68,17 @@ export interface IComputingTransaction {
 
 export interface IEncryptData {
   /**
-   * Base64 string of file contents.
+   * fileName for the encrypted file that will be stored in the bucket
    */
-  content: string;
-}
-
-export interface IAssignCidToNftData {
+  fileName: string;
   /**
-   * CID of the encrypted file stored in a bucket
+   * Contents of the file to encrypt
    */
-  cid: string;
+  content: Buffer;
   /**
    * Token ID of the NFT which will be used to decrypt the file's content
+   *
+   * The NFT should be a part of the contract's `data.nftContractAddress` field.
    */
   nftId: number;
 }

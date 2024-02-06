@@ -1,17 +1,18 @@
 import { ApillonApi } from '../../lib/apillon-api';
-import { ApillonModel } from '../../lib/apillon';
+import { ApillonConfig, ApillonModel } from '../../lib/apillon';
 import {
   ComputingContractData,
   ComputingContractStatus,
   ComputingContractType,
   ComputingTransactionType,
-  IAssignCidToNftData,
   IComputingTransaction,
   IEncryptData,
 } from '../../types/computing';
 import { IApillonList, IApillonPagination } from '../../types/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonLogger } from '../../lib/apillon-logger';
+import { Storage } from '../storage/storage';
+import { FileMetadata } from '../../docs-index';
 
 export class ComputingContract extends ApillonModel {
   /**
@@ -23,6 +24,11 @@ export class ComputingContract extends ApillonModel {
    * Contract description.
    */
   public description: string = null;
+
+  /**
+   * The bucket where files encrypted by this contract are stored
+   */
+  public bucketUuid: string = null;
 
   /**
    * The computing contract's type
@@ -55,14 +61,25 @@ export class ComputingContract extends ApillonModel {
   public data: ComputingContractData = null;
 
   /**
+   * Apillon config used to initialize a storage module
+   * for saving encrypted files
+   */
+  private config: ApillonConfig;
+
+  /**
    * Constructor which should only be called via Computing class.
    * @param uuid Unique identifier of the contract.
    * @param data Data to populate computing contract with.
    */
-  constructor(uuid: string, data?: Partial<ComputingContract>) {
+  constructor(
+    uuid: string,
+    data?: Partial<ComputingContract>,
+    config?: ApillonConfig,
+  ) {
     super(uuid);
     this.API_PREFIX = `/computing/contracts/${uuid}`;
     this.populate(data);
+    this.config = config;
   }
 
   /**
@@ -74,7 +91,7 @@ export class ComputingContract extends ApillonModel {
       ComputingContract & { contractUuid: string }
     >(this.API_PREFIX);
 
-    return new ComputingContract(data.contractUuid, data);
+    return this.populate(data);
   }
 
   /**
@@ -111,30 +128,63 @@ export class ComputingContract extends ApillonModel {
   }
 
   /**
-   * Calls the encrypt method on the computing contract.
+   * - Calls the encrypt method on the computing contract
+   * - Uploads the encrypted file to the bucket
+   * - Assigns the encrypted file's CID to the NFT used for decryption authentication
    * @param {IEncryptData} data The data to use for encryption.
    * @returns The encrypted data in the form of a string.
    */
-  async encrypt(data: IEncryptData): Promise<any> {
-    return ApillonApi.post<{ encryptedContent: string }>(
+  async encryptFile(data: IEncryptData): Promise<FileMetadata[]> {
+    ApillonLogger.log(`Encrypting file...`);
+    const { encryptedContent } = await ApillonApi.post<any>(
       `${this.API_PREFIX}/encrypt`,
-      data,
+      {
+        ...data,
+        content: data.content.toString('base64'),
+      },
     );
+    if (!encryptedContent) {
+      throw new Error('Failed to encrypt file');
+    }
+    if (!this.bucketUuid) {
+      await this.get();
+    }
+
+    ApillonLogger.log(`Uploading encrypted file to bucket...`);
+    const files = await new Storage(this.config)
+      .bucket(this.bucketUuid)
+      .uploadFiles(
+        [
+          {
+            fileName: data.fileName,
+            content: Buffer.from(encryptedContent, 'utf-8'),
+            contentType: 'multipart/form-data',
+          },
+        ],
+        { awaitCid: true },
+      );
+    ApillonLogger.log(`Assigning file CID to NFT ID...`);
+    await this.assignCidToNft({ cid: files[0].CID, nftId: data.nftId });
+
+    return files;
   }
 
   /**
    * Assigns a CID to an NFT on the contract.
-   * @param {IAssignCidToNftData} data The payload for assigning a CID to an NFT
+   * @param data The payload for assigning a CID to an NFT
    * @returns Success status
    */
-  async assignCidToNft(data: IAssignCidToNftData): Promise<boolean> {
+  private async assignCidToNft(data: {
+    cid: string;
+    nftId: number;
+  }): Promise<boolean> {
     const { success } = await ApillonApi.post<{ success: boolean }>(
       `${this.API_PREFIX}/assign-cid-to-nft`,
       data,
     );
     if (success) {
       ApillonLogger.log(
-        `CID assigned successfully to NFT with ID=${data.nftId}`,
+        `Encrypted file CID assigned successfully to NFT with ID=${data.nftId}`,
       );
     }
     return success;
