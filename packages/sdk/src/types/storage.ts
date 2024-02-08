@@ -54,6 +54,8 @@ export interface FileMetadata {
   CIDv1?: string;
 }
 
+export type FileUploadResult = Omit<FileMetadata, 'content'>;
+
 export interface IFileUploadRequest {
   /**
    * Wrap uploaded files to IPFS directory.

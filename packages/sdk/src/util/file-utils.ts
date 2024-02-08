@@ -62,25 +62,12 @@ async function uploadFilesToS3(
       throw new Error(`Can't find file ${link.path}${link.fileName}!`);
     }
     uploadWorkers.push(
-      new Promise<void>(async (resolve, reject) => {
-        // If uploading from local folder read file, otherwise directly upload content
-        if (file.index) {
-          fs.readFile(file.index, async (err, data) => {
-            if (err) {
-              reject(err.message);
-            }
-            // const respS3 =
-            await s3Api.put(link.url, data);
-            // console.log(respS3);
-
-            ApillonLogger.log(`File uploaded: ${file.fileName}`);
-            resolve();
-          });
-        } else if (file.content) {
-          await s3Api.put(link.url, file.content);
-          ApillonLogger.log(`File uploaded: ${file.fileName}`);
-          resolve();
-        }
+      new Promise<void>(async (resolve, _reject) => {
+        // If uploading from local folder then read file, otherwise directly upload content
+        const content = file.index ? fs.readFileSync(file.index) : file.content;
+        await s3Api.put(link.url, content);
+        ApillonLogger.log(`File uploaded: ${file.fileName}`);
+        resolve();
       }),
     );
   }
@@ -114,23 +101,19 @@ export async function uploadFiles(
   ApillonLogger.log(`Total files to upload: ${files.length}`);
 
   // Split files into chunks for parallel uploading
-  const fileChunkSize = 50;
+  const fileChunkSize = 200;
   const sessionUuid = uuidv4();
+  const uploadedFiles = [];
 
-  const uploadedFiles = await Promise.all(
-    chunkify(files, fileChunkSize).map(async (fileGroup) => {
-      const data = await ApillonApi.post<IFileUploadResponse>(
-        `${apiPrefix}/upload`,
-        {
-          files: fileGroup,
-          sessionUuid,
-        },
-      );
+  for (const fileGroup of chunkify(files, fileChunkSize)) {
+    const { files } = await ApillonApi.post<IFileUploadResponse>(
+      `${apiPrefix}/upload`,
+      { files: fileGroup, sessionUuid },
+    );
 
-      await uploadFilesToS3(data.files, fileGroup);
-      return data.files;
-    }),
-  );
+    await uploadFilesToS3(files, fileGroup);
+    uploadedFiles.push(files);
+  }
 
   ApillonLogger.logWithTime('File upload complete.');
 

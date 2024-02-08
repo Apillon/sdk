@@ -12,7 +12,7 @@ import { IApillonList, IApillonPagination } from '../../types/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { Storage } from '../storage/storage';
-import { FileMetadata } from '../../docs-index';
+import { FileUploadResult } from '../../docs-index';
 
 export class ComputingContract extends ApillonModel {
   /**
@@ -134,7 +134,7 @@ export class ComputingContract extends ApillonModel {
    * @param {IEncryptData} data The data to use for encryption.
    * @returns The uploaded encrypted file metadata
    */
-  async encryptFile(data: IEncryptData): Promise<FileMetadata[]> {
+  async encryptFile(data: IEncryptData): Promise<FileUploadResult[]> {
     ApillonLogger.log(`Encrypting file...`);
     const { encryptedContent } = await ApillonApi.post<any>(
       `${this.API_PREFIX}/encrypt`,
