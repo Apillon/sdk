@@ -51,21 +51,18 @@ describe('Hosting tests', () => {
     );
     try {
       console.time('File upload complete');
-      await hosting.website(websiteUuid).uploadFiles(
-        [
-          {
-            fileName: 'index.html',
-            contentType: 'text/html',
-            content: html,
-          },
-          {
-            fileName: 'style.css',
-            contentType: 'text/css',
-            content: css,
-          },
-        ],
-        { wrapWithDirectory: true, directoryPath: 'main/subdir' },
-      );
+      await hosting.website(websiteUuid).uploadFiles([
+        {
+          fileName: 'index.html',
+          contentType: 'text/html',
+          content: html,
+        },
+        {
+          fileName: 'style.css',
+          contentType: 'text/css',
+          content: css,
+        },
+      ]);
       console.timeEnd('File upload complete');
       // console.log(content);
     } catch (e) {

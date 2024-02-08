@@ -44,11 +44,22 @@ export async function uploadFromFolder(
   path: string,
   optsWithGlobals: GlobalOptions,
 ) {
+  if (!!optsWithGlobals.wrap && !optsWithGlobals.path) {
+    console.error(
+      'Error: path option (-p, --path) is required when --wrap option is supplied',
+    );
+    return;
+  }
   await withErrorHandler(async () => {
     console.log(`Uploading files from folder: ${path}`);
-    await new Storage(optsWithGlobals)
+    const files = await new Storage(optsWithGlobals)
       .bucket(optsWithGlobals.bucketUuid)
-      .uploadFromFolder(path);
+      .uploadFromFolder(path, {
+        wrapWithDirectory: !!optsWithGlobals.wrap,
+        directoryPath: optsWithGlobals.path,
+        awaitCid: !!optsWithGlobals.await,
+      });
+    console.log(files);
   });
 }
 
