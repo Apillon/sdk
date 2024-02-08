@@ -46,6 +46,12 @@ View each individual module examples in the sections below.
 
 This wiki only contains the basic installation and examples of SDK usage. For additional information on using the SDK, see the [Detailed SDK documentation](https://sdk-docs.apillon.io/).
 
+### Examples
+
+Examples for using Apillon can be found in a demo repo [here](https://github.com/Apillon/apillon-sdk-demo). Instructions on running the examples are in the [README file](https://github.com/Apillon/apillon-sdk-demo/blob/master/README.md).
+
+> You can run examples directly in your browser via [CodeSandbox](https://codesandbox.io/p/github/Apillon/apillon-sdk-demo/master).
+
 ## Hosting
 
 Hosting module encapsulates functionalities for Hosting service available on Apillon dashboard.
@@ -364,4 +370,53 @@ async function validatePolkadotWalletSignature() {
 }
 
 ```
+## Computing
 
+The Computing module provides functionalities for managing computing contracts, including creating contracts, listing contracts, and interacting with specific contracts for operations like encryption and ownership transfer.
+
+### Usage example
+
+```ts
+const computing = new Computing({
+  key: 'yourApiKey',
+  secret: 'yourApiSecret',
+});
+
+// List all computing contracts
+const contracts = await computing.listContracts();
+console.log(contracts);
+
+// Create a new computing contract
+const newContract = await computing.createContract({
+  name: 'New Contract',
+  description: 'Description of the new contract',
+  nftContractAddress: '0xabc...',
+  nftChainRpcUrl: ChainRpcUrl.ASTAR,
+});
+
+// Interact with a specific computing contract
+const contract = computing.contract(newContract.uuid);
+
+// Get details of the contract
+const contractDetails = await contract.get();
+console.log(contractDetails);
+
+// List transactions of the contract
+const transactions = await contract.listTransactions();
+console.log(transactions);
+
+// Encrypt a file and upload it to the associated bucket
+const encryptionResult = await contract.encryptFile({
+  fileName: 'example.txt',
+  content: Buffer.from('Hello, world!'),
+  nftId: 1, // NFT ID used for decryption authentication
+});
+console.log(encryptionResult);
+
+// Transfer ownership of the contract
+const newOwnerAddress = '0xNewOwnerAddress';
+const successResult = await contract.transferOwnership(newOwnerAddress);
+console.log(
+  `Ownership transfer was ${successResult ? 'successful' : 'unsuccessful'}.`,
+);
+```
