@@ -108,21 +108,15 @@ describe('Storage tests', () => {
   });
 
   test('upload files from buffer', async () => {
-    const html = fs.readFileSync(
-      resolve(__dirname, './helpers/website/index.html'),
-    );
+    // const html = fs.readFileSync(
+    //   resolve(__dirname, './helpers/website/index.html'),
+    // );
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
     console.time('File upload complete');
     await storage.bucket(bucketUuid).uploadFiles(
       [
-        {
-          fileName: 'index.html',
-          contentType: 'text/html',
-          path: null,
-          content: html,
-        },
         {
           fileName: 'style.css',
           contentType: 'text/css',

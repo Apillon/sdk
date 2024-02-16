@@ -96,14 +96,14 @@ describe('Computing tests', () => {
 
   test.skip('Encrypt data using computing contract', async () => {
     const html = fs.readFileSync(
-      resolve(__dirname, './helpers/website/index.html'),
+      resolve(__dirname, './helpers/website/style.css'),
     );
     const files = await computing
       .contract(contractUuid)
-      .encryptFile({ content: html, fileName: 'index.html', nftId: 5 });
+      .encryptFile({ content: html, fileName: 'style.css', nftId: 5 });
 
     expect(files).toHaveLength(1);
-    expect(files[0].fileName).toBe('index.html');
+    expect(files[0].fileName).toBe('style.css');
     expect(files[0].CID).toBeDefined();
     expect(files[0].CIDv1).toBeDefined();
   });

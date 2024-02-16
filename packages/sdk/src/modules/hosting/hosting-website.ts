@@ -92,7 +92,7 @@ export class HostingWebsite extends ApillonModel {
     folderPath: string,
     params?: IFileUploadRequest,
   ): Promise<void> {
-    await uploadFiles(folderPath, this.API_PREFIX, params);
+    await uploadFiles({ apiPrefix: this.API_PREFIX, folderPath, params });
   }
 
   /**
@@ -104,7 +104,7 @@ export class HostingWebsite extends ApillonModel {
     files: FileMetadata[],
     params?: IFileUploadRequest,
   ): Promise<void> {
-    await uploadFiles(null, this.API_PREFIX, params, files);
+    await uploadFiles({ apiPrefix: this.API_PREFIX, params, files });
   }
 
   /**

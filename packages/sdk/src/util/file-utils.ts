@@ -75,12 +75,15 @@ async function uploadFilesToS3(
   await Promise.all(uploadWorkers);
 }
 
-export async function uploadFiles(
-  folderPath: string,
-  apiPrefix: string,
-  params?: IFileUploadRequest,
-  files?: FileMetadata[],
-): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+export async function uploadFiles(uploadParams: {
+  apiPrefix: string;
+  folderPath?: string;
+  files?: FileMetadata[];
+  params?: IFileUploadRequest;
+}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+  const { folderPath, apiPrefix, params } = uploadParams;
+  let files = uploadParams.files;
+
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {
