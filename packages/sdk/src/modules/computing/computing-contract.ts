@@ -7,8 +7,9 @@ import {
   ComputingTransactionType,
   IComputingTransaction,
   IEncryptData,
+  ITransactionListFilters,
 } from '../../types/computing';
-import { IApillonList, IApillonPagination } from '../../types/apillon';
+import { IApillonList } from '../../types/apillon';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { Storage } from '../storage/storage';
@@ -96,11 +97,11 @@ export class ComputingContract extends ApillonModel {
 
   /**
    * Gets list of transactions for this computing contract.
-   * @param {IApillonPagination} params Pagination filters.
+   * @param {ITransactionListFilters} params Query filters.
    * @returns {IComputingTransaction[]} List of transactions.
    */
   public async listTransactions(
-    params?: IApillonPagination,
+    params?: ITransactionListFilters,
   ): Promise<IApillonList<IComputingTransaction>> {
     const url = constructUrlWithQueryParams(
       `${this.API_PREFIX}/transactions`,

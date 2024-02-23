@@ -49,7 +49,6 @@ export class Computing extends ApillonModule {
       ComputingContract & { contractUuid: string }
     >(this.API_PREFIX, {
       ...data,
-      restrictToOwner: data.restrictToOwner || false,
       contractType: 1, // Hardcoded until new type is added
     });
     return new ComputingContract(contract.contractUuid, contract, this.config);

@@ -17,11 +17,12 @@ import * as fs from 'fs';
 describe('Computing tests', () => {
   let computing: Computing;
   let contractUuid: string;
+  let receivingAddress: string;
+  let bucket_uuid: string;
+
   const name = 'Schrodinger SDK Test';
   const description = 'Schrodinger SDK Test computing contract';
   const nftContractAddress = '0xe6C61ef02729a190Bd940A3077f8464c27C2E593';
-  let receivingAddress: string;
-  let bucket_uuid: string;
 
   beforeAll(() => {
     computing = new Computing(getConfig());
@@ -30,13 +31,15 @@ describe('Computing tests', () => {
     bucket_uuid = getBucketUUID();
   });
 
-  test('Create new contracts', async () => {
+  test('Create new contract', async () => {
     const contract = await computing.createContract({
       name,
       description,
-      nftContractAddress,
-      nftChainRpcUrl: ChainRpcUrl.MOONBASE,
       bucket_uuid,
+      contractData: {
+        nftContractAddress,
+        nftChainRpcUrl: ChainRpcUrl.MOONBASE,
+      },
     });
     expect(contract).toBeInstanceOf(ComputingContract);
     expect(contract.name).toEqual(name);
@@ -47,6 +50,20 @@ describe('Computing tests', () => {
     expect(contract.data.nftChainRpcUrl).toEqual(ChainRpcUrl.MOONBASE);
 
     contractUuid = contract.uuid;
+  });
+
+  test('Creating new contract with missing contract data should fail', async () => {
+    const createContract = () =>
+      computing.createContract({
+        name,
+        description,
+        bucket_uuid,
+        contractData: {
+          nftContractAddress: undefined,
+          nftChainRpcUrl: undefined,
+        },
+      });
+    await expect(createContract).rejects.toThrow();
   });
 
   test('List contracts', async () => {
@@ -92,6 +109,16 @@ describe('Computing tests', () => {
         ),
       );
     });
+  });
+
+  test('List all transactions with specific type', async () => {
+    const { items } = await computing.contract(contractUuid).listTransactions({
+      transactionType: ComputingTransactionType.DEPLOY_CONTRACT,
+    });
+    expect(items.length).toEqual(1);
+    expect(items[0].transactionType).toEqual(
+      ComputingTransactionType.DEPLOY_CONTRACT,
+    );
   });
 
   test.skip('Encrypt data using computing contract', async () => {
