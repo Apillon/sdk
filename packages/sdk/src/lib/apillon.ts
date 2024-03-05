@@ -31,8 +31,10 @@ export interface ApillonConfig {
 }
 
 export class ApillonModule {
+  protected config: ApillonConfig;
+
   public constructor(config?: ApillonConfig) {
-    ApillonApi.initialize(config);
+    this.config = ApillonApi.initialize(config);
     ApillonLogger.initialize(
       config?.debug ? LogLevel.VERBOSE : config?.logLevel || LogLevel.ERROR,
     );

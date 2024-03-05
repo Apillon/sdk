@@ -101,10 +101,7 @@ export class Identity extends ApillonModule {
    */
   public validatePolkadotWalletSignature(
     data: IValidatePolkadotWalletSignature,
-  ): {
-    isValid: boolean;
-    address: string;
-  } {
+  ): VerifySignedMessageResult {
     const { message, signature, walletAddress, timestamp } = data;
 
     const signingMessage =
