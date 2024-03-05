@@ -93,7 +93,7 @@ export interface IEncryptData {
    */
   fileName: string;
   /**
-   * Contents of the file to encrypt
+   * Contents of the file to encrypt. If the file is an image, the format needs to be base64.
    */
   content: Buffer;
   /**

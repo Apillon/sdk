@@ -82,7 +82,7 @@ import * as fs from 'fs';
 const hosting = new Hosting({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  logLevel: LogLevel.NONE,
+  logLevel: LogLevel.VERBOSE,
 });
 
 // list all websites
@@ -140,7 +140,7 @@ import * as fs from 'fs';
 const storage = new Storage({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  logLevel: LogLevel.NONE,
+  logLevel: LogLevel.VERBOSE,
 });
 
 // list buckets
@@ -196,7 +196,7 @@ import { Storage, LogLevel } from '@apillon/sdk';
 const storage = new Storage({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  logLevel: LogLevel.NONE,
+  logLevel: LogLevel.VERBOSE,
 });
 
 // create and instance of a bucket directly through uuid
@@ -241,7 +241,7 @@ import {
 const nft = new Nft({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  logLevel: LogLevel.NONE,
+  logLevel: LogLevel.VERBOSE,
 });
 
 // create a new collection
@@ -315,7 +315,7 @@ import { LogLevel } from './types/apillon';
 const identity = new Identity({
   key: 'yourApiKey',
   secret: 'yourApiSecret',
-  logLevel: LogLevel.NONE,
+  logLevel: LogLevel.VERBOSE,
 });
 
 // obtain on-chain identity data for a Polkadot wallet
