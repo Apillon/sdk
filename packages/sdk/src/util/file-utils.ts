@@ -16,12 +16,14 @@ function listFilesRecursive(
   folderPath: string,
   fileList = [],
   relativePath = '',
+  gitignorePatterns = [],
 ) {
   const gitignorePath = path.join(folderPath, '.gitignore');
-  const gitignorePatterns = fs.existsSync(gitignorePath)
-    ? fs.readFileSync(gitignorePath, 'utf-8').split('\n')
-    : [];
-  gitignorePatterns.push('.git'); // Always ignore .git folder.
+  if (fs.existsSync(gitignorePath)) {
+    gitignorePatterns.push(fs.readFileSync(gitignorePath, 'utf-8').split('\n'));
+  }
+  // Always ignore .git and .gitignore files.
+  const defaultIgnoreFiles = ['\\.git$', '\\.gitignore$'];
 
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
@@ -30,15 +32,20 @@ function listFilesRecursive(
 
     // Skip file if it matches .gitignore patterns
     if (
-      gitignorePatterns.some((pattern) =>
-        new RegExp(pattern).test(relativeFilePath),
+      [...gitignorePatterns, ...defaultIgnoreFiles].some((pattern) =>
+        new RegExp(pattern).test(file),
       )
     ) {
       continue;
     }
 
     if (fs.statSync(fullPath).isDirectory()) {
-      listFilesRecursive(fullPath, fileList, `${relativeFilePath}/`);
+      listFilesRecursive(
+        fullPath,
+        fileList,
+        `${relativeFilePath}/`,
+        gitignorePatterns,
+      );
     } else {
       fileList.push({ fileName: file, path: relativePath, index: fullPath });
     }

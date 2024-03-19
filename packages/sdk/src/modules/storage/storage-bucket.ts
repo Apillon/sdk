@@ -130,7 +130,7 @@ export class StorageBucket extends ApillonModel {
     );
 
     if (!params?.awaitCid) {
-      return uploadedFiles;
+      return this.getUploadedFiles(sessionUuid, uploadedFiles.length);
     }
 
     return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
@@ -153,7 +153,7 @@ export class StorageBucket extends ApillonModel {
     );
 
     if (!params?.awaitCid) {
-      return uploadedFiles;
+      return this.getUploadedFiles(sessionUuid, uploadedFiles.length);
     }
 
     return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
@@ -187,14 +187,7 @@ export class StorageBucket extends ApillonModel {
     let retryTimes = 0;
     ApillonLogger.log('Resolving file CIDs...');
     while (resolvedFiles.length === 0 || !resolvedFiles.every((f) => !!f.CID)) {
-      resolvedFiles = (await this.listFiles({ sessionUuid, limit })).items.map(
-        (file) => ({
-          fileName: file.name,
-          fileUuid: file.uuid,
-          CID: file.CID,
-          CIDv1: file.CIDv1,
-        }),
-      );
+      resolvedFiles = await this.getUploadedFiles(sessionUuid, limit);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (++retryTimes >= 15) {
@@ -203,6 +196,15 @@ export class StorageBucket extends ApillonModel {
       }
     }
     return resolvedFiles;
+  }
+
+  private async getUploadedFiles(sessionUuid: string, limit: number) {
+    return (await this.listFiles({ sessionUuid, limit })).items.map((file) => ({
+      fileName: file.name,
+      fileUuid: file.uuid,
+      CID: file.CID,
+      // CIDv1: file.CIDv1,
+    }));
   }
 
   //#region IPNS methods
