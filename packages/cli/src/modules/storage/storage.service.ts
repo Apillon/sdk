@@ -58,6 +58,7 @@ export async function uploadFromFolder(
         wrapWithDirectory: !!optsWithGlobals.wrap,
         directoryPath: optsWithGlobals.path,
         awaitCid: !!optsWithGlobals.await,
+        ignoreFiles: !!optsWithGlobals.ignore,
       });
     console.log(files);
   });
