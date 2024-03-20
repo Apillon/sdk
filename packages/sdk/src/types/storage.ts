@@ -74,8 +74,15 @@ export interface IFileUploadRequest {
 
   /**
    * If set to true, the upload action will wait until files receive a CID from IPFS before returning a result
+   * @default false
    */
   awaitCid?: boolean;
+
+  /**
+   * If set to true, will ignore all the files inside the .gitignore file, including .git and .gitignore itself
+   * @default true
+   */
+  ignoreFiles?: boolean;
 }
 
 export interface IFileUploadResponse {

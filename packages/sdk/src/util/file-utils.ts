@@ -12,30 +12,101 @@ import {
 import { LogLevel } from '../types/apillon';
 import { randomBytes } from 'crypto';
 
+export async function uploadFiles(
+  folderPath: string,
+  apiPrefix: string,
+  params?: IFileUploadRequest,
+  files?: FileMetadata[],
+): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+  if (folderPath) {
+    ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
+  } else if (files?.length) {
+    ApillonLogger.log(`Preparing to upload ${files.length} files...`);
+  } else {
+    throw new Error('Invalid upload parameters received');
+  }
+
+  // If folderPath param passed, read files from local storage
+  if (folderPath && !files?.length) {
+    try {
+      files = readFilesFromFolder(folderPath, params?.ignoreFiles);
+    } catch (err) {
+      ApillonLogger.log(err.message, LogLevel.ERROR);
+      throw new Error(`Error reading files in ${folderPath}`);
+    }
+  }
+
+  ApillonLogger.log(`Total files to upload: ${files.length}`);
+
+  // Split files into chunks for parallel uploading
+  const fileChunkSize = 200;
+  const sessionUuid = uuidv4();
+  const uploadedFiles = [];
+
+  for (const fileGroup of chunkify(files, fileChunkSize)) {
+    const { files } = await ApillonApi.post<IFileUploadResponse>(
+      `${apiPrefix}/upload`,
+      { files: fileGroup, sessionUuid },
+    );
+
+    await uploadFilesToS3(files, fileGroup);
+    uploadedFiles.push(files);
+  }
+
+  ApillonLogger.logWithTime('File upload complete.');
+
+  ApillonLogger.log('Closing upload session...');
+  await ApillonApi.post(`${apiPrefix}/upload/${sessionUuid}/end`, params);
+  ApillonLogger.logWithTime('Upload session ended.');
+
+  return { sessionUuid, files: uploadedFiles.flatMap((f) => f) };
+}
+
+function readFilesFromFolder(
+  folderPath: string,
+  ignoreFiles = true,
+): FileMetadata[] {
+  const gitignorePatterns = [];
+  if (ignoreFiles) {
+    ApillonLogger.log('Ignoring files from .gitignore during upload.');
+
+    const gitignorePath = path.join(folderPath, '.gitignore');
+    if (fs.existsSync(gitignorePath)) {
+      gitignorePatterns.push(
+        ...fs.readFileSync(gitignorePath, 'utf-8').split('\n'),
+      );
+    }
+    // Ignore the following files by default when ignoreFiles = true
+    gitignorePatterns.push(
+      '\\.git/?$',
+      '\\.gitignore$',
+      'node_modules/?',
+      '\\.env$',
+    );
+  }
+
+  const folderFiles = listFilesRecursive(folderPath);
+  return folderFiles.filter(
+    (file) =>
+      // Skip files that match .gitignore patterns
+      !gitignorePatterns.some(
+        (pattern) =>
+          new RegExp(pattern).test(file.fileName) ||
+          new RegExp(pattern).test(file.path),
+      ),
+  );
+}
+
 function listFilesRecursive(
   folderPath: string,
   fileList = [],
   relativePath = '',
-) {
-  const gitignorePath = path.join(folderPath, '.gitignore');
-  const gitignorePatterns = fs.existsSync(gitignorePath)
-    ? fs.readFileSync(gitignorePath, 'utf-8').split('\n')
-    : [];
-  gitignorePatterns.push('.git'); // Always ignore .git folder.
-
+): FileMetadata[] {
   const files = fs.readdirSync(folderPath);
+
   for (const file of files) {
     const fullPath = path.join(folderPath, file);
     const relativeFilePath = path.join(relativePath, file);
-
-    // Skip file if it matches .gitignore patterns
-    if (
-      gitignorePatterns.some((pattern) =>
-        new RegExp(pattern).test(relativeFilePath),
-      )
-    ) {
-      continue;
-    }
 
     if (fs.statSync(fullPath).isDirectory()) {
       listFilesRecursive(fullPath, fileList, `${relativeFilePath}/`);
@@ -73,55 +144,6 @@ async function uploadFilesToS3(
   }
 
   await Promise.all(uploadWorkers);
-}
-
-export async function uploadFiles(
-  folderPath: string,
-  apiPrefix: string,
-  params?: IFileUploadRequest,
-  files?: FileMetadata[],
-): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
-  if (folderPath) {
-    ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
-  } else if (files?.length) {
-    ApillonLogger.log(`Preparing to upload ${files.length} files...`);
-  } else {
-    throw new Error('Invalid upload parameters received');
-  }
-  // If folderPath param passed, read files from local storage
-  if (folderPath && !files?.length) {
-    try {
-      files = listFilesRecursive(folderPath);
-    } catch (err) {
-      ApillonLogger.log(err.message, LogLevel.ERROR);
-      throw new Error(`Error reading files in ${folderPath}`);
-    }
-  }
-
-  ApillonLogger.log(`Total files to upload: ${files.length}`);
-
-  // Split files into chunks for parallel uploading
-  const fileChunkSize = 200;
-  const sessionUuid = uuidv4();
-  const uploadedFiles = [];
-
-  for (const fileGroup of chunkify(files, fileChunkSize)) {
-    const { files } = await ApillonApi.post<IFileUploadResponse>(
-      `${apiPrefix}/upload`,
-      { files: fileGroup, sessionUuid },
-    );
-
-    await uploadFilesToS3(files, fileGroup);
-    uploadedFiles.push(files);
-  }
-
-  ApillonLogger.logWithTime('File upload complete.');
-
-  ApillonLogger.log('Closing upload session...');
-  await ApillonApi.post(`${apiPrefix}/upload/${sessionUuid}/end`, params);
-  ApillonLogger.logWithTime('Upload session ended.');
-
-  return { sessionUuid, files: uploadedFiles.flatMap((f) => f) };
 }
 
 function chunkify(files: FileMetadata[], chunkSize = 10): FileMetadata[][] {
