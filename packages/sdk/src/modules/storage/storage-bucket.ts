@@ -1,5 +1,6 @@
 import { Directory } from './directory';
 import {
+  BucketType,
   FileMetadata,
   FileUploadResult,
   IBucketFilesRequest,
@@ -33,6 +34,11 @@ export class StorageBucket extends ApillonModel {
    * Size of the bucket in bytes.
    */
   public size: number = null;
+
+  /**
+   * Type of bucket (storage, hosting or NFT metadata)
+   */
+  public bucketType: number = null;
 
   /**
    * Bucket content which are files and directories.
@@ -196,7 +202,7 @@ export class StorageBucket extends ApillonModel {
       );
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (++retryTimes >= 15) {
+      if (++retryTimes >= 30) {
         ApillonLogger.log('Unable to resolve file CIDs', LogLevel.ERROR);
         return resolvedFiles;
       }
@@ -246,4 +252,12 @@ export class StorageBucket extends ApillonModel {
     return new Ipns(this.uuid, data.ipnsUuid, data);
   }
   //#endregion
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      bucketType: BucketType[value],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
+  }
 }

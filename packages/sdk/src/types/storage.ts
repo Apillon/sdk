@@ -12,6 +12,12 @@ export enum FileStatus {
   AVAILABLE_ON_IPFS_AND_REPLICATED = 4,
 }
 
+export enum BucketType {
+  STORAGE = 1,
+  HOSTING = 2,
+  NFT_METADATA = 3,
+}
+
 export interface IStorageBucketContentRequest extends IApillonPagination {
   directoryUuid?: string;
   markedForDeletion?: boolean;
