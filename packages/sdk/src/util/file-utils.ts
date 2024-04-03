@@ -46,7 +46,15 @@ export async function uploadFiles(
   for (const fileGroup of chunkify(files, fileChunkSize)) {
     const { files } = await ApillonApi.post<IFileUploadResponse>(
       `${apiPrefix}/upload`,
-      { files: fileGroup, sessionUuid },
+      {
+        files: fileGroup.map((fg) => {
+          // Remove content property from the payload
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { content, ...rest } = fg;
+          return rest;
+        }),
+        sessionUuid,
+      },
     );
 
     await uploadFilesToS3(files, fileGroup);
