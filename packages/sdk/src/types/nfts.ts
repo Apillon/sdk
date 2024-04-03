@@ -6,6 +6,10 @@ export enum EvmChain {
   ASTAR = 592,
 }
 
+export enum SubstrateChain {
+  ASTAR = 8,
+}
+
 export enum CollectionStatus {
   CREATED = 0,
   DEPLOY_INITIATED = 1,
@@ -36,24 +40,31 @@ export enum TransactionType {
   NEST_MINT_NFT = 6,
 }
 
-export interface ICreateCollection {
+export interface ICreateCollectionBase {
   collectionType: CollectionType;
-  chain: EvmChain;
   name: string;
   symbol: string;
   description?: string;
   baseUri: string;
   baseExtension: string;
   maxSupply?: number;
-  isRevokable: boolean;
-  isSoulbound: boolean;
   royaltiesAddress: string;
   royaltiesFees: number;
   drop: boolean;
   dropStart?: number;
   dropPrice?: number;
   dropReserve?: number;
+}
+
+export interface ICreateCollection extends ICreateCollectionBase {
+  isRevokable: boolean;
+  isSoulbound: boolean;
   isAutoIncrement?: boolean;
+  chain: EvmChain;
+}
+
+export interface ICreateSubstrateCollection extends ICreateCollectionBase {
+  chain: SubstrateChain;
 }
 
 //OUTPUTS
