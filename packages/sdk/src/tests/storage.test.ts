@@ -107,6 +107,18 @@ describe('Storage tests', () => {
     expect(files.every((f) => !!f.CID)).toBeTruthy();
   });
 
+  test('upload files from folder with ignoreFiles = false', async () => {
+    const uploadDir = resolve(__dirname, './helpers/website/');
+
+    console.time('File upload complete');
+    const files = await storage
+      .bucket(bucketUuid)
+      .uploadFromFolder(uploadDir, { ignoreFiles: false });
+    expect(files.length).toEqual(3); // .gitignore and index.html are not ignored
+
+    console.timeEnd('File upload complete');
+  });
+
   test('upload files from buffer', async () => {
     // const html = fs.readFileSync(
     //   resolve(__dirname, './helpers/website/index.html'),
