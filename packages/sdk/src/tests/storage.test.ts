@@ -77,21 +77,13 @@ describe('Storage tests', () => {
   });
 
   test('upload files from folder', async () => {
-    try {
-      const uploadDir = resolve(__dirname, './helpers/website/');
+    const uploadDir = resolve(__dirname, './helpers/website/');
 
-      console.time('File upload complete');
-      const files = await storage
-        .bucket(bucketUuid)
-        .uploadFromFolder(uploadDir);
-      console.timeEnd('File upload complete');
+    console.time('File upload complete');
+    const files = await storage.bucket(bucketUuid).uploadFromFolder(uploadDir);
+    console.timeEnd('File upload complete');
 
-      expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
-
-      // console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
   });
 
   test('upload files from folder with awaitCid', async () => {

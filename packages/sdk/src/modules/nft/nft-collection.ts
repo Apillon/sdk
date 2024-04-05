@@ -1,6 +1,7 @@
 import {
   IMintNftData,
   INftActionResponse,
+  SubstrateChain,
   TransactionStatus,
 } from './../../types/nfts';
 import { ApillonApi } from '../../lib/apillon-api';
@@ -125,7 +126,7 @@ export class NftCollection extends ApillonModel {
   /**
    * Chain on which the smart contract was deployed.
    */
-  public chain: EvmChain = null;
+  public chain: EvmChain | SubstrateChain = null;
 
   /**
    * Constructor which should only be called via Nft class.
@@ -257,8 +258,8 @@ export class NftCollection extends ApillonModel {
       collectionStatus: CollectionStatus[serialized],
       transactionType: TransactionType[serialized],
       transactionStatus: TransactionStatus[serialized],
-      chain: EvmChain[serialized],
-      chainId: EvmChain[serialized],
+      chain: EvmChain[serialized] || SubstrateChain[serialized],
+      chainId: EvmChain[serialized] || SubstrateChain[serialized],
     };
     return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }

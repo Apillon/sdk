@@ -1,10 +1,9 @@
 import { Nft } from '../modules/nft/nft';
 import { NftCollection } from '../modules/nft/nft-collection';
-import { CollectionType, EvmChain } from '../types/nfts';
+import { CollectionType, EvmChain, SubstrateChain } from '../types/nfts';
 import { getCollectionUUID, getConfig, getMintAddress } from './helpers/helper';
 
 const nftData = {
-  chain: EvmChain.MOONBASE,
   collectionType: CollectionType.GENERIC,
   name: 'SDK Test',
   description: 'Created from SDK tests',
@@ -14,8 +13,6 @@ const nftData = {
   baseUri: 'https://test.com/metadata/',
   baseExtension: '.json',
   maxSupply: 5,
-  isRevokable: false,
-  isSoulbound: false,
   drop: false,
 };
 
@@ -37,15 +34,37 @@ describe('Nft tests', () => {
   });
 
   test('creates a new collection', async () => {
-    const collection = await nft.create(nftData);
+    const collection = await nft.create({
+      ...nftData,
+      chain: EvmChain.MOONBASE,
+      isRevokable: true,
+      isSoulbound: true,
+    });
     expect(collection.uuid).toBeDefined();
     expect(collection.contractAddress).toBeDefined();
     expect(collection.symbol).toEqual('SDKT');
     expect(collection.name).toEqual('SDK Test');
     expect(collection.description).toEqual('Created from SDK tests');
     expect(collection.isAutoIncrement).toEqual(true);
+    expect(collection.isRevokable).toEqual(true);
+    expect(collection.isSoulbound).toEqual(true);
 
     collectionUuid = collection.uuid;
+  });
+
+  test('creates a new substrate collection', async () => {
+    const collection = await nft.createSubstrate({
+      ...nftData,
+      chain: SubstrateChain.ASTAR,
+    });
+    expect(collection.uuid).toBeDefined();
+    expect(collection.contractAddress).toBeDefined();
+    expect(collection.symbol).toEqual('SDKT');
+    expect(collection.name).toEqual('SDK Test');
+    expect(collection.description).toEqual('Created from SDK tests');
+    expect(collection.isAutoIncrement).toEqual(true);
+    expect(collection.isRevokable).toEqual(false);
+    expect(collection.isSoulbound).toEqual(false);
   });
 
   test('mints a new nft', async () => {
@@ -98,7 +117,10 @@ describe('Nft tests', () => {
       const collection = await nft.create({
         ...nftData,
         name: 'SDK Test isAutoIncrement=false',
+        chain: EvmChain.MOONBASE,
         isAutoIncrement: false,
+        isRevokable: false,
+        isSoulbound: false,
       });
       expect(collection.uuid).toBeDefined();
       expect(collection.contractAddress).toBeDefined();
