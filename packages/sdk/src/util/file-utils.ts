@@ -12,12 +12,14 @@ import {
 import { LogLevel } from '../types/apillon';
 import { randomBytes } from 'crypto';
 
-export async function uploadFiles(
-  folderPath: string,
-  apiPrefix: string,
-  params?: IFileUploadRequest,
-  files?: FileMetadata[],
-): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+export async function uploadFiles(uploadParams: {
+  apiPrefix: string;
+  params?: IFileUploadRequest;
+  folderPath?: string;
+  files?: FileMetadata[];
+}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+  const { folderPath, apiPrefix, params } = uploadParams;
+  let files = uploadParams.files;
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
   } else if (files?.length) {

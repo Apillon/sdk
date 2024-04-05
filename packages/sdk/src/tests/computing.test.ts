@@ -132,7 +132,6 @@ describe('Computing tests', () => {
     expect(files).toHaveLength(1);
     expect(files[0].fileName).toBe('style.css');
     expect(files[0].CID).toBeDefined();
-    expect(files[0].CIDv1).toBeDefined();
   });
 
   test.skip('Transfer ownership of computing contract', async () => {

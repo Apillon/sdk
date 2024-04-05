@@ -88,10 +88,7 @@ export class ComputingContract extends ApillonModel {
    * @returns ComputingContract instance
    */
   async get(): Promise<ComputingContract> {
-    const data = await ApillonApi.get<
-      ComputingContract & { contractUuid: string }
-    >(this.API_PREFIX);
-
+    const data = await ApillonApi.get<ComputingContract>(this.API_PREFIX);
     return this.populate(data);
   }
 

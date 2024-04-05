@@ -9,7 +9,6 @@ import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList } from '../../types/apillon';
 import {
-  ICollection,
   ITransactionFilters,
   ITransaction,
   CollectionType,
@@ -144,7 +143,7 @@ export class NftCollection extends ApillonModel {
    * @returns Collection instance.
    */
   public async get(): Promise<NftCollection> {
-    const data = await ApillonApi.get<ICollection>(this.API_PREFIX);
+    const data = await ApillonApi.get<NftCollection>(this.API_PREFIX);
     return this.populate(data);
   }
 
@@ -224,7 +223,7 @@ export class NftCollection extends ApillonModel {
    * @returns Collection data.
    */
   public async transferOwnership(address: string): Promise<NftCollection> {
-    const data = await ApillonApi.post<ICollection>(
+    const data = await ApillonApi.post<NftCollection>(
       `${this.API_PREFIX}/transfer`,
       { address },
     );

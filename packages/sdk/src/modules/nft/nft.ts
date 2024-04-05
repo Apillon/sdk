@@ -4,7 +4,6 @@ import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList } from '../../types/apillon';
 import {
   ICollectionFilters,
-  ICollection,
   ICreateCollection,
   ICreateSubstrateCollection,
   ICreateCollectionBase,
@@ -35,7 +34,9 @@ export class Nft extends ApillonModule {
   ): Promise<IApillonList<NftCollection>> {
     const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
-    const data = await ApillonApi.get<IApillonList<ICollection>>(url);
+    const data = await ApillonApi.get<
+      IApillonList<NftCollection & { collectionUuid: string }>
+    >(url);
 
     return {
       ...data,
@@ -68,10 +69,9 @@ export class Nft extends ApillonModule {
     if (!data.drop) {
       data.dropStart = data.dropPrice = data.dropReserve = 0;
     }
-    const response = await ApillonApi.post<ICollection>(
-      `${this.API_PREFIX}/${isEvm ? 'evm' : 'substrate'}`,
-      data,
-    );
+    const response = await ApillonApi.post<
+      NftCollection & { collectionUuid: string }
+    >(`${this.API_PREFIX}/${isEvm ? 'evm' : 'substrate'}`, data);
     return new NftCollection(response.collectionUuid, response);
   }
 }

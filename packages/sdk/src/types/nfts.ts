@@ -48,7 +48,7 @@ export interface ICreateCollectionBase {
   baseUri: string;
   baseExtension: string;
   maxSupply?: number;
-  royaltiesAddress: string;
+  royaltiesAddress?: string;
   royaltiesFees: number;
   drop: boolean;
   dropStart?: number;
@@ -65,23 +65,6 @@ export interface ICreateCollection extends ICreateCollectionBase {
 
 export interface ICreateSubstrateCollection extends ICreateCollectionBase {
   chain: SubstrateChain;
-}
-
-//OUTPUTS
-export interface ICollection extends ICreateCollection {
-  collectionUuid: string;
-  contractAddress: string;
-  deployerAddress: string;
-  transactionHash: string;
-  collectionStatus: number;
-  collectionType: number;
-  chain: number;
-  name: string;
-  symbol: string;
-  description: string;
-  bucketUuid: string;
-  updateTime: string;
-  createTime: string;
 }
 
 export interface ITransaction {

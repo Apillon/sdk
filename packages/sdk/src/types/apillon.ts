@@ -9,7 +9,7 @@ export interface IApillonPagination {
   limit?: number;
   orderBy?: string;
   desc?: boolean;
-  status: number;
+  status?: number;
 }
 
 export enum LogLevel {

@@ -61,10 +61,8 @@ export class StorageBucket extends ApillonModel {
    * @returns Bucket instance
    */
   async get(): Promise<StorageBucket> {
-    const data = await ApillonApi.get<StorageBucket & { bucketUuid: string }>(
-      this.API_PREFIX,
-    );
-    return new StorageBucket(data.bucketUuid, data);
+    const data = await ApillonApi.get<StorageBucket>(this.API_PREFIX);
+    return this.populate(data);
   }
 
   /**

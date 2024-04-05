@@ -9,7 +9,6 @@ const nftData = {
   description: 'Created from SDK tests',
   symbol: 'SDKT',
   royaltiesFees: 0,
-  royaltiesAddress: '0x0000000000000000000000000000000000000000',
   baseUri: 'https://test.com/metadata/',
   baseExtension: '.json',
   maxSupply: 5,
@@ -56,6 +55,7 @@ describe('Nft tests', () => {
     const collection = await nft.createSubstrate({
       ...nftData,
       chain: SubstrateChain.ASTAR,
+      royaltiesAddress: 'b3k5JvUnYjdZrCCNkf15PFpqChMunu11aeRoLropayUmhR4',
     });
     expect(collection.uuid).toBeDefined();
     expect(collection.contractAddress).toBeDefined();

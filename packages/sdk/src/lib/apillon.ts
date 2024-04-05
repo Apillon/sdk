@@ -73,8 +73,7 @@ export class ApillonModel {
   protected populate(data: object) {
     if (data != null) {
       Object.keys(data || {}).forEach((key) => {
-        const prop = this[key];
-        if (prop === null) {
+        if (this[key] === null) {
           this[key] = data[key];
         }
       });
