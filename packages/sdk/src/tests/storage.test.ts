@@ -1,19 +1,26 @@
 import { resolve } from 'path';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
-import { getBucketUUID, getConfig } from './helpers/helper';
+import {
+  getBucketUUID,
+  getConfig,
+  getDirectoryUUID,
+  getFileUUID,
+} from './helpers/helper';
 import * as fs from 'fs';
 
 describe('Storage tests', () => {
   let storage: Storage;
   let bucketUuid: string;
   // For get and delete tests
-  const directoryUuid = '6c9c6ab1-801d-4915-a63e-120eed21fee0';
-  const fileUuid = 'cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc';
+  let directoryUuid: string;
+  let fileUuid: string;
 
   beforeAll(async () => {
     storage = new Storage(getConfig());
     bucketUuid = getBucketUUID();
+    directoryUuid = getDirectoryUUID();
+    fileUuid = getFileUUID();
   });
 
   test('List buckets', async () => {

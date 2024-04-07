@@ -33,7 +33,7 @@ describe('Hosting tests', () => {
     const website = hosting.website(websiteUuid);
 
     const uploadDir = resolve(__dirname, './helpers/website/');
-    await website.uploadFromFolder(uploadDir);
+    await website.uploadFromFolder(uploadDir, { ignoreFiles: false });
     const deployment = await website.deploy(DeployToEnvironment.TO_STAGING);
     expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
     deploymentUuid = deployment.uuid;
@@ -42,32 +42,27 @@ describe('Hosting tests', () => {
     expect(website.lastDeploymentStatus).toEqual(DeploymentStatus.INITIATED);
   });
 
-  test.skip('upload files from buffer', async () => {
+  test('upload files from buffer', async () => {
     const html = fs.readFileSync(
       resolve(__dirname, './helpers/website/index.html'),
     );
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
-    try {
-      console.time('File upload complete');
-      await hosting.website(websiteUuid).uploadFiles([
-        {
-          fileName: 'index.html',
-          contentType: 'text/html',
-          content: html,
-        },
-        {
-          fileName: 'style.css',
-          contentType: 'text/css',
-          content: css,
-        },
-      ]);
-      console.timeEnd('File upload complete');
-      // console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    console.time('File upload complete');
+    await hosting.website(websiteUuid).uploadFiles([
+      {
+        fileName: 'index.html',
+        contentType: 'text/html',
+        content: html,
+      },
+      {
+        fileName: 'style.css',
+        contentType: 'text/css',
+        content: css,
+      },
+    ]);
+    console.timeEnd('File upload complete');
   });
 
   test('list all deployments', async () => {

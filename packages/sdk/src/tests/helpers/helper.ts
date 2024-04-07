@@ -38,3 +38,11 @@ export function getPhalaAddress() {
 export function getComputingContractUUID() {
   return process.env['COMPUTING_CONTRACT_UUID'];
 }
+
+export function getDirectoryUUID() {
+  return process.env['DIRECTORY_UUID'];
+}
+
+export function getFileUUID() {
+  return process.env['FILE_UUID'];
+}

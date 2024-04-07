@@ -10,3 +10,4 @@ export * from './modules/hosting/hosting';
 export * from './modules/nft/nft';
 export * from './modules/identity/identity';
 export * from './modules/computing/computing';
+export * from './modules/social/social';

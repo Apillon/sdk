@@ -18,3 +18,6 @@ export * from './modules/nft/nft-collection';
 export * from './modules/identity/identity';
 export * from './modules/computing/computing';
 export * from './modules/computing/computing-contract';
+export * from './modules/social/social';
+export * from './modules/social/social-hub';
+export * from './modules/social/social-channel';
