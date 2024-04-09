@@ -3,6 +3,7 @@ export * from './types/nfts';
 export * from './types/hosting';
 export * from './types/storage';
 export * from './types/identity';
+export * from './types/social';
 export * from './lib/apillon';
 export * from './lib/common';
 export * from './modules/storage/storage';
