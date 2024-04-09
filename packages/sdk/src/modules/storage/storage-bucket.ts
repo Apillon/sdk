@@ -1,5 +1,6 @@
 import { Directory } from './directory';
 import {
+  BucketType,
   FileMetadata,
   FileUploadResult,
   IBucketFilesRequest,
@@ -35,6 +36,11 @@ export class StorageBucket extends ApillonModel {
   public size: number = null;
 
   /**
+   * Type of bucket (storage, hosting or NFT metadata)
+   */
+  public bucketType: number = null;
+
+  /**
    * Bucket content which are files and directories.
    */
   public content: (File | Directory)[] = [];
@@ -55,10 +61,8 @@ export class StorageBucket extends ApillonModel {
    * @returns Bucket instance
    */
   async get(): Promise<StorageBucket> {
-    const data = await ApillonApi.get<StorageBucket & { bucketUuid: string }>(
-      this.API_PREFIX,
-    );
-    return new StorageBucket(data.bucketUuid, data);
+    const data = await ApillonApi.get<StorageBucket>(this.API_PREFIX);
+    return this.populate(data);
   }
 
   /**
@@ -123,11 +127,11 @@ export class StorageBucket extends ApillonModel {
     folderPath: string,
     params?: IFileUploadRequest,
   ): Promise<FileUploadResult[]> {
-    const { files: uploadedFiles, sessionUuid } = await uploadFiles(
+    const { files: uploadedFiles, sessionUuid } = await uploadFiles({
+      apiPrefix: this.API_PREFIX,
       folderPath,
-      this.API_PREFIX,
       params,
-    );
+    });
 
     if (!params?.awaitCid) {
       return this.getUploadedFiles(sessionUuid, uploadedFiles.length);
@@ -145,12 +149,11 @@ export class StorageBucket extends ApillonModel {
     files: FileMetadata[],
     params?: IFileUploadRequest,
   ): Promise<FileUploadResult[]> {
-    const { files: uploadedFiles, sessionUuid } = await uploadFiles(
-      null,
-      this.API_PREFIX,
+    const { files: uploadedFiles, sessionUuid } = await uploadFiles({
+      apiPrefix: this.API_PREFIX,
       params,
       files,
-    );
+    });
 
     if (!params?.awaitCid) {
       return this.getUploadedFiles(sessionUuid, uploadedFiles.length);
@@ -190,7 +193,7 @@ export class StorageBucket extends ApillonModel {
       resolvedFiles = await this.getUploadedFiles(sessionUuid, limit);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (++retryTimes >= 15) {
+      if (++retryTimes >= 30) {
         ApillonLogger.log('Unable to resolve file CIDs', LogLevel.ERROR);
         return resolvedFiles;
       }
@@ -249,4 +252,12 @@ export class StorageBucket extends ApillonModel {
     return new Ipns(this.uuid, data.ipnsUuid, data);
   }
   //#endregion
+
+  protected override serializeFilter(key: string, value: any) {
+    const serialized = super.serializeFilter(key, value);
+    const enums = {
+      bucketType: BucketType[value],
+    };
+    return Object.keys(enums).includes(key) ? enums[key] : serialized;
+  }
 }

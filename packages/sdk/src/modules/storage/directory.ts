@@ -21,7 +21,7 @@ export class Directory extends ApillonModel {
   public name: string = null;
 
   /**
-   * Directory unique ipfs identifier.
+   * Directory unique IPFS content identifier.
    */
   public CID: string = null;
 

@@ -1,19 +1,26 @@
 import { resolve } from 'path';
 import { Storage } from '../modules/storage/storage';
 import { StorageContentType } from '../types/storage';
-import { getBucketUUID, getConfig } from './helpers/helper';
+import {
+  getBucketUUID,
+  getConfig,
+  getDirectoryUUID,
+  getFileUUID,
+} from './helpers/helper';
 import * as fs from 'fs';
 
 describe('Storage tests', () => {
   let storage: Storage;
   let bucketUuid: string;
   // For get and delete tests
-  const directoryUuid = '6c9c6ab1-801d-4915-a63e-120eed21fee0';
-  const fileUuid = 'cf6a0d3d-2abd-4a0d-85c1-10b8f04cd4fc';
+  let directoryUuid: string;
+  let fileUuid: string;
 
   beforeAll(async () => {
     storage = new Storage(getConfig());
     bucketUuid = getBucketUUID();
+    directoryUuid = getDirectoryUUID();
+    fileUuid = getFileUUID();
   });
 
   test('List buckets', async () => {
@@ -77,21 +84,13 @@ describe('Storage tests', () => {
   });
 
   test('upload files from folder', async () => {
-    try {
-      const uploadDir = resolve(__dirname, './helpers/website/');
+    const uploadDir = resolve(__dirname, './helpers/website/');
 
-      console.time('File upload complete');
-      const files = await storage
-        .bucket(bucketUuid)
-        .uploadFromFolder(uploadDir);
-      console.timeEnd('File upload complete');
+    console.time('File upload complete');
+    const files = await storage.bucket(bucketUuid).uploadFromFolder(uploadDir);
+    console.timeEnd('File upload complete');
 
-      expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
-
-      // console.log(content);
-    } catch (e) {
-      console.log(e);
-    }
+    expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
   });
 
   test('upload files from folder with awaitCid', async () => {
@@ -120,21 +119,15 @@ describe('Storage tests', () => {
   });
 
   test('upload files from buffer', async () => {
-    const html = fs.readFileSync(
-      resolve(__dirname, './helpers/website/index.html'),
-    );
+    // const html = fs.readFileSync(
+    //   resolve(__dirname, './helpers/website/index.html'),
+    // );
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
     console.time('File upload complete');
     await storage.bucket(bucketUuid).uploadFiles(
       [
-        {
-          fileName: 'index.html',
-          contentType: 'text/html',
-          path: null,
-          content: html,
-        },
         {
           fileName: 'style.css',
           contentType: 'text/css',

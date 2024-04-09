@@ -9,10 +9,17 @@ export interface IApillonPagination {
   limit?: number;
   orderBy?: string;
   desc?: boolean;
+  status?: number;
 }
 
 export enum LogLevel {
   NONE = 1,
   ERROR = 2,
   VERBOSE = 3,
+}
+
+export enum ChainRpcUrl {
+  ASTAR = 'https://evm.astar.network',
+  MOONBASE = 'https://rpc.api.moonbase.moonbeam.network',
+  MOONBEAM = 'https://rpc.api.moonbeam.network',
 }

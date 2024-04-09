@@ -21,14 +21,9 @@ export class File extends ApillonModel {
   public name: string = null;
 
   /**
-   * File unique ipfs identifier.
+   * File unique IPFS content identifier.
    */
   public CID: string = null;
-
-  /**
-   * File content identifier V1.
-   */
-  public CIDv1: string = null;
 
   /**
    * File upload status.

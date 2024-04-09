@@ -61,6 +61,8 @@ export class ApillonApi {
         }
       },
     );
+
+    return config;
   }
 
   public static async get<T>(url: string, config?: any): Promise<T> {

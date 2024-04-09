@@ -1,6 +1,7 @@
 import {
   IMintNftData,
   INftActionResponse,
+  SubstrateChain,
   TransactionStatus,
 } from './../../types/nfts';
 import { ApillonApi } from '../../lib/apillon-api';
@@ -8,7 +9,6 @@ import { ApillonLogger } from '../../lib/apillon-logger';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList } from '../../types/apillon';
 import {
-  ICollection,
   ITransactionFilters,
   ITransaction,
   CollectionType,
@@ -125,7 +125,7 @@ export class NftCollection extends ApillonModel {
   /**
    * Chain on which the smart contract was deployed.
    */
-  public chain: EvmChain = null;
+  public chain: EvmChain | SubstrateChain = null;
 
   /**
    * Constructor which should only be called via Nft class.
@@ -143,7 +143,7 @@ export class NftCollection extends ApillonModel {
    * @returns Collection instance.
    */
   public async get(): Promise<NftCollection> {
-    const data = await ApillonApi.get<ICollection>(this.API_PREFIX);
+    const data = await ApillonApi.get<NftCollection>(this.API_PREFIX);
     return this.populate(data);
   }
 
@@ -200,7 +200,7 @@ export class NftCollection extends ApillonModel {
    * Burns a nft.
    * @warn Can only burn NFTs if the collection is revokable.
    * @param tokenId Token ID of the NFT we want to burn.
-   * @returns Status.
+   * @returns Success status and transaction hash.
    */
   public async burn(tokenId: string): Promise<INftActionResponse> {
     if (this.isRevokable != null && !this.isRevokable) {
@@ -223,7 +223,7 @@ export class NftCollection extends ApillonModel {
    * @returns Collection data.
    */
   public async transferOwnership(address: string): Promise<NftCollection> {
-    const data = await ApillonApi.post<ICollection>(
+    const data = await ApillonApi.post<NftCollection>(
       `${this.API_PREFIX}/transfer`,
       { address },
     );
@@ -237,7 +237,7 @@ export class NftCollection extends ApillonModel {
   /**
    * Gets list of transactions that occurred on this collection through Apillon.
    * @param params Filters.
-   * @returns List of transactions.
+   * @returns {ITransaction[]} List of transactions.
    */
   public async listTransactions(
     params?: ITransactionFilters,
@@ -247,14 +247,7 @@ export class NftCollection extends ApillonModel {
       params,
     );
 
-    const data = await ApillonApi.get<IApillonList<ITransaction>>(url);
-
-    return {
-      ...data,
-      items: data.items.map((t) =>
-        JSON.parse(JSON.stringify(t, this.serializeFilter)),
-      ),
-    };
+    return await ApillonApi.get<IApillonList<ITransaction>>(url);
   }
 
   protected override serializeFilter(key: string, value: any) {
@@ -264,8 +257,8 @@ export class NftCollection extends ApillonModel {
       collectionStatus: CollectionStatus[serialized],
       transactionType: TransactionType[serialized],
       transactionStatus: TransactionStatus[serialized],
-      chain: EvmChain[serialized],
-      chainId: EvmChain[serialized],
+      chain: EvmChain[serialized] || SubstrateChain[serialized],
+      chainId: EvmChain[serialized] || SubstrateChain[serialized],
     };
     return Object.keys(enums).includes(key) ? enums[key] : serialized;
   }
