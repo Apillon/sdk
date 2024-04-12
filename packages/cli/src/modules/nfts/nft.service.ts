@@ -1,4 +1,4 @@
-import { ICreateCollection, Nft, toInteger } from '@apillon/sdk';
+import { Nft, toInteger } from '@apillon/sdk';
 import { readAndParseJson } from '../../lib/files';
 import { GlobalOptions } from '../../lib/types';
 import { paginate } from '../../lib/options';
@@ -30,7 +30,7 @@ export async function createCollection(
   await withErrorHandler(async () => {
     let createCollectionData;
     try {
-      createCollectionData = readAndParseJson(filePath) as ICreateCollection;
+      createCollectionData = readAndParseJson(filePath);
     } catch (e) {
       if (e.code === 'ENOENT') {
         return console.error(`Error: File not found (${filePath}).`);
@@ -46,8 +46,11 @@ export async function createCollection(
     if (!createCollectionData) {
       return;
     }
+    const nft = new Nft(optsWithGlobals);
+    const data = optsWithGlobals.substrate
+      ? await nft.createSubstrate(createCollectionData)
+      : await nft.create(createCollectionData);
 
-    const data = await new Nft(optsWithGlobals).create(createCollectionData);
     console.log(data.serialize());
     console.log('NFT collection created successfully!');
   });
