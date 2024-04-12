@@ -57,6 +57,12 @@ export function createNftsCommands(cli: Command) {
     .command('create-collection')
     .description('Create NFT collection from JSON file')
     .argument('<file-path>', 'path to JSON data file of type ICreateCollection')
+    .addOption(
+      new Option(
+        '--substrate',
+        'Create the collection on substrate environment',
+      ),
+    )
     .action(async function (filePath: string) {
       await createCollection(filePath, this.optsWithGlobals());
     });
