@@ -15,6 +15,7 @@ describe('Storage tests', () => {
   // For get and delete tests
   let directoryUuid: string;
   let fileUuid: string;
+  let cid: string;
 
   beforeAll(async () => {
     storage = new Storage(getConfig());
@@ -78,11 +79,6 @@ describe('Storage tests', () => {
     items.forEach((item) => expect(item.name).toBeTruthy());
   });
 
-  test('get file details', async () => {
-    const file = await storage.bucket(bucketUuid).file(fileUuid).get();
-    expect(file.name).toBeTruthy();
-  });
-
   test('upload files from folder', async () => {
     const uploadDir = resolve(__dirname, './helpers/website/');
 
@@ -104,18 +100,19 @@ describe('Storage tests', () => {
 
     expect(files.length).toBeGreaterThan(0);
     expect(files.every((f) => !!f.CID)).toBeTruthy();
+    cid = files[0].CID;
   });
 
   test('upload files from folder with ignoreFiles = false', async () => {
     const uploadDir = resolve(__dirname, './helpers/website/');
 
-    console.time('File upload complete');
-    const files = await storage
-      .bucket(bucketUuid)
-      .uploadFromFolder(uploadDir, { ignoreFiles: false });
-    expect(files.length).toEqual(3); // .gitignore and index.html are not ignored
-
-    console.timeEnd('File upload complete');
+    // .gitignore and index.html are not ignored
+    // and HTML files are not allowed
+    await expect(
+      storage
+        .bucket(bucketUuid)
+        .uploadFromFolder(uploadDir, { ignoreFiles: false }),
+    ).rejects.toThrow();
   });
 
   test('upload files from buffer', async () => {
@@ -140,11 +137,46 @@ describe('Storage tests', () => {
     console.timeEnd('File upload complete');
   });
 
-  test.skip('delete a file', async () => {
-    await storage.bucket(bucketUuid).file(fileUuid).delete();
+  describe.skip('File detail tests', () => {
+    test('get file details', async () => {
+      const file = await storage.bucket(bucketUuid).file(fileUuid).get();
+      expect(file.name).toBeTruthy();
+    });
+
+    test('delete a file', async () => {
+      await storage.bucket(bucketUuid).file(fileUuid).delete();
+    });
+
+    test('delete a directory', async () => {
+      await storage.bucket(bucketUuid).directory(directoryUuid).delete();
+    });
   });
 
-  test.skip('delete a directory', async () => {
-    await storage.bucket(bucketUuid).directory(directoryUuid).delete();
+  describe('Storage info tests', () => {
+    test('Get storage info', async () => {
+      const info = await storage.getInfo();
+      expect(info).toBeDefined();
+      expect(info.availableStorage).toBeGreaterThan(0);
+      expect(info.usedStorage).toBeGreaterThanOrEqual(0);
+      expect(info.usedStorage).toBeLessThan(info.availableStorage);
+      expect(info.availableBandwidth).toBeGreaterThan(0);
+      expect(info.usedBandwidth).toBeGreaterThanOrEqual(0);
+      expect(info.usedBandwidth).toBeLessThan(info.availableBandwidth);
+    });
+
+    test('Get IPFS cluster info', async () => {
+      const ipfsClusterInfo = await storage.getIpfsClusterInfo();
+      expect(ipfsClusterInfo).toBeDefined();
+      expect(ipfsClusterInfo.secret).toBeDefined();
+      expect(ipfsClusterInfo.projectUuid).toBeDefined();
+      expect(ipfsClusterInfo.ipfsGateway).toBeDefined();
+      expect(ipfsClusterInfo.ipnsGateway).toBeDefined();
+    });
+
+    test('Generate IPFS link', async () => {
+      const { link } = await storage.generateIpfsLink(cid);
+      expect(link).toBeDefined();
+      expect(link).toContain(cid);
+    });
   });
 });

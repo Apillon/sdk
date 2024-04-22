@@ -116,3 +116,42 @@ export interface ICreateIpns {
    */
   cid?: string;
 }
+
+export interface StorageInfo {
+  /**
+   * Available storage space in bytes
+   */
+  availableStorage: number;
+  /**
+   * Used storage in bytes. When `usedStorage` reaches available storage, upload to buckets will be blocked (error 40006003)
+   */
+  usedStorage: number;
+  /**
+   * Monthly available bandwidth (upload and download)
+   */
+  availableBandwidth: number;
+  /**
+   * Bandwidth used in current month. If `usedBandwidth` reaches available bandwidth, requests to the IPFS gateway will be blocked
+   */
+  usedBandwidth: number;
+}
+
+export interface IpfsClusterInfo {
+  /**
+   * Secret for this project, which can be used to generate tokens to access content of IPFS gateway
+   * @docs [Generate an IPFS link](https://wiki.apillon.io/build/2-storage-api.html#get-or-generate-link-for-ipfs)
+   */
+  secret: string;
+  /**
+   * Project unique identifier
+   */
+  projectUuid: string;
+  /**
+   * Gateway that can used to access content via CIDs.
+   */
+  ipfsGateway: string;
+  /**
+   * Gateway that can be used to access content via IPNS name.
+   */
+  ipnsGateway: string;
+}

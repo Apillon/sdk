@@ -1,3 +1,4 @@
+import { IpfsClusterInfo, StorageInfo } from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
@@ -8,7 +9,7 @@ export class Storage extends ApillonModule {
   /**
    * API url for storage.
    */
-  private API_PREFIX = '/storage/buckets';
+  private API_PREFIX = '/storage';
 
   /**
    * Lists all buckets.
@@ -18,7 +19,10 @@ export class Storage extends ApillonModule {
   public async listBuckets(
     params?: IApillonPagination,
   ): Promise<IApillonList<StorageBucket>> {
-    const url = constructUrlWithQueryParams(this.API_PREFIX, params);
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/buckets`,
+      params,
+    );
 
     const data = await ApillonApi.get<
       IApillonList<StorageBucket & { bucketUuid: string }>
@@ -38,5 +42,40 @@ export class Storage extends ApillonModule {
    */
   public bucket(uuid: string): StorageBucket {
     return new StorageBucket(uuid);
+  }
+
+  /**
+   * Gets overall storage info for a project - available and used storage and bandwidth
+   * @returns {Promise<StorageInfo>}
+   */
+  public async getInfo(): Promise<StorageInfo> {
+    return await ApillonApi.get<StorageInfo>(`${this.API_PREFIX}/info`);
+  }
+
+  /**
+   * Gets basic data of an IPFS cluster used by the project.
+   *
+   * IPFS clusters contain multiple IPFS nodes but expose a single gateway for accessing content via CID or IPNS.
+   *
+   * Apillon clusters (gateways) are not publicly accessible
+   * @note Each project has its own secret for generating tokens to access content on the IPFS gateway.
+   * @returns {Promise<IpfsClusterInfo>}
+   */
+  public async getIpfsClusterInfo(): Promise<IpfsClusterInfo> {
+    return await ApillonApi.get<IpfsClusterInfo>(
+      `${this.API_PREFIX}/ipfs-cluster-info`,
+    );
+  }
+
+  /**
+   * Apillon IPFS gateways are private and can only be accessible with a token.
+   * @docs [Generate an IPFS link](https://wiki.apillon.io/build/2-storage-api.html#get-or-generate-link-for-ipfs)
+   * @param {string} cid The CID or IPNS address of the fie
+   * @returns {Promise<{ link: string }>} Link where the requested content can be accessed.
+   */
+  public async generateIpfsLink(cid: string): Promise<{ link: string }> {
+    return await ApillonApi.get<{ link: string }>(
+      `${this.API_PREFIX}/link-on-ipfs/${cid}`,
+    );
   }
 }

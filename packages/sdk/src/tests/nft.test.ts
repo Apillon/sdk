@@ -26,17 +26,11 @@ describe('Nft tests', () => {
     receivingAddress = getMintAddress();
   });
 
-  test('list nft collections', async () => {
-    const { items: collections } = await nft.listCollections();
-    expect(collections.length).toBeGreaterThan(0);
-    expect(collections[0]).toBeInstanceOf(NftCollection);
-  });
-
   test('creates a new collection', async () => {
     const collection = await nft.create({
       ...nftData,
       chain: EvmChain.MOONBASE,
-      isRevokable: true,
+      isRevokable: false,
       isSoulbound: true,
     });
     expect(collection.uuid).toBeDefined();
@@ -45,10 +39,16 @@ describe('Nft tests', () => {
     expect(collection.name).toEqual('SDK Test');
     expect(collection.description).toEqual('Created from SDK tests');
     expect(collection.isAutoIncrement).toEqual(true);
-    expect(collection.isRevokable).toEqual(true);
+    expect(collection.isRevokable).toEqual(false);
     expect(collection.isSoulbound).toEqual(true);
 
     collectionUuid = collection.uuid;
+  });
+
+  test('list nft collections', async () => {
+    const { items: collections } = await nft.listCollections();
+    expect(collections.length).toBeGreaterThan(0);
+    expect(collections[0]).toBeInstanceOf(NftCollection);
   });
 
   test('creates a new substrate collection', async () => {
