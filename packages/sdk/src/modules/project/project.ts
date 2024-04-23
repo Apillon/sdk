@@ -9,7 +9,7 @@ export class Project extends ApillonModule {
 
   /**
    * Get credit balance for your project
-   * @returns {Promise<{ balance: number }>} The credit balance of your project
+   * @returns {Promise<number>} The credit balance of your project
    */
   public async getCreditBalance(): Promise<number> {
     const { balance } = await ApillonApi.get<{ balance: number }>(
