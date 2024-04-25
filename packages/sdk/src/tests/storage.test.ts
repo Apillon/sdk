@@ -15,7 +15,6 @@ describe('Storage tests', () => {
   // For get and delete tests
   let directoryUuid: string;
   let fileUuid: string;
-  let cid: string;
 
   beforeAll(async () => {
     storage = new Storage(getConfig());
@@ -100,7 +99,6 @@ describe('Storage tests', () => {
 
     expect(files.length).toBeGreaterThan(0);
     expect(files.every((f) => !!f.CID)).toBeTruthy();
-    cid = files[0].CID;
   });
 
   test('upload files from folder with ignoreFiles = false', async () => {
@@ -174,6 +172,7 @@ describe('Storage tests', () => {
     });
 
     test('Generate IPFS link', async () => {
+      const cid = 'bafybeigjhyc2tpvqfqsuvf3byo4e4a4v6spi6jk4qqvvtlpca6rsaf2cqi';
       const { link } = await storage.generateIpfsLink(cid);
       expect(link).toBeDefined();
       expect(link).toContain(cid);
