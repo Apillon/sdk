@@ -173,7 +173,7 @@ describe('Storage tests', () => {
 
     test('Generate IPFS link', async () => {
       const cid = 'bafybeigjhyc2tpvqfqsuvf3byo4e4a4v6spi6jk4qqvvtlpca6rsaf2cqi';
-      const { link } = await storage.generateIpfsLink(cid);
+      const link = await storage.generateIpfsLink(cid);
       expect(link).toBeDefined();
       expect(link).toContain(cid);
     });
