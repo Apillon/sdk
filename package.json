@@ -21,13 +21,13 @@
   },
   "packageManager": "npm@8.4.0",
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "eslint-config-common": "*",
+    "jest": "29.7.0",
     "prettier": "latest",
     "rimraf": "^5.0.5",
-    "turbo": "latest",
-    "jest": "29.7.0",
-    "ts-jest": "29.1.1",
-    "@types/jest": "^29.5.11"
+    "ts-jest": "29.1.2",
+    "turbo": "latest"
   },
   "jest": {
     "testTimeout": 1800000,

@@ -1,7 +1,7 @@
 {
   "name": "@apillon/sdk",
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -45,20 +45,20 @@
   ],
   "dependencies": {
     "@polkadot/util-crypto": "^12.6.2",
-    "axios": "^1.6.2",
+    "axios": "^1.6.8",
     "ethereumjs-util": "^7.1.5"
   },
   "devDependencies": {
     "@polkadot/keyring": "^12.6.2",
-    "@types/jest": "^29.5.11",
-    "dotenv": "^16.3.1",
+    "@types/jest": "^29.5.12",
+    "dotenv": "^16.4.5",
     "eslint-config-common": "*",
-    "ethers": "^6.9.0",
-    "nodemon": "^3.0.2",
+    "ethers": "^6.12.0",
+    "nodemon": "^3.1.0",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
     "tsconfig": "*",
-    "typedoc": "^0.25.4"
+    "typedoc": "^0.25.13"
   },
   "jest": {
     "testTimeout": 1800000,

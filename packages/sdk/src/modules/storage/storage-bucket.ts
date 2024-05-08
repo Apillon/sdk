@@ -101,10 +101,7 @@ export class StorageBucket extends ApillonModel {
    * @returns List of files in the bucket
    */
   async listFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
-    const url = constructUrlWithQueryParams(
-      `/storage/buckets/${this.uuid}/files`,
-      params,
-    );
+    const url = constructUrlWithQueryParams(`${this.API_PREFIX}/files`, params);
     const data = await ApillonApi.get<
       IApillonList<File & { fileUuid: string }>
     >(url);
@@ -227,10 +224,7 @@ export class StorageBucket extends ApillonModel {
    * @returns List of IPNS names in the bucket
    */
   async listIpnsNames(params?: IPNSListRequest) {
-    const url = constructUrlWithQueryParams(
-      `/storage/buckets/${this.uuid}/ipns`,
-      params,
-    );
+    const url = constructUrlWithQueryParams(`${this.API_PREFIX}/ipns`, params);
     const data = await ApillonApi.get<
       IApillonList<Ipns & { ipnsUuid: string }>
     >(url);
@@ -247,8 +241,10 @@ export class StorageBucket extends ApillonModel {
    * @returns New IPNS instance
    */
   async createIpns(body: ICreateIpns): Promise<Ipns> {
-    const url = `/storage/buckets/${this.uuid}/ipns`;
-    const data = await ApillonApi.post<Ipns & { ipnsUuid: string }>(url, body);
+    const data = await ApillonApi.post<Ipns & { ipnsUuid: string }>(
+      `${this.API_PREFIX}/ipns`,
+      body,
+    );
     return new Ipns(this.uuid, data.ipnsUuid, data);
   }
   //#endregion

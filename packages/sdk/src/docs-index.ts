@@ -22,3 +22,4 @@ export * from './modules/computing/computing-contract';
 export * from './modules/social/social';
 export * from './modules/social/social-hub';
 export * from './modules/social/social-channel';
+export * from './modules/project/project';
