@@ -9,16 +9,20 @@ export class Hosting extends ApillonModule {
   /**
    * Base API url for hosting.
    */
-  private API_PREFIX = '/hosting/websites';
+  private API_PREFIX = '/hosting';
 
   /**
+   * List all websites
    * @param {IWebsiteFilters} params Query filters for listing websites
    * @returns A list of HostingWebsite instances.
    */
   public async listWebsites(
     params?: IWebsiteFilters,
   ): Promise<IApillonList<HostingWebsite>> {
-    const url = constructUrlWithQueryParams(this.API_PREFIX, params);
+    const url = constructUrlWithQueryParams(
+      `${this.API_PREFIX}/websites`,
+      params,
+    );
 
     const data = await ApillonApi.get<IApillonList<HostingWebsite>>(url);
 
@@ -36,5 +40,18 @@ export class Hosting extends ApillonModule {
    */
   public website(uuid: string): HostingWebsite {
     return new HostingWebsite(uuid);
+  }
+
+  /**
+   * Generate a short link for a given target URL
+   * @param {string} targetUrl - The targer URL to generate a shortened URL for
+   * @returns `id`: the short URL slug, `url`: the short URL, `targetUrl`: the target URL which the short link points to
+   */
+  public async generateShortUrl(
+    targetUrl: string,
+  ): Promise<{ id: string; url: string; targetUrl: string }> {
+    return await ApillonApi.post<any>(`${this.API_PREFIX}/short-url`, {
+      targetUrl,
+    });
   }
 }
