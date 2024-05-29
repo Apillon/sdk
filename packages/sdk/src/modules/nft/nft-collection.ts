@@ -139,15 +139,6 @@ export class NftCollection extends ApillonModel {
   }
 
   /**
-   * Gets and populates collection information.
-   * @returns Collection instance.
-   */
-  public async get(): Promise<NftCollection> {
-    const data = await ApillonApi.get<NftCollection>(this.API_PREFIX);
-    return this.populate(data);
-  }
-
-  /**
    * @param {IMintNftData} params - NFT mint parameters
    * @returns {INftActionResponse} - success status and transaction hash of the mint
    */

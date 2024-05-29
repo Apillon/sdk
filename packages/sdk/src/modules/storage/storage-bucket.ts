@@ -57,15 +57,6 @@ export class StorageBucket extends ApillonModel {
   }
 
   /**
-   * Gets bucket details.
-   * @returns Bucket instance
-   */
-  async get(): Promise<StorageBucket> {
-    const data = await ApillonApi.get<StorageBucket>(this.API_PREFIX);
-    return this.populate(data);
-  }
-
-  /**
    * Gets contents of a bucket.
    * @returns A a list of File and Directory objects.
    */
@@ -80,7 +71,7 @@ export class StorageBucket extends ApillonModel {
     const data = await ApillonApi.get<IApillonList<File | Directory>>(url);
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
-        const file = item as File;
+        const file = item as File & { fileStatus: number };
         content.push(new File(this.uuid, file.directoryUuid, file.uuid, file));
       } else {
         const directory = new Directory(
@@ -103,7 +94,7 @@ export class StorageBucket extends ApillonModel {
   async listFiles(params?: IBucketFilesRequest): Promise<IApillonList<File>> {
     const url = constructUrlWithQueryParams(`${this.API_PREFIX}/files`, params);
     const data = await ApillonApi.get<
-      IApillonList<File & { fileUuid: string }>
+      IApillonList<File & { fileUuid: string; fileStatus: number }>
     >(url);
 
     return {

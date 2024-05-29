@@ -1,4 +1,3 @@
-import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonModel } from '../../lib/apillon';
 import { HubStatus } from '../../types/social';
 
@@ -38,14 +37,5 @@ export class SocialHub extends ApillonModel {
     super(uuid);
     this.API_PREFIX = `/social/hubs/${uuid}`;
     this.populate(data);
-  }
-
-  /**
-   * Fetches and populates the hub details from the API.
-   * @returns An instance of Hub class with filled properties.
-   */
-  public async get(): Promise<SocialHub> {
-    const data = await ApillonApi.get<SocialHub>(this.API_PREFIX);
-    return this.populate(data);
   }
 }

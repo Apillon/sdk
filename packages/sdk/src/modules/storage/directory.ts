@@ -63,9 +63,7 @@ export class Directory extends ApillonModel {
    * Gets contents of a directory.
    * @returns Directory data and content (files and subfolders)
    */
-  async get(
-    params: IStorageBucketContentRequest = {},
-  ): Promise<(Directory | File)[]> {
+  override async get(params: IStorageBucketContentRequest = {}) {
     this.content = [];
     params.directoryUuid = this.uuid;
     const url = constructUrlWithQueryParams(
@@ -76,7 +74,7 @@ export class Directory extends ApillonModel {
 
     for (const item of data.items) {
       if (item.type == StorageContentType.FILE) {
-        const file = item as File;
+        const file = item as File & { fileStatus: number };
         this.content.push(
           new File(this.bucketUuid, file.directoryUuid, file.uuid, file),
         );
@@ -87,7 +85,7 @@ export class Directory extends ApillonModel {
       }
     }
 
-    return this.content;
+    return this.content as any;
   }
 
   /**
