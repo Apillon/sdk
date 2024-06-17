@@ -2,7 +2,7 @@ import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList } from '../../types/apillon';
-import { IWebsiteFilters } from '../../types/hosting';
+import { IWebsiteFilters, ShortUrl } from '../../types/hosting';
 import { HostingWebsite } from './hosting-website';
 
 export class Hosting extends ApillonModule {
@@ -45,11 +45,9 @@ export class Hosting extends ApillonModule {
   /**
    * Generate a short link for a given target URL
    * @param {string} targetUrl - The targer URL to generate a shortened URL for
-   * @returns `id`: the short URL slug, `url`: the short URL, `targetUrl`: the target URL which the short link points to
+   * @returns {ShortUrl}
    */
-  public async generateShortUrl(
-    targetUrl: string,
-  ): Promise<{ id: string; url: string; targetUrl: string }> {
+  public async generateShortUrl(targetUrl: string): Promise<ShortUrl> {
     return await ApillonApi.post<any>(`${this.API_PREFIX}/short-url`, {
       targetUrl,
     });
