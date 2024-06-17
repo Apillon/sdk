@@ -82,4 +82,13 @@ describe('Hosting tests', () => {
     const deployment = await website.deployment(deploymentUuid).get();
     expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
   });
+
+  test('generate short url', async () => {
+    const targertUrl = 'https://ipfs.apillon.io/ipfs/abc';
+
+    const shortUrl = await hosting.generateShortUrl(targertUrl);
+    expect(shortUrl.id).toBeDefined();
+    expect(shortUrl.targetUrl).toBe(targertUrl);
+    expect(shortUrl.url).toContain(shortUrl.id);
+  });
 });

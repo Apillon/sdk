@@ -1,4 +1,3 @@
-import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonModel } from '../../lib/apillon';
 import { HubStatus } from '../../types/social';
 
@@ -32,14 +31,5 @@ export class SocialChannel extends ApillonModel {
     super(uuid);
     this.API_PREFIX = `/social/channels/${uuid}`;
     this.populate(data);
-  }
-
-  /**
-   * Fetches and populates the channel details from the API.
-   * @returns An instance of Channel class with filled properties.
-   */
-  public async get(): Promise<SocialChannel> {
-    const data = await ApillonApi.get<SocialChannel>(this.API_PREFIX);
-    return this.populate(data);
   }
 }

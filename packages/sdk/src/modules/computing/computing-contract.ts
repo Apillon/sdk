@@ -84,15 +84,6 @@ export class ComputingContract extends ApillonModel {
   }
 
   /**
-   * Gets a computing contract's details.
-   * @returns ComputingContract instance
-   */
-  async get(): Promise<ComputingContract> {
-    const data = await ApillonApi.get<ComputingContract>(this.API_PREFIX);
-    return this.populate(data);
-  }
-
-  /**
    * Gets list of transactions for this computing contract.
    * @param {ITransactionListFilters} params Query filters.
    * @returns {IComputingTransaction[]} List of transactions.

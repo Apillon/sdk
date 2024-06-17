@@ -47,15 +47,6 @@ export class Ipns extends ApillonModel {
   }
 
   /**
-   * Gets IPNS details.
-   * @returns IPNS record
-   */
-  async get(): Promise<Ipns> {
-    const data = await ApillonApi.get<Ipns>(this.API_PREFIX);
-    return this.populate(data);
-  }
-
-  /**
    * Publish an IPNS record to IPFS and link it to a CID.
    * @param {string} cid - CID to which this ipns name will point.
    * @returns IPNS record with updated data after publish

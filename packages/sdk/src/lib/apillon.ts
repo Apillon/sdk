@@ -67,6 +67,15 @@ export class ApillonModel {
   }
 
   /**
+   * Gets and populates the object details of this entity
+   * @returns A new instance of this object
+   */
+  async get(): Promise<this> {
+    const data = await ApillonApi.get<this>(this.API_PREFIX);
+    return this.populate(data);
+  }
+
+  /**
    * Populates class properties via data object.
    * @param data Data object.
    */

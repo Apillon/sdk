@@ -1,6 +1,4 @@
 import { ApillonModel } from '../../lib/apillon';
-
-import { ApillonApi } from '../../lib/apillon-api';
 import { DeployToEnvironment, DeploymentStatus } from '../../types/hosting';
 
 export class Deployment extends ApillonModel {
@@ -54,14 +52,6 @@ export class Deployment extends ApillonModel {
     this.websiteUuid = websiteUuid;
     this.API_PREFIX = `/hosting/websites/${websiteUuid}/deployments/${deploymentUuid}`;
     this.populate(data);
-  }
-
-  /**
-   * Gets deployment details.
-   */
-  async get(): Promise<Deployment> {
-    const data = await ApillonApi.get<Deployment>(this.API_PREFIX);
-    return this.populate(data);
   }
 
   protected override serializeFilter(key: string, value: any) {
