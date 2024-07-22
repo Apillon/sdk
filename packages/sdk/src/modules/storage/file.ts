@@ -70,7 +70,7 @@ export class File extends ApillonModel {
    * Gets file details.
    * @returns File instance
    */
-  async get(): Promise<File> {
+  public override async get(): Promise<this> {
     const data = await ApillonApi.get<File & { fileStatus: number }>(
       this.API_PREFIX,
     );

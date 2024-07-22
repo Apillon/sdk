@@ -75,15 +75,6 @@ export class HostingWebsite extends ApillonModel {
   }
 
   /**
-   * Gets information about the website and fills properties with it.
-   * @returns An instance of HostingWebsite class with filled properties.
-   */
-  public async get(): Promise<HostingWebsite> {
-    const data = await ApillonApi.get<HostingWebsite>(this.API_PREFIX);
-    return this.populate(data);
-  }
-
-  /**
    * Uploads website files inside a folder via path.
    * @param folderPath Path to the folder to upload.
    * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files

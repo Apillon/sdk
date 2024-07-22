@@ -24,3 +24,18 @@ export interface IDeploymentFilters extends IApillonPagination {
   deploymentStatus?: DeploymentStatus;
   environment?: DeployToEnvironment;
 }
+
+export interface ShortUrl {
+  /**
+   * the short URL slug
+   */
+  id: string;
+  /**
+   * the short URL
+   */
+  url: string;
+  /**
+   * the target URL which the short link points to
+   */
+  targetUrl: string;
+}
