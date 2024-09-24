@@ -35,8 +35,19 @@ export class HostingWebsite extends ApillonModel {
 
   /**
    * IPNS CID for staging environment.
+   * @deprecated - Use `cidStaging` instead
    */
   public ipnsStaging: string = null;
+
+  /**
+   * IPFS CID for staging environment.
+   */
+  public cidStaging: string = null;
+
+  /**
+   * IPFS CID for production environment.
+   */
+  public cidProduction: string = null;
 
   /**
    * IPNS CID for production environment.
