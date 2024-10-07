@@ -46,7 +46,10 @@
   "dependencies": {
     "@polkadot/util-crypto": "^12.6.2",
     "axios": "^1.6.8",
-    "ethereumjs-util": "^7.1.5"
+    "ethereumjs-util": "^7.1.5",
+    "glob": "^11.0.0",
+    "ignore": "^6.0.2",
+    "targz": "^1.0.1"
   },
   "devDependencies": {
     "@polkadot/keyring": "^12.6.2",

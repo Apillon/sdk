@@ -42,6 +42,7 @@
       "**/.serverless": true,
       "**/.turbo": true,
       "**/node_modules": false
-    }
+    },
+    "nuxt.isNuxtApp": false
   }
 }

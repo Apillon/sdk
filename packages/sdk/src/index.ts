@@ -13,3 +13,5 @@ export * from './modules/identity/identity';
 export * from './modules/computing/computing';
 export * from './modules/social/social';
 export * from './modules/project/project';
+export * from './modules/indexing/indexing';
+export * from './modules/indexing/indexer';
