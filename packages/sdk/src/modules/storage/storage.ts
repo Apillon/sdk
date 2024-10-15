@@ -38,7 +38,7 @@ export class Storage extends ApillonModule {
 
   /**
    * @param uuid Unique bucket identifier.
-   * @returns An instance of StorageBucket.
+   * @returns An empty instance of StorageBucket.
    */
   public bucket(uuid: string): StorageBucket {
     return new StorageBucket(uuid);

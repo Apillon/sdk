@@ -36,7 +36,7 @@ export class Hosting extends ApillonModule {
 
   /**
    * @param uuid Unique website identifier.
-   * @returns An instance of HostingWebsite.
+   * @returns An empty instance of HostingWebsite.
    */
   public website(uuid: string): HostingWebsite {
     return new HostingWebsite(uuid);

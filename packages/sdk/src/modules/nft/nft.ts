@@ -18,7 +18,7 @@ export class Nft extends ApillonModule {
 
   /**
    * @param uuid Unique collection identifier.
-   * @returns An instance of NFT Collection
+   * @returns An empty instance of NftCollection
    */
   public collection(uuid: string): NftCollection {
     return new NftCollection(uuid, null);
