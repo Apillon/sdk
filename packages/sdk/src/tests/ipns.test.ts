@@ -21,7 +21,7 @@ describe('IPNS tests for StorageBucket', () => {
   test('Create a new IPNS record', async () => {
     const name = 'Test IPNS';
     const description = 'This is a test description';
-    const cid = 'QmUxtfFfWFguxSWUUy2FiBsGuH6Px4KYFxJqNYJRiDpemj';
+    const cid = 'QmUq4iFLKZUpEsHCAqfsBermXHRnPuE5CNcyPv1xaNkyGp';
     const ipns = await storage.bucket(bucketUuid).createIpns({
       name,
       description,
