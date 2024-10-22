@@ -53,7 +53,7 @@ export class CloudFunctions extends ApillonModule {
    * @param {string} uuid Unique identifier of the cloud function.
    * @returns {CloudFunction} An empty instance of CloudFunction.
    */
-  public async cloudFunction(uuid: string): Promise<CloudFunction> {
+  public cloudFunction(uuid: string): CloudFunction {
     return new CloudFunction(uuid);
   }
 }

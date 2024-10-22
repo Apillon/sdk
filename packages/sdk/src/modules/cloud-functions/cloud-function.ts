@@ -31,7 +31,7 @@ export class CloudFunction extends ApillonModel {
   /**
    * List of jobs associated with the cloud function
    */
-  private jobs: CloudFunctionJob[] = [];
+  public jobs: CloudFunctionJob[] = [];
 
   /**
    * Constructor which should only be called via CloudFunctions class
@@ -42,6 +42,16 @@ export class CloudFunction extends ApillonModel {
     this.API_PREFIX = `/cloud-functions/${this.uuid}`;
     this.populate(data);
     this.gatewayUrl = `https://${this.uuid}.${process.env.ACURAST_GATEWAY_URL}`;
+  }
+
+  /**
+   * Gets and populates cloud function details.
+   * @returns CloudFunction instance
+   */
+  public override async get(): Promise<this> {
+    const data = await ApillonApi.get<any>(this.API_PREFIX);
+    this.jobs = data.jobs.map((job) => new CloudFunctionJob(job.jobUuid, job));
+    return this.populate(data);
   }
 
   /**
@@ -66,10 +76,10 @@ export class CloudFunction extends ApillonModel {
   public async createJob(
     body: ICreateCloudFunctionJob,
   ): Promise<CloudFunctionJob> {
-    const job = await ApillonApi.post<CloudFunctionJob>(
+    const job = await ApillonApi.post<CloudFunctionJob & { jobUuid: string }>(
       `${this.API_PREFIX}/jobs`,
       body,
     );
-    return new CloudFunctionJob(job.uuid, job);
+    return new CloudFunctionJob(job.jobUuid, job);
   }
 }

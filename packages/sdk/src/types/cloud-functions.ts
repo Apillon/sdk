@@ -13,7 +13,7 @@ export interface ISetCloudFunctionEnvironment {
   /**
    * Environment variables to set as key-value pairs.
    */
-  environment: Record<string, string>;
+  variables: { key: string; value: string }[];
 }
 
 /**
@@ -25,10 +25,6 @@ export interface ICreateCloudFunctionJob {
    */
   name: string;
   /**
-   * Description of the cloud function job.
-   */
-  description: string;
-  /**
    * CID of the script to be executed by the cloud function job.
    * @example 'bafybebcsl5d7wu3quxrsiwgxgyzpvknv5re2cqa6d4rybprhisomu3r5he'
    */
@@ -37,7 +33,7 @@ export interface ICreateCloudFunctionJob {
    * Number of processors to use for the cloud function job.
    * @default 1
    */
-  slots: number;
+  slots?: number;
 }
 
 export enum JobStatus {
