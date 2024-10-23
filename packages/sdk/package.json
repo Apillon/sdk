@@ -1,7 +1,7 @@
 {
   "name": "@apillon/sdk",
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "https://github.com/Apillon/sdk"
   },
-  "homepage": "https://wiki.apillon.io",
+  "homepage": "https://wiki.apillon.io/build/5-apillon-sdk.html",
   "declaration": true,
   "files": [
     "dist/**"
