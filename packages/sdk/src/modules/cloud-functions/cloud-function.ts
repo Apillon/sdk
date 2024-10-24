@@ -1,10 +1,7 @@
 import { CloudFunctionJob } from './cloud-function-job';
 import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonModel } from '../../lib/apillon';
-import {
-  ICreateCloudFunctionJob,
-  ISetCloudFunctionEnvironment,
-} from '../../types/cloud-functions';
+import { ICreateCloudFunctionJob } from '../../types/cloud-functions';
 import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class CloudFunction extends ApillonModel {
@@ -56,13 +53,15 @@ export class CloudFunction extends ApillonModel {
 
   /**
    * Sets environment variables for a specific cloud function
-   * @param {ISetCloudFunctionEnvironment} body Environment variables to set
+   * @param {{ key: string; value: string }[]} variables Environment variables to set
    * @returns {Promise<void>}
    */
   public async setEnvironment(
-    body: ISetCloudFunctionEnvironment,
+    variables: { key: string; value: string }[],
   ): Promise<void> {
-    await ApillonApi.post<void>(`${this.API_PREFIX}/environment`, body);
+    await ApillonApi.post<void>(`${this.API_PREFIX}/environment`, {
+      variables,
+    });
     ApillonLogger.log(
       `Environment variables for cloud function with UUID: ${this.uuid} successfully set`,
     );

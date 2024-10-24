@@ -9,13 +9,6 @@ export interface ICreateCloudFunction {
   description: string;
 }
 
-export interface ISetCloudFunctionEnvironment {
-  /**
-   * Environment variables to set as key-value pairs.
-   */
-  variables: { key: string; value: string }[];
-}
-
 /**
  * Interface for creating a cloud function job.
  */

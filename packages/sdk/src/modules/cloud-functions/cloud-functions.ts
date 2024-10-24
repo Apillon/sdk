@@ -4,6 +4,7 @@ import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonPagination } from '../../types/apillon';
 import { ICreateCloudFunction } from '../../types/cloud-functions';
 import { CloudFunction } from './cloud-function';
+import { CloudFunctionJob } from './cloud-function-job';
 
 export class CloudFunctions extends ApillonModule {
   /**
@@ -55,5 +56,14 @@ export class CloudFunctions extends ApillonModule {
    */
   public cloudFunction(uuid: string): CloudFunction {
     return new CloudFunction(uuid);
+  }
+
+  /**
+   * Gets a specific cloud function job.
+   * @param {string} uuid Unique identifier of the cloud function job.
+   * @returns {CloudFunctionJob} An empty instance of CloudFunctionJob.
+   */
+  public cloudFunctionJob(uuid: string): CloudFunctionJob {
+    return new CloudFunctionJob(uuid);
   }
 }

@@ -76,7 +76,7 @@ describe('Cloud Functions tests', () => {
 
     await cloudFunctions
       .cloudFunction(cloudFunctionUuid)
-      .setEnvironment({ variables: environmentVariables });
+      .setEnvironment(environmentVariables);
 
     const cloudFunction = await cloudFunctions
       .cloudFunction(cloudFunctionUuid)
@@ -104,9 +104,9 @@ describe('Cloud Functions tests', () => {
       .get();
 
     await jobs[0].delete();
-    const { jobs: updatedJobs } = await cloudFunctions.cloudFunction(
-      cloudFunctionUuid,
-    );
+    const { jobs: updatedJobs } = await cloudFunctions
+      .cloudFunction(cloudFunctionUuid)
+      .get();
     expect(updatedJobs.find((j) => j.uuid === jobs[0].uuid)).toBeUndefined();
   });
 });

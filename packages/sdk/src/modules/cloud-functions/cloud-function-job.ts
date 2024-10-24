@@ -29,7 +29,7 @@ export class CloudFunctionJob extends ApillonModel {
    */
   public jobStatus: JobStatus = null;
 
-  constructor(uuid: string, data: Partial<CloudFunctionJob>) {
+  constructor(uuid: string, data?: Partial<CloudFunctionJob>) {
     super(uuid);
     this.API_PREFIX = `/cloud-functions/jobs/${uuid}`;
     this.populate(data);
