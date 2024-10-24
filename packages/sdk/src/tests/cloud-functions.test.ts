@@ -28,9 +28,7 @@ describe('Cloud Functions tests', () => {
   });
 
   test('List cloud functions', async () => {
-    const { items } = await cloudFunctions.listCloudFunctions({
-      limit: 10,
-    });
+    const { items } = await cloudFunctions.listCloudFunctions();
 
     expect(items.length).toBeGreaterThanOrEqual(0);
     items.forEach((cloudFunction) => {

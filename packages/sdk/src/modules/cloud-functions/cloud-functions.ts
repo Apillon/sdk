@@ -14,13 +14,13 @@ export class CloudFunctions extends ApillonModule {
 
   /**
    * Lists all cloud functions.
-   * @param {IApillonPagination} filter Filter for listing cloud functions.
+   * @param {IApillonPagination} params Filter for listing cloud functions.
    * @returns Array of CloudFunction objects.
    */
   public async listCloudFunctions(
-    filter: IApillonPagination,
+    params?: IApillonPagination,
   ): Promise<IApillonList<CloudFunction>> {
-    const url = constructUrlWithQueryParams(this.API_PREFIX, filter);
+    const url = constructUrlWithQueryParams(this.API_PREFIX, params);
 
     const data = await ApillonApi.get<
       IApillonList<CloudFunction & { functionUuid: string }>
