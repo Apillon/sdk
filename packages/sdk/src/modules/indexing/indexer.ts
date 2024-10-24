@@ -22,36 +22,47 @@ export class Indexer extends ApillonModel {
    */
   constructor(uuid: string, data?: Partial<Indexer>) {
     super(uuid);
-    this.API_PREFIX = `/indexing/indexer/${uuid}`;
+    this.API_PREFIX = `/indexing/indexers/${uuid}`;
     this.populate(data);
   }
 
-  public async deployIndexer(data: { indexerDir: string }): Promise<any> {
+  /**
+   *
+   * @param path Path to the indexer source code directory.
+   */
+  public async deployIndexer(path: string): Promise<any> {
+    //Check directory and if squid.yaml exists in it
+    if (!fs.existsSync(path)) {
+      throw new Error('Path does not exist');
+    }
+    if (!fs.existsSync(`${path}/squid.yaml`)) {
+      throw new Error('squid.yaml not found in directory');
+    }
+
     //Get s3 URL for upload
-    const url = await ApillonApi.get<string>(
-      `${this.API_PREFIX}/url-for-source-code-upload`,
-    );
+    const url = await ApillonApi.get<string>(`${this.API_PREFIX}/upload-url`);
 
     //Create tar.gz file
     const numOfFiles = await compressIndexerSourceCode(
-      data.indexerDir,
-      `${data.indexerDir}/builds/${this.uuid}.tar.gz`,
+      path,
+      `${path}/builds/${this.uuid}.tar.gz`,
     );
 
     if (numOfFiles === 0) {
       throw new Error('Source directory is empty');
     }
+    console.info(`Compressed ${numOfFiles} files. Uploading to s3...`);
 
     //Upload tar.gz to s3
     const s3Api = axios.create();
-    const content = fs.readFileSync(
-      `${data.indexerDir}/builds/${this.uuid}.tar.gz`,
-    );
+    const content = fs.readFileSync(`${path}/builds/${this.uuid}.tar.gz`);
     await s3Api.put(url, content, {
       headers: { 'Content-Type': 'application/gzip' },
     });
 
+    console.info('Upload complete. Deploying indexer...');
+
     //Call deploy API
-    await ApillonApi.post<string>(`${this.API_PREFIX}/deploy`);
+    return await ApillonApi.post<string>(`${this.API_PREFIX}/deploy`);
   }
 }

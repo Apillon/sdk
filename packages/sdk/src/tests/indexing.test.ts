@@ -1,5 +1,5 @@
 import { Indexing } from '../modules/indexing/indexing';
-import { getConfig } from './helpers/helper';
+import { getConfig, getIndexerUUID } from './helpers/helper';
 
 describe('Indexing tests', () => {
   let indexing: Indexing = undefined;
@@ -9,8 +9,25 @@ describe('Indexing tests', () => {
   });
 
   test('Deploy a indexer', async () => {
-    await indexing
-      .indexer('5286ad99-9447-4f7f-8f29-2c8a3aef7a9f')
-      .deployIndexer({ indexerDir: 'D:\\Sqd\\moonbeam-squid' });
+    const response = await indexing
+      .indexer(getIndexerUUID())
+      .deployIndexer('D:\\Sqd\\moonbeam-squid');
+
+    expect(response).toBeDefined();
+    expect(response.lastDeploymentId).toBeTruthy();
+    expect(response.status).toBe(5);
+    expect(response.deployment).toBeDefined();
+  });
+
+  test('Deploy a indexer with invalid path, should return error', async () => {
+    await expect(
+      indexing.indexer(getIndexerUUID()).deployIndexer('some invalid path'),
+    ).rejects.toThrow('Path does not exist');
+  });
+
+  test('Deploy a indexer with valid path but invalid content, should return error', async () => {
+    await expect(
+      indexing.indexer(getIndexerUUID()).deployIndexer('D:\\Sqd'),
+    ).rejects.toThrow('squid.yaml not found in directory');
   });
 });

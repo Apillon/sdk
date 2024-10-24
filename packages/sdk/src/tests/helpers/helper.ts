@@ -46,3 +46,7 @@ export function getDirectoryUUID() {
 export function getFileUUID() {
   return process.env['FILE_UUID'];
 }
+
+export function getIndexerUUID() {
+  return process.env['INDEXER_UUID'];
+}

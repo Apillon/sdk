@@ -10,6 +10,9 @@ export async function deployIndexer(
     console.log(`Deploying indexer: ${path}`);
     await new Indexing(optsWithGlobals)
       .indexer(optsWithGlobals.indexerUuid)
-      .deployIndexer({ indexerDir: path });
+      .deployIndexer(path);
+    console.log(
+      `Indexer deployment successfully started! Check Apillon console for status.`,
+    );
   });
 }
