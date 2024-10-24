@@ -28,10 +28,11 @@ export class CloudFunctions extends ApillonModule {
 
     return {
       ...data,
-      items: data.items.map(
-        (cloudFunction) =>
-          new CloudFunction(cloudFunction.functionUuid, cloudFunction),
-      ),
+      items: data.items.map((cf) => {
+        const cloudFunction = new CloudFunction(cf.functionUuid, cf);
+        delete cloudFunction.jobs;
+        return cloudFunction;
+      }),
     };
   }
 
