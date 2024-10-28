@@ -3,6 +3,7 @@ import fs from 'fs';
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { compressIndexerSourceCode } from '../../util/indexer-utils';
+import { IDeployIndexer } from '../../types/indexer';
 
 export class Indexer extends ApillonModel {
   /**
@@ -63,6 +64,14 @@ export class Indexer extends ApillonModel {
     console.info('Upload complete. Deploying indexer...');
 
     //Call deploy API
-    return await ApillonApi.post<string>(`${this.API_PREFIX}/deploy`);
+    const deployResponse = await ApillonApi.post<IDeployIndexer>(
+      `${this.API_PREFIX}/deploy`,
+    );
+    if (deployResponse.deployment.failed != 'NO') {
+      console.error(deployResponse.deployment);
+      throw new Error('Indexer deployment failed!');
+    }
+
+    return deployResponse;
   }
 }
