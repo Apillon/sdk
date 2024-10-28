@@ -78,6 +78,8 @@ export function compressIndexerSourceCode(
   const squidIgnore = createSquidIgnore(srcDir);
   let filesCount = 0;
 
+  fs.mkdirSync(path.dirname(destDir), { recursive: true });
+
   return new Promise((resolve, reject) => {
     targz.compress(
       {
