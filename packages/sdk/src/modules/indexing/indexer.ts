@@ -27,7 +27,7 @@ export class Indexer extends ApillonModel {
   }
 
   /**
-   *
+   * Prepare indexer source code, upload it to s3 and deploy the indexer.
    * @param path Path to the indexer source code directory.
    */
   public async deployIndexer(path: string): Promise<any> {
@@ -39,9 +39,6 @@ export class Indexer extends ApillonModel {
       throw new Error('squid.yaml not found in directory');
     }
 
-    //Get s3 URL for upload
-    const url = await ApillonApi.get<string>(`${this.API_PREFIX}/upload-url`);
-
     //Create tar.gz file
     const numOfFiles = await compressIndexerSourceCode(
       path,
@@ -52,6 +49,9 @@ export class Indexer extends ApillonModel {
       throw new Error('Source directory is empty');
     }
     console.info(`Compressed ${numOfFiles} files. Uploading to s3...`);
+
+    //Get s3 URL for upload
+    const url = await ApillonApi.get<string>(`${this.API_PREFIX}/upload-url`);
 
     //Upload tar.gz to s3
     const s3Api = axios.create();
