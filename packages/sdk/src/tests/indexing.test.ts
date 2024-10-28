@@ -3,14 +3,16 @@ import { getConfig, getIndexerUUID } from './helpers/helper';
 
 describe('Indexing tests', () => {
   let indexing: Indexing = undefined;
+  let indexer_uuid: string = undefined;
 
   beforeAll(async () => {
     indexing = new Indexing(getConfig());
+    indexer_uuid = getIndexerUUID();
   });
 
   test('Deploy a indexer', async () => {
     const response = await indexing
-      .indexer(getIndexerUUID())
+      .indexer(indexer_uuid)
       .deployIndexer('D:\\Sqd\\moonbeam-squid');
 
     expect(response).toBeDefined();
@@ -20,14 +22,14 @@ describe('Indexing tests', () => {
   });
 
   test('Deploy a indexer with invalid path, should return error', async () => {
-    await expect(
-      indexing.indexer(getIndexerUUID()).deployIndexer('some invalid path'),
-    ).rejects.toThrow('Path does not exist');
+    const logSpy = jest.spyOn(global.console, 'error');
+    await indexing.indexer(indexer_uuid).deployIndexer('some invalid path');
+    expect(logSpy).toHaveBeenCalled();
   });
 
   test('Deploy a indexer with valid path but invalid content, should return error', async () => {
-    await expect(
-      indexing.indexer(getIndexerUUID()).deployIndexer('D:\\Sqd'),
-    ).rejects.toThrow('squid.yaml not found in directory');
+    const logSpy = jest.spyOn(global.console, 'error');
+    await indexing.indexer(indexer_uuid).deployIndexer('D:\\Sqd');
+    expect(logSpy).toHaveBeenCalled();
   });
 });

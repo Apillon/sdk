@@ -7,7 +7,7 @@ export function createIndexingCommands(cli: Command) {
     .description('Commands for deployment of indexers on Apillon platform');
 
   indexing
-    .command('deploy-indexer')
+    .command('deploy')
     .description('Deploy an indexer')
     .argument('<path>', 'path to indexer root folder')
     .requiredOption('-i, --indexer-uuid <uuid>', 'UUID of indexer')

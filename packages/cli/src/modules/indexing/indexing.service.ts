@@ -8,11 +8,14 @@ export async function deployIndexer(
 ) {
   await withErrorHandler(async () => {
     console.log(`Deploying indexer: ${path}`);
-    await new Indexing(optsWithGlobals)
+    const res = await new Indexing(optsWithGlobals)
       .indexer(optsWithGlobals.indexerUuid)
       .deployIndexer(path);
-    console.log(
-      `Indexer deployment successfully started! Check Apillon console for status.`,
-    );
+
+    if (res) {
+      console.log(
+        `Indexer deployment successfully started! Check Apillon console for status.`,
+      );
+    }
   });
 }

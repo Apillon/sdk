@@ -2,8 +2,10 @@ import axios from 'axios';
 import fs from 'fs';
 import { ApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
-import { compressIndexerSourceCode } from '../../util/indexer-utils';
+import { ApillonLogger } from '../../lib/apillon-logger';
 import { IDeployIndexer } from '../../types/indexer';
+import { compressIndexerSourceCode } from '../../util/indexer-utils';
+import { LogLevel } from '../../docs-index';
 
 export class Indexer extends ApillonModel {
   /**
@@ -27,6 +29,10 @@ export class Indexer extends ApillonModel {
     this.populate(data);
   }
 
+  override async get(): Promise<this> {
+    throw new Error('Method not supported.');
+  }
+
   /**
    * Prepare indexer source code, upload it to s3 and deploy the indexer.
    * @param path Path to the indexer source code directory.
@@ -34,10 +40,10 @@ export class Indexer extends ApillonModel {
   public async deployIndexer(path: string): Promise<any> {
     //Check directory and if squid.yaml exists in it
     if (!fs.existsSync(path)) {
-      throw new Error('Path does not exist');
+      return console.error('Invalid path');
     }
     if (!fs.existsSync(`${path}/squid.yaml`)) {
-      throw new Error('squid.yaml not found in directory');
+      return console.error('squid.yaml not found in directory');
     }
 
     //Create tar.gz file
@@ -47,29 +53,28 @@ export class Indexer extends ApillonModel {
     );
 
     if (numOfFiles === 0) {
-      throw new Error('Source directory is empty');
+      return console.error('Source directory is empty');
     }
-    console.info(`Compressed ${numOfFiles} files. Uploading to s3...`);
+    ApillonLogger.log(`Compressed ${numOfFiles} files. Uploading to s3...`);
 
     //Get s3 URL for upload
     const url = await ApillonApi.get<string>(`${this.API_PREFIX}/upload-url`);
 
     //Upload tar.gz to s3
-    const s3Api = axios.create();
     const content = fs.readFileSync(`${path}/builds/${this.uuid}.tar.gz`);
-    await s3Api.put(url, content, {
+    await axios.put(url, content, {
       headers: { 'Content-Type': 'application/gzip' },
     });
 
-    console.info('Upload complete. Deploying indexer...');
+    ApillonLogger.log(`'Upload complete. Deploying indexer...'`);
 
     //Call deploy API
     const deployResponse = await ApillonApi.post<IDeployIndexer>(
       `${this.API_PREFIX}/deploy`,
     );
     if (deployResponse.deployment.failed != 'NO') {
-      console.error(deployResponse.deployment);
-      throw new Error('Indexer deployment failed!');
+      ApillonLogger.log(deployResponse.deployment, LogLevel.ERROR);
+      return console.error('Indexer deployment failed!');
     }
 
     return deployResponse;
