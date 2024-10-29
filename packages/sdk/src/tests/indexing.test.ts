@@ -2,8 +2,8 @@ import { Indexing } from '../modules/indexing/indexing';
 import { getConfig, getIndexerUUID } from './helpers/helper';
 
 describe('Indexing tests', () => {
-  let indexing: Indexing = undefined;
-  let indexer_uuid: string = undefined;
+  let indexing: Indexing;
+  let indexer_uuid: string;
 
   beforeAll(async () => {
     indexing = new Indexing(getConfig());

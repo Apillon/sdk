@@ -23,3 +23,8 @@ export * from './modules/social/social';
 export * from './modules/social/social-hub';
 export * from './modules/social/social-channel';
 export * from './modules/project/project';
+export * from './modules/cloud-functions/cloud-functions';
+export * from './modules/cloud-functions/cloud-function';
+export * from './modules/cloud-functions/cloud-function-job';
+export * from './modules/indexing/indexing';
+export * from './modules/indexing/indexer';
