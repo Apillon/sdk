@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import axios from 'axios';
 import fs from 'fs';
 import { ApillonModel } from '../../lib/apillon';
@@ -40,10 +41,12 @@ export class Indexer extends ApillonModel {
   public async deployIndexer(path: string): Promise<any> {
     //Check directory and if squid.yaml exists in it
     if (!fs.existsSync(path)) {
-      return console.error('Invalid path');
+      throw new Error('Error deploying indexer: Invalid path');
     }
     if (!fs.existsSync(`${path}/squid.yaml`)) {
-      return console.error('squid.yaml not found in directory');
+      throw new Error(
+        'Error deploying indexer: squid.yaml not found in directory',
+      );
     }
 
     //Create tar.gz file
@@ -53,7 +56,7 @@ export class Indexer extends ApillonModel {
     );
 
     if (numOfFiles === 0) {
-      return console.error('Source directory is empty');
+      throw new Error('Error deploying indexer: Source directory is empty');
     }
     ApillonLogger.log(`Compressed ${numOfFiles} files. Uploading to s3...`);
 

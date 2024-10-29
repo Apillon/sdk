@@ -1,8 +1,10 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import fs from 'node:fs';
 import path from 'node:path';
 import { globSync } from 'glob';
 import ignore from 'ignore';
 import targz from 'targz';
+import { ApillonLogger } from '../lib/apillon-logger';
 
 export function createSquidIgnore(squidDir: string) {
   const ig = ignore().add(
@@ -86,28 +88,27 @@ export function compressIndexerSourceCode(
         src: srcDir,
         dest: destDir,
         tar: {
-          ignore: (name) => {
+          ignore: (name: string) => {
             const relativePath = path.relative(
               path.resolve(srcDir),
               path.resolve(name),
             );
 
             if (squidIgnore.ignores(relativePath)) {
-              console.log('ignoring ' + relativePath);
+              ApillonLogger.log(`ignoring ${relativePath}`);
               return true;
-            } else {
-              console.log('adding ' + relativePath);
-              filesCount++;
-              return false;
             }
+            ApillonLogger.log(`adding ${relativePath}`);
+            filesCount++;
+            return false;
           },
         },
       },
-      function (err) {
+      (err) => {
         if (err) {
-          console.error(err);
+          ApillonLogger.log(err);
           reject(
-            `Compression failed. ${err.message ? 'Error: ' + err.message : ''}`,
+            `Compression failed. ${err.message ? `Error: ${err.message}` : ''}`,
           );
         } else {
           resolve(filesCount);
