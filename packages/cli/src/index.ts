@@ -6,6 +6,7 @@ import config from './config';
 import { createHostingCommands } from './modules/hosting/hosting.commands';
 import { createNftsCommands } from './modules/nfts/nfts.commands';
 import { createStorageCommands } from './modules/storage/storage.commands';
+import { createCloudFunctionsCommands } from './modules/cloud-functions/cloud-functions.commands';
 
 const cli = new Command('apillon').version(config.VERSION);
 cli.addHelpText(
@@ -47,5 +48,6 @@ cli.showHelpAfterError('Run with --help for additional information!');
 createStorageCommands(cli);
 createHostingCommands(cli);
 createNftsCommands(cli);
+createCloudFunctionsCommands(cli);
 
 cli.parse();

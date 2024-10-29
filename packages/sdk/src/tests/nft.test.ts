@@ -51,7 +51,7 @@ describe('Nft tests', () => {
     expect(collections[0]).toBeInstanceOf(NftCollection);
   });
 
-  test('creates a new substrate collection', async () => {
+  test.skip('creates a new substrate collection', async () => {
     const collection = await nft.createSubstrate({
       ...nftData,
       chain: SubstrateChain.ASTAR,

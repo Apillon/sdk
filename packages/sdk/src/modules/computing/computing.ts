@@ -56,7 +56,7 @@ export class Computing extends ApillonModule {
 
   /**
    * @param uuid Unique contract identifier.
-   * @returns An instance of ComputingContract.
+   * @returns An empty instance of ComputingContract.
    */
   public contract(uuid: string): ComputingContract {
     return new ComputingContract(uuid, null, this.config);
