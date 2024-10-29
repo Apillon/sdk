@@ -33,9 +33,10 @@ export async function createCloudFunction(optsWithGlobals: GlobalOptions) {
       name: optsWithGlobals.name,
       description: optsWithGlobals.description,
     });
-
-    console.log(data.serialize());
-    console.log('Cloud function created successfully!');
+    if (data) {
+      console.log(data.serialize());
+      console.log('Cloud function created successfully!');
+    }
   });
 }
 
