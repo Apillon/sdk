@@ -82,7 +82,7 @@ export class Social extends ApillonModule {
 
   /**
    * @param uuid Unique hub identifier.
-   * @returns An instance of Hub.
+   * @returns An empty instance of SocialHub.
    */
   public hub(uuid: string): SocialHub {
     return new SocialHub(uuid);
@@ -90,7 +90,7 @@ export class Social extends ApillonModule {
 
   /**
    * @param uuid Unique channel identifier.
-   * @returns An instance of SocialChannel.
+   * @returns An empty instance of SocialChannel.
    */
   public channel(uuid: string): SocialChannel {
     return new SocialChannel(uuid);
