@@ -7,6 +7,7 @@ import { createHostingCommands } from './modules/hosting/hosting.commands';
 import { createNftsCommands } from './modules/nfts/nfts.commands';
 import { createStorageCommands } from './modules/storage/storage.commands';
 import { createCloudFunctionsCommands } from './modules/cloud-functions/cloud-functions.commands';
+import { createIndexingCommands } from './modules/indexing/indexing.commands';
 
 const cli = new Command('apillon').version(config.VERSION);
 cli.addHelpText(
@@ -49,5 +50,6 @@ createStorageCommands(cli);
 createHostingCommands(cli);
 createNftsCommands(cli);
 createCloudFunctionsCommands(cli);
+createIndexingCommands(cli);
 
 cli.parse();
