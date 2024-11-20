@@ -30,6 +30,17 @@ export interface ApillonConfig {
   debug?: boolean;
 }
 
+export interface ICreateApillonModel {
+  /**
+   * Name of the model object
+   */
+  name: string;
+  /**
+   * Description of the model object
+   */
+  description: string;
+}
+
 export class ApillonModule {
   protected config: ApillonConfig;
 

@@ -1,14 +1,3 @@
-export interface ICreateCloudFunction {
-  /**
-   * Name of the cloud function.
-   */
-  name: string;
-  /**
-   * Description of the cloud function.
-   */
-  description: string;
-}
-
 /**
  * Interface for creating a cloud function job.
  */
