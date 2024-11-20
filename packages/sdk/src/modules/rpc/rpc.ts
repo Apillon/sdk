@@ -37,7 +37,7 @@ export class Rpc extends ApillonModule {
    * @param {ApillonApiCreateRpcApiKeyDto} data - The data for creating an API key.
    * @returns The created API key.
    */
-  public async createApiKey(data: ICreateApillonModel): Promise<any> {
+  public async createApiKey(data: ICreateApillonModel): Promise<RpcApiKey> {
     const apiKey = await ApillonApi.post<any>(
       `${this.API_PREFIX}/api-key`,
       data,

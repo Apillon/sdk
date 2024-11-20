@@ -383,6 +383,7 @@ async function validatePolkadotWalletSignature() {
 }
 
 ```
+
 ## Computing
 
 The Computing module provides functionalities for managing computing contracts, including creating contracts, listing contracts, and interacting with specific contracts for operations like encryption and ownership transfer.
@@ -433,6 +434,42 @@ const successResult = await contract.transferOwnership(newOwnerAddress);
 console.log(
   `Ownership transfer was ${successResult ? 'successful' : 'unsuccessful'}.`,
 );
+```
+
+## RPCs
+
+The RPC module provides functionalities for managing RPC API keys and listing available endpoints. This module is essential for interacting with the Apillon platform's RPC services dynamically.
+
+### Usage example
+
+```typescript
+import { Rpc } from '@apillon/sdk';
+import { getConfig } from './helpers/helper';
+
+// Initialize the RPC module
+const rpc = new Rpc({
+  key: 'yourApiKey',
+  secret: 'yourApiSecret',
+});
+
+// Create a new API key
+const apiKey = await rpc.createApiKey({
+  name: 'Test API Key',
+  description: 'Test Description',
+});
+console.log('API Key created:', apiKey.name);
+
+// List all API keys
+const { items } = await rpc.listApiKeys();
+console.log('Total API Keys:', items.length);
+
+// Get a specific API key by ID
+const apiKey = await rpc.apiKey(apiKeyId).get();
+console.log('API Key UUID:', apiKey.uuid);
+
+// List all available endpoints
+const endpoints = await rpc.listEndpoints();
+console.log('Total Endpoints:', endpoints.length);
 ```
 
 ## Social
