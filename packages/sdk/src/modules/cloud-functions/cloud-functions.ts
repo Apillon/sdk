@@ -1,8 +1,7 @@
-import { ApillonModule } from '../../lib/apillon';
+import { ApillonModule, ICreateApillonModel } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, IApillonPagination } from '../../types/apillon';
-import { ICreateCloudFunction } from '../../types/cloud-functions';
 import { CloudFunction } from './cloud-function';
 import { CloudFunctionJob } from './cloud-function-job';
 
@@ -38,11 +37,11 @@ export class CloudFunctions extends ApillonModule {
 
   /**
    * Creates a new cloud function based on the provided data.
-   * @param {ICreateCloudFunction} data Data for creating the cloud function.
+   * @param {ICreateApillonModel} data Data for creating the cloud function.
    * @returns {CloudFunction} Newly created cloud function.
    */
   public async createCloudFunction(
-    data: ICreateCloudFunction,
+    data: ICreateApillonModel,
   ): Promise<CloudFunction> {
     const cloudFunction = await ApillonApi.post<
       CloudFunction & { functionUuid: string }

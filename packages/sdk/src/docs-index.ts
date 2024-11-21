@@ -5,6 +5,10 @@ export * from './types/storage';
 export * from './types/identity';
 export * from './types/computing';
 export * from './types/social';
+export * from './types/cloud-functions';
+export * from './types/indexer';
+export * from './types/rpc';
+
 export * from './lib/apillon';
 export * from './modules/storage/storage';
 export * from './modules/storage/storage-bucket';
@@ -28,3 +32,5 @@ export * from './modules/cloud-functions/cloud-function';
 export * from './modules/cloud-functions/cloud-function-job';
 export * from './modules/indexing/indexing';
 export * from './modules/indexing/indexer';
+export * from './modules/rpc/rpc';
+export * from './modules/rpc/rpc-api-key';

@@ -12,7 +12,7 @@ export enum DeploymentType {
   SET_TAG = 'SET_TAG',
   REMOVE_TAG = 'REMOVE_TAG',
 }
-export enum DeploymentStatus {
+export enum IndexerDeploymentStatus {
   UNPACKING = 'UNPACKING',
   IMAGE_BUILDING = 'IMAGE_BUILDING',
   RESETTING = 'RESETTING',
@@ -57,7 +57,7 @@ export interface IDeployIndexer {
      */
     id: number;
     type: DeploymentType;
-    status: DeploymentStatus;
+    status: IndexerDeploymentStatus;
     failed: DeploymentFailed;
   };
 }
