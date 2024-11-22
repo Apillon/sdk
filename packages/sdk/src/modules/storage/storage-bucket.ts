@@ -14,7 +14,7 @@ import { File } from './file';
 import { constructUrlWithQueryParams } from '../../lib/common';
 import { IApillonList, LogLevel } from '../../types/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
-import { uploadFiles } from '../../util/file-utils';
+import { uploadFiles, uploadFilesAsync } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
 import { Ipns } from './ipns';
 import { ApillonLogger } from '../../lib/apillon-logger';
@@ -150,6 +150,21 @@ export class StorageBucket extends ApillonModel {
     return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
   }
 
+  /**
+   * Uploads files to the bucket, returning cids before uploading.
+   * @param {FileMetadata[]} files - The files to be uploaded
+   * @param {IFileUploadRequest} params - Optional parameters to be used for uploading files
+   */
+  public async uploadFilesAsync(
+    files: FileMetadata[],
+    params?: Omit<IFileUploadRequest, 'awaitCid'>,
+  ): Promise<string[]> {
+    return await uploadFilesAsync({
+      apiPrefix: this.API_PREFIX,
+      params,
+      files,
+    });
+  }
   /**
    * Gets file instance.
    * @param fileUuid UUID of the file.

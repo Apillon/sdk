@@ -1,6 +1,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import * as fs from 'fs';
 import * as path from 'path';
+import * as ipfsHash from 'ipfs-only-hash';
 import axios from 'axios';
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
@@ -12,13 +13,12 @@ import {
 import { LogLevel } from '../types/apillon';
 import { randomBytes } from 'crypto';
 
-export async function uploadFiles(uploadParams: {
-  apiPrefix: string;
+export function resolveFiles(uploadParams: {
   params?: IFileUploadRequest;
   folderPath?: string;
   files?: FileMetadata[];
-}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
-  const { folderPath, apiPrefix, params } = uploadParams;
+}){
+  const { folderPath, params } = uploadParams;
   let files = uploadParams.files;
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
@@ -40,12 +40,24 @@ export async function uploadFiles(uploadParams: {
 
   ApillonLogger.log(`Total files to upload: ${files.length}`);
 
+  return files;
+}
+
+export async function uploadResolvedFiles(uploadParams: {
+  apiPrefix: string;
+  params?: IFileUploadRequest;
+  folderPath?: string;
+  files: FileMetadata[];
+  returnCidsImmediately?: boolean;
+}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+  const { apiPrefix, params } = uploadParams;
+
   // Split files into chunks for parallel uploading
   const fileChunkSize = 200;
   const sessionUuid = uuidv4();
   const uploadedFiles = [];
 
-  for (const fileGroup of chunkify(files, fileChunkSize)) {
+  for (const fileGroup of chunkify(uploadParams.files, fileChunkSize)) {
     const { files } = await ApillonApi.post<IFileUploadResponse>(
       `${apiPrefix}/upload`,
       {
@@ -71,6 +83,44 @@ export async function uploadFiles(uploadParams: {
 
   return { sessionUuid, files: uploadedFiles.flatMap((f) => f) };
 }
+
+export async function uploadFiles(uploadParams: {
+  apiPrefix: string;
+  params?: IFileUploadRequest;
+  folderPath?: string;
+  files?: FileMetadata[];
+  returnCidsImmediately?: boolean;
+}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+  const resolvedFiles = resolveFiles(uploadParams);
+
+  return await uploadResolvedFiles({...uploadParams, files: resolvedFiles});
+}
+
+export async function uploadFilesAsync(uploadParams: {
+  apiPrefix: string;
+  params?: IFileUploadRequest;
+  folderPath?: string;
+  files?: FileMetadata[];
+}) {
+  const resolvedFiles = resolveFiles(uploadParams);
+
+  const uploadedCIDs = [] as string[];
+  for (const fileGroup of chunkify(resolvedFiles, 200)) {
+    const cids = await Promise.all(fileGroup.map(async (fg) => await ipfsHash.of(fg.content, {
+      cidVersion: 1
+    })))
+
+    uploadedCIDs.push(...cids);
+  }
+
+  const cidPromise = Promise.resolve(uploadedCIDs);
+
+  uploadResolvedFiles({...uploadParams, files: resolvedFiles});
+
+  return cidPromise;
+
+}
+
 
 function readFilesFromFolder(
   folderPath: string,
