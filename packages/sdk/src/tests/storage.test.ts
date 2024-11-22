@@ -135,6 +135,27 @@ describe('Storage tests', () => {
     console.timeEnd('File upload complete');
   });
 
+  test('upload files from buffer with CID immediately returning', async () => {
+    const css = fs.readFileSync(
+      resolve(__dirname, './helpers/website/style.css'),
+    );
+    const cids = await storage.bucket(bucketUuid).uploadFilesAsync(
+      [
+        {
+          fileName: 'style.css',
+          contentType: 'text/css',
+          path: null,
+          content: css,
+        },
+      ],
+      { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+    );
+
+    expect(cids.length).toBe(1);
+
+    console.timeEnd('File upload complete');
+  })
+
   describe.skip('File detail tests', () => {
     test('get file details', async () => {
       const file = await storage.bucket(bucketUuid).file(fileUuid).get();
