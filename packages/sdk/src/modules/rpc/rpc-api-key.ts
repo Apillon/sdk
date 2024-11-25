@@ -29,7 +29,7 @@ export class RpcApiKey extends ApillonModel {
   /**
    * Array of favorite URLs for the RPC API key.
    */
-  public urls: string[] = [];
+  public urls: string[] = null;
 
   /**
    * Constructor which should only be called via Rpc class.
