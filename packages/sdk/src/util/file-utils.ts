@@ -8,6 +8,7 @@ import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
 import {
   FileMetadata,
+  FileUploadResult,
   IFileUploadRequest,
   IFileUploadResponse,
 } from '../types/storage';
@@ -55,9 +56,9 @@ export async function uploadFiles(uploadParams: {
 
   for (const fileGroup of chunkify(files, fileChunkSize)) {
     const metadata = {
-      files: [],
-      urls: [],
-      cids: [],
+      files: [] as FileUploadResult[],
+      urls: [] as string[],
+      cids: [] as string[],
     };
 
     for (const fg of fileGroup) {
@@ -68,13 +69,16 @@ export async function uploadFiles(uploadParams: {
       const cid = await ipfsHash.of(content);
 
       metadata.cids.push(cid);
-
-      const { link } = await ApillonApi.get<{ link: string }>(
-        `${ipfsLinkApiPrefix}/link-on-ipfs/${cid}`,
-      );
-
-      metadata.urls.push(link);
     }
+
+    const {links} = await ApillonApi.post<{links: string[]}>(
+      `${ipfsLinkApiPrefix}/link-on-ipfs-multiple`,
+    {
+      cids: metadata.cids
+    }
+    )
+
+    metadata.urls = links;
 
     const { files } = await ApillonApi.post<IFileUploadResponse>(
       `${apiPrefix}/upload`,
