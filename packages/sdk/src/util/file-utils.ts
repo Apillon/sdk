@@ -2,6 +2,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
+import * as ipfsHash from 'ipfs-only-hash';
+
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
 import {
@@ -17,8 +19,14 @@ export async function uploadFiles(uploadParams: {
   params?: IFileUploadRequest;
   folderPath?: string;
   files?: FileMetadata[];
-}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+}): Promise<{
+  sessionUuid: string;
+  files: (FileMetadata & { url: string })[];
+}> {
   const { folderPath, apiPrefix, params } = uploadParams;
+
+  const ipfsLinkApiPrefix = '/storage';
+
   let files = uploadParams.files;
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
@@ -46,21 +54,46 @@ export async function uploadFiles(uploadParams: {
   const uploadedFiles = [];
 
   for (const fileGroup of chunkify(files, fileChunkSize)) {
+    const metadata = {
+      files: [],
+      urls: [],
+      cids: [],
+    };
+
+    for (const fg of fileGroup) {
+      const { content, ...rest } = fg;
+
+      metadata.files.push(rest);
+
+      const cid = await ipfsHash.of(content);
+
+      metadata.cids.push(cid);
+
+      const { link } = await ApillonApi.get<{ link: string }>(
+        `${ipfsLinkApiPrefix}/link-on-ipfs/${cid}`,
+      );
+
+      metadata.urls.push(link);
+    }
+
     const { files } = await ApillonApi.post<IFileUploadResponse>(
       `${apiPrefix}/upload`,
       {
-        files: fileGroup.map((fg) => {
-          // Remove content property from the payload
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { content, ...rest } = fg;
-          return rest;
-        }),
+        files: metadata.files,
         sessionUuid,
       },
     );
 
     await uploadFilesToS3(files, fileGroup);
-    uploadedFiles.push(files);
+
+    const filesWithUrl = files.map((file, index) => {
+      return {
+        ...file,
+        CID: metadata.cids[index],
+        url: metadata.urls[index],
+      };
+    });
+    uploadedFiles.push(filesWithUrl);
   }
 
   ApillonLogger.logWithTime('File upload complete.');
