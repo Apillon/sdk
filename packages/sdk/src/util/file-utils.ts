@@ -66,7 +66,9 @@ export async function uploadFiles(uploadParams: {
 
       metadata.files.push(rest);
 
-      const cid = await ipfsHash.of(content);
+      const cid = await ipfsHash.of(content, {
+        cidVersion: 1,
+      });
 
       metadata.cids.push(cid);
     }
