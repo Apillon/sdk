@@ -56,7 +56,7 @@ export interface FileMetadata {
   CID?: string;
 }
 
-export type FileUploadResult = Omit<FileMetadata, 'content'>;
+export type FileUploadResult = Omit<FileMetadata, 'content'> & { url?: string };
 
 export interface IFileUploadRequest {
   /**
@@ -81,6 +81,7 @@ export interface IFileUploadRequest {
   /**
    * If set to true, the upload action will wait until files receive a CID from IPFS before returning a result
    * @default false
+   * @deprecated New implementation precalculates CIDs for all files before uploading them to IPFS
    */
   awaitCid?: boolean;
 

@@ -2,10 +2,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
+import * as ipfsHash from 'ipfs-only-hash';
+
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
 import {
   FileMetadata,
+  FileUploadResult,
   IFileUploadRequest,
   IFileUploadResponse,
 } from '../types/storage';
@@ -17,8 +20,14 @@ export async function uploadFiles(uploadParams: {
   params?: IFileUploadRequest;
   folderPath?: string;
   files?: FileMetadata[];
-}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+}): Promise<{
+  sessionUuid: string;
+  files: (FileMetadata & { url: string })[];
+}> {
   const { folderPath, apiPrefix, params } = uploadParams;
+
+  const ipfsLinkApiPrefix = '/storage';
+
   let files = uploadParams.files;
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
@@ -46,21 +55,51 @@ export async function uploadFiles(uploadParams: {
   const uploadedFiles = [];
 
   for (const fileGroup of chunkify(files, fileChunkSize)) {
+    const metadata = {
+      files: [] as FileUploadResult[],
+      urls: [] as string[],
+      cids: [] as string[],
+    };
+
+    for (const fg of fileGroup) {
+      const { content, ...rest } = fg;
+
+      metadata.files.push(rest);
+
+      const cid = await ipfsHash.of(content, {
+        cidVersion: 1,
+      });
+
+      metadata.cids.push(cid);
+    }
+
+    const {links} = await ApillonApi.post<{links: string[]}>(
+      `${ipfsLinkApiPrefix}/link-on-ipfs-multiple`,
+    {
+      cids: metadata.cids
+    }
+    )
+
+    metadata.urls = links;
+
     const { files } = await ApillonApi.post<IFileUploadResponse>(
       `${apiPrefix}/upload`,
       {
-        files: fileGroup.map((fg) => {
-          // Remove content property from the payload
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { content, ...rest } = fg;
-          return rest;
-        }),
+        files: metadata.files,
         sessionUuid,
       },
     );
 
     await uploadFilesToS3(files, fileGroup);
-    uploadedFiles.push(files);
+
+    const filesWithUrl = files.map((file, index) => {
+      return {
+        ...file,
+        CID: metadata.cids[index],
+        url: metadata.urls[index],
+      };
+    });
+    uploadedFiles.push(filesWithUrl);
   }
 
   ApillonLogger.logWithTime('File upload complete.');

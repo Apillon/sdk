@@ -115,17 +115,13 @@ export class StorageBucket extends ApillonModel {
     folderPath: string,
     params?: IFileUploadRequest,
   ): Promise<FileUploadResult[]> {
-    const { files: uploadedFiles, sessionUuid } = await uploadFiles({
+    const { files: uploadedFiles } = await uploadFiles({
       apiPrefix: this.API_PREFIX,
       folderPath,
       params,
     });
 
-    if (!params?.awaitCid) {
-      return this.getUploadedFiles(sessionUuid, uploadedFiles.length);
-    }
-
-    return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
+    return uploadedFiles;
   }
 
   /**
@@ -137,17 +133,13 @@ export class StorageBucket extends ApillonModel {
     files: FileMetadata[],
     params?: IFileUploadRequest,
   ): Promise<FileUploadResult[]> {
-    const { files: uploadedFiles, sessionUuid } = await uploadFiles({
+    const { files: uploadedFiles } = await uploadFiles({
       apiPrefix: this.API_PREFIX,
       params,
       files,
     });
 
-    if (!params?.awaitCid) {
-      return this.getUploadedFiles(sessionUuid, uploadedFiles.length);
-    }
-
-    return await this.resolveFileCIDs(sessionUuid, uploadedFiles.length);
+    return uploadedFiles;
   }
 
   /**
