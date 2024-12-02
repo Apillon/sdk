@@ -53,30 +53,22 @@ export async function uploadFiles(uploadParams: {
   const uploadedFiles = [];
 
   for (const fileGroup of chunkify(files, fileChunkSize)) {
-    if (params.wrapWithDirectory) {
+    if (params?.wrapWithDirectory) {
       for (const fg of fileGroup) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { content, ...rest } = fg;
-
-        const readContent = fg.index ? fs.readFileSync(fg.index) : fg.content;
-
-        fg.content = readContent;
+        fg.content = fg.index ? fs.readFileSync(fg.index) : fg.content;
       }
 
       const { files } = await ApillonApi.post<IFileUploadResponse>(
         `${apiPrefix}/upload`,
         {
-          files: fileGroup.map((fg) => {
-            // Remove content property from the payload
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { content, ...rest } = fg;
-            return rest;
-          }),
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          files: fileGroup.map(({ content, ...rest }) => rest),
           sessionUuid,
         },
       );
 
       await uploadFilesToS3(files, fileGroup);
+      files.forEach((file: any) => delete file.url);
 
       uploadedFiles.push(files);
     } else {
@@ -105,9 +97,7 @@ export async function uploadFiles(uploadParams: {
 
       const { links } = await ApillonApi.post<{ links: string[] }>(
         `/storage/link-on-ipfs-multiple`,
-        {
-          cids: metadata.cids,
-        },
+        { cids: metadata.cids },
       );
 
       metadata.urls = links;
@@ -120,19 +110,17 @@ export async function uploadFiles(uploadParams: {
       );
 
       // Upload doesn't return files in the same order as sent
-      const sortedFiles = metadata.files.map((metaFile) => {
-        return files.find((file) => file.fileName === metaFile.fileName);
-      });
+      const sortedFiles = metadata.files.map((metaFile) =>
+        files.find((file) => file.fileName === metaFile.fileName),
+      );
 
       await uploadFilesToS3(sortedFiles, fileGroup);
 
-      const filesWithUrl = sortedFiles.map((file, index) => {
-        return {
-          ...file,
-          CID: metadata.cids[index],
-          url: metadata.urls[index],
-        };
-      });
+      const filesWithUrl = sortedFiles.map((file, index) => ({
+        ...file,
+        CID: metadata.cids[index],
+        url: metadata.urls[index],
+      }));
       uploadedFiles.push(filesWithUrl);
     }
   }

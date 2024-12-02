@@ -67,7 +67,10 @@ export function createStorageCommands(cli: Command) {
     .requiredOption('-b, --bucket-uuid <uuid>', 'UUID of destination bucket')
     .option('-w, --wrap', 'Wrap uploaded files to an IPFS directory')
     .option('-p, --path <string>', 'Path to upload files to')
-    .option('--await', 'await file CIDs to be resolved')
+    .option(
+      '--await',
+      'await file CIDs to be resolved (DEPRECATED - CIDs are now resolved automatically)',
+    )
     .option('--ignore', 'ignore files from .gitignore file')
     .action(async function (path: string) {
       await uploadFromFolder(path, this.optsWithGlobals());
