@@ -86,22 +86,10 @@ describe('Storage tests', () => {
     console.timeEnd('File upload complete');
 
     expect(files.every((f) => !!f.fileUuid)).toBeTruthy();
-  });
-
-  test('upload files from folder with awaitCid', async () => {
-    const uploadDir = resolve(__dirname, './helpers/website/');
-
-    console.time('File upload complete');
-    const files = await storage
-      .bucket(bucketUuid)
-      .uploadFromFolder(uploadDir, { awaitCid: true });
-    console.timeEnd('File upload complete');
-
-    expect(files.length).toBeGreaterThan(0);
     expect(files.every((f) => !!f.CID)).toBeTruthy();
   });
 
-  test('upload files from folder with ignoreFiles = false', async () => {
+  test('upload files from folder with ignoreFiles=false', async () => {
     const uploadDir = resolve(__dirname, './helpers/website/');
 
     // .gitignore and index.html are not ignored
@@ -114,9 +102,6 @@ describe('Storage tests', () => {
   });
 
   test('upload files from buffer', async () => {
-    // const html = fs.readFileSync(
-    //   resolve(__dirname, './helpers/website/index.html'),
-    // );
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
@@ -130,7 +115,7 @@ describe('Storage tests', () => {
           content: css,
         },
       ],
-      { wrapWithDirectory: true, directoryPath: 'main/subdir' },
+      { directoryPath: 'main/subdir' },
     );
 
     expect(files.length).toBe(1);
@@ -138,6 +123,32 @@ describe('Storage tests', () => {
     expect(files[0].fileUuid).toBeDefined();
     expect(files[0].path).toBeNull();
     expect(files[0].url).toBeDefined();
+
+    console.timeEnd('File upload complete');
+  });
+
+  test('upload files from buffer with wrapWithDirectory=true', async () => {
+    const css = fs.readFileSync(
+      resolve(__dirname, './helpers/website/style.css'),
+    );
+    console.time('File upload complete');
+    const files = await storage.bucket(bucketUuid).uploadFiles(
+      [
+        {
+          fileName: 'style.css',
+          contentType: 'text/css',
+          path: null,
+          content: css,
+        },
+      ],
+      { wrapWithDirectory: true, directoryPath: 'main/subdir-wrapped' },
+    );
+
+    expect(files.length).toBe(1);
+    expect(files[0].fileUuid).toBeDefined();
+    expect(files[0].CID).toBeUndefined();
+    expect(files[0].path).toBeNull();
+    expect(files[0].url).toBeUndefined();
 
     console.timeEnd('File upload complete');
   });
