@@ -49,6 +49,7 @@
     "ethereumjs-util": "^7.1.5",
     "glob": "^11.0.0",
     "ignore": "^6.0.2",
+    "ipfs-only-hash": "^4.0.0",
     "targz": "^1.0.1"
   },
   "devDependencies": {
