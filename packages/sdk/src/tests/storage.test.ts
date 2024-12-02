@@ -121,7 +121,7 @@ describe('Storage tests', () => {
       resolve(__dirname, './helpers/website/style.css'),
     );
     console.time('File upload complete');
-    await storage.bucket(bucketUuid).uploadFiles(
+    const files = await storage.bucket(bucketUuid).uploadFiles(
       [
         {
           fileName: 'style.css',
@@ -132,6 +132,13 @@ describe('Storage tests', () => {
       ],
       { wrapWithDirectory: true, directoryPath: 'main/subdir' },
     );
+
+    expect(files.length).toBe(1);
+    expect(files[0].CID).toBeDefined();
+    expect(files[0].fileUuid).toBeDefined();
+    expect(files[0].path).toBeNull();
+    expect(files[0].url).toBeDefined();
+
     console.timeEnd('File upload complete');
   });
 

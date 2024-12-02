@@ -2,10 +2,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
+import * as ipfsHash from 'ipfs-only-hash';
+
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
 import {
   FileMetadata,
+  FileUploadResult,
   IFileUploadRequest,
   IFileUploadResponse,
 } from '../types/storage';
@@ -16,9 +19,13 @@ export async function uploadFiles(uploadParams: {
   apiPrefix: string;
   params?: IFileUploadRequest;
   folderPath?: string;
-  files?: FileMetadata[];
-}): Promise<{ sessionUuid: string; files: FileMetadata[] }> {
+  files?: (FileMetadata & { index?: string })[];
+}): Promise<{
+  sessionUuid: string;
+  files: (FileMetadata & { url: string })[];
+}> {
   const { folderPath, apiPrefix, params } = uploadParams;
+
   let files = uploadParams.files;
   if (folderPath) {
     ApillonLogger.log(`Preparing to upload files from ${folderPath}...`);
@@ -46,21 +53,88 @@ export async function uploadFiles(uploadParams: {
   const uploadedFiles = [];
 
   for (const fileGroup of chunkify(files, fileChunkSize)) {
-    const { files } = await ApillonApi.post<IFileUploadResponse>(
-      `${apiPrefix}/upload`,
-      {
-        files: fileGroup.map((fg) => {
-          // Remove content property from the payload
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { content, ...rest } = fg;
-          return rest;
-        }),
-        sessionUuid,
-      },
-    );
+    if (params.wrapWithDirectory) {
+      for (const fg of fileGroup) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { content, ...rest } = fg;
 
-    await uploadFilesToS3(files, fileGroup);
-    uploadedFiles.push(files);
+        const readContent = fg.index ? fs.readFileSync(fg.index) : fg.content;
+
+        fg.content = readContent;
+      }
+
+      const { files } = await ApillonApi.post<IFileUploadResponse>(
+        `${apiPrefix}/upload`,
+        {
+          files: fileGroup.map((fg) => {
+            // Remove content property from the payload
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { content, ...rest } = fg;
+            return rest;
+          }),
+          sessionUuid,
+        },
+      );
+
+      await uploadFilesToS3(files, fileGroup);
+
+      uploadedFiles.push(files);
+    } else {
+      const metadata = {
+        files: [] as FileUploadResult[],
+        urls: [] as string[],
+        cids: [] as string[],
+      };
+
+      for (const fg of fileGroup) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { content, ...rest } = fg;
+
+        metadata.files.push(rest);
+
+        const readContent = fg.index ? fs.readFileSync(fg.index) : fg.content;
+
+        fg.content = readContent;
+
+        const cid = await ipfsHash.of(readContent, {
+          cidVersion: 1,
+        });
+
+        metadata.cids.push(cid);
+      }
+
+      const { links } = await ApillonApi.post<{ links: string[] }>(
+        `/storage/link-on-ipfs-multiple`,
+        {
+          cids: metadata.cids,
+        },
+      );
+
+      metadata.urls = links;
+      const { files } = await ApillonApi.post<IFileUploadResponse>(
+        `${apiPrefix}/upload`,
+        {
+          files: metadata.files,
+          sessionUuid,
+        },
+      );
+
+      // Upload doesn't return files in the same order as sent
+      const sortedFiles = metadata.files.map((metaFile) => {
+        return files.find((file) => file.fileName === metaFile.fileName);
+      });
+
+      await uploadFilesToS3(sortedFiles, fileGroup);
+
+      const filesWithUrl = sortedFiles.map((file, index) => {
+        return {
+          ...file,
+          CID: metadata.cids[index],
+          url: metadata.urls[index],
+        };
+      });
+      uploadedFiles.push(filesWithUrl);
+    }
   }
 
   ApillonLogger.logWithTime('File upload complete.');
@@ -145,8 +219,7 @@ async function uploadFilesToS3(
     uploadWorkers.push(
       new Promise<void>(async (resolve, _reject) => {
         // If uploading from local folder then read file, otherwise directly upload content
-        const content = file.index ? fs.readFileSync(file.index) : file.content;
-        await s3Api.put(link.url, content);
+        await s3Api.put(link.url, file.content);
         ApillonLogger.log(`File uploaded: ${file.fileName}`);
         resolve();
       }),
@@ -156,7 +229,12 @@ async function uploadFilesToS3(
   await Promise.all(uploadWorkers);
 }
 
-function chunkify(files: FileMetadata[], chunkSize = 10): FileMetadata[][] {
+function chunkify(
+  files: FileMetadata[],
+  chunkSize = 10,
+): (FileMetadata & {
+  index?: string;
+})[][] {
   // Divide files into chunks for parallel processing and uploading
   const fileChunks: FileMetadata[][] = [];
   for (let i = 0; i < files.length; i += chunkSize) {
