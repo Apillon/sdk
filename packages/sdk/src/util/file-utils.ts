@@ -53,61 +53,88 @@ export async function uploadFiles(uploadParams: {
   const uploadedFiles = [];
 
   for (const fileGroup of chunkify(files, fileChunkSize)) {
-    const metadata = {
-      files: [] as FileUploadResult[],
-      urls: [] as string[],
-      cids: [] as string[],
-    };
+    if (params.wrapWithDirectory) {
+      for (const fg of fileGroup) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { content, ...rest } = fg;
 
-    for (const fg of fileGroup) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { content, ...rest } = fg;
+        const readContent = fg.index ? fs.readFileSync(fg.index) : fg.content;
 
-      metadata.files.push(rest);
+        fg.content = readContent;
+      }
 
-      const readContent = fg.index ? fs.readFileSync(fg.index) : fg.content;
+      const { files } = await ApillonApi.post<IFileUploadResponse>(
+        `${apiPrefix}/upload`,
+        {
+          files: fileGroup.map((fg) => {
+            // Remove content property from the payload
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { content, ...rest } = fg;
+            return rest;
+          }),
+          sessionUuid,
+        },
+      );
 
-      fg.content = readContent;
+      await uploadFilesToS3(files, fileGroup);
 
-      const cid = await ipfsHash.of(readContent, {
-        cidVersion: 1,
+      uploadedFiles.push(files);
+    } else {
+      const metadata = {
+        files: [] as FileUploadResult[],
+        urls: [] as string[],
+        cids: [] as string[],
+      };
+
+      for (const fg of fileGroup) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { content, ...rest } = fg;
+
+        metadata.files.push(rest);
+
+        const readContent = fg.index ? fs.readFileSync(fg.index) : fg.content;
+
+        fg.content = readContent;
+
+        const cid = await ipfsHash.of(readContent, {
+          cidVersion: 1,
+        });
+
+        metadata.cids.push(cid);
+      }
+
+      const { links } = await ApillonApi.post<{ links: string[] }>(
+        `/storage/link-on-ipfs-multiple`,
+        {
+          cids: metadata.cids,
+        },
+      );
+
+      metadata.urls = links;
+      const { files } = await ApillonApi.post<IFileUploadResponse>(
+        `${apiPrefix}/upload`,
+        {
+          files: metadata.files,
+          sessionUuid,
+        },
+      );
+
+      // Upload doesn't return files in the same order as sent
+      const sortedFiles = metadata.files.map((metaFile) => {
+        return files.find((file) => file.fileName === metaFile.fileName);
       });
 
-      metadata.cids.push(cid);
+      await uploadFilesToS3(sortedFiles, fileGroup);
+
+      const filesWithUrl = sortedFiles.map((file, index) => {
+        return {
+          ...file,
+          CID: metadata.cids[index],
+          url: metadata.urls[index],
+        };
+      });
+      uploadedFiles.push(filesWithUrl);
     }
-
-    const { links } = await ApillonApi.post<{ links: string[] }>(
-      `/storage/link-on-ipfs-multiple`,
-      {
-        cids: metadata.cids,
-      },
-    );
-
-    metadata.urls = links;
-
-    const { files } = await ApillonApi.post<IFileUploadResponse>(
-      `${apiPrefix}/upload`,
-      {
-        files: metadata.files,
-        sessionUuid,
-      },
-    );
-
-    // Upload doesn't return files in the same order as sent
-    const sortedFiles = metadata.files.map((metaFile) => {
-      return files.find((file) => file.fileName === metaFile.fileName);
-    });
-
-    await uploadFilesToS3(sortedFiles, fileGroup);
-
-    const filesWithUrl = sortedFiles.map((file, index) => {
-      return {
-        ...file,
-        CID: metadata.cids[index],
-        url: metadata.urls[index],
-      };
-    });
-    uploadedFiles.push(filesWithUrl);
   }
 
   ApillonLogger.logWithTime('File upload complete.');
