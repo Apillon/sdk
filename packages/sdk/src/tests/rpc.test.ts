@@ -43,6 +43,7 @@ describe('Rpc Module tests', () => {
 
     expect(apiKey).toBeInstanceOf(RpcApiKey);
     expect(apiKey.id).toEqual(apiKeyId);
+    expect(apiKey.urls.length).toBeGreaterThan(0);
   });
 
   test('List endpoints', async () => {
