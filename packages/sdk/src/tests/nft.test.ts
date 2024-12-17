@@ -67,6 +67,49 @@ describe('Nft tests', () => {
     expect(collection.isSoulbound).toEqual(false);
   });
 
+  test.only('creates a new unique collection', async () => {
+    const uniqueCollectionData = {
+      ...nftData,
+      maxSupply: 1000,
+      isRevokable: true,
+      isSoulbound: false,
+      metadata: {
+        '1': {
+          name: 'Unique NFT 1',
+          description: 'Description for Unique NFT 1',
+          image: 'https://example.com/nft1.png',
+          attributes: {
+            value: 'Attribute Value 1',
+            trait_type: 'Attribute Type 1',
+            display_type: 'string',
+          },
+        },
+        '2': {
+          name: 'Unique NFT 2',
+          description: 'Description for Unique NFT 2',
+          image: 'https://example.com/nft2.png',
+          attributes: {
+            value: 'Attribute Value 2',
+            trait_type: 'Attribute Type 2',
+            display_type: 'string',
+          },
+        },
+      },
+    };
+
+    const collection = await nft.createUnique(uniqueCollectionData);
+    expect(collection.uuid).toBeDefined();
+    expect(collection.contractAddress).toBeDefined();
+    expect(collection.symbol).toEqual('SDKT');
+    expect(collection.name).toEqual('SDK Test');
+    expect(collection.description).toEqual('Created from SDK tests');
+    expect(collection.isAutoIncrement).toEqual(true);
+    expect(collection.isRevokable).toEqual(true);
+    expect(collection.isSoulbound).toEqual(false);
+
+    collectionUuid = collection.uuid;
+  });
+
   test('mints a new nft', async () => {
     const collection = nft.collection(collectionUuid);
     const res = await collection.mint({

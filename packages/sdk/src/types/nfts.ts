@@ -8,6 +8,7 @@ export enum EvmChain {
 
 export enum SubstrateChain {
   ASTAR = 8,
+  UNIQUE = 11,
 }
 
 export enum CollectionStatus {
@@ -57,14 +58,79 @@ export interface ICreateCollectionBase {
 }
 
 export interface ICreateCollection extends ICreateCollectionBase {
+  /**
+   * Indicates if the collection is revokable (burnable).
+   */
   isRevokable: boolean;
+  /**
+   * Indicates if the collection is soulbound.
+   */
   isSoulbound: boolean;
+  /**
+   * If enabled, newly minted NFTs will have token IDs in sequential order.
+   */
   isAutoIncrement?: boolean;
+  /**
+   * The EVM chain on which the collection will be deployed.
+   */
   chain: EvmChain;
 }
 
 export interface ICreateSubstrateCollection extends ICreateCollectionBase {
   chain: SubstrateChain;
+}
+
+export interface IMetadataAttributes {
+  /**
+   * Trait value.
+   */
+  value: string;
+  /**
+   * Name of the trait.
+   */
+  trait_type: string;
+  /**
+   * Type for displaying trait (number, date,...).
+   */
+  display_type: string;
+}
+
+export interface IMetadata {
+  /**
+   * NFT name.
+   */
+  name: string;
+  /**
+   * NFT description.
+   */
+  description: string;
+  /**
+   * NFT image URL.
+   */
+  image: string;
+  /**
+   * Array of NFT attributes.
+   */
+  attributes: IMetadataAttributes;
+}
+
+export interface ICreateUniqueCollection extends ICreateCollectionBase {
+  /**
+   * Maximum supply of the collection.
+   */
+  maxSupply: number;
+  /**
+   * For revokable collection owner can destroy (burn) NFTs at any time.
+   */
+  isRevokable: boolean;
+  /**
+   * Soulbound tokens are NFTs that are bound to wallet and not transferable. (default: false)
+   */
+  isSoulbound: boolean;
+  /**
+   * Object containing metadata for different token ids.
+   */
+  metadata: { [tokenId: string]: IMetadata };
 }
 
 export interface ITransaction {
