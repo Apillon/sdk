@@ -277,6 +277,39 @@ const substrateCollection = await nft.createSubstrate({
   ...
 });
 
+// or create a unique collection
+const uniqueCollection = await nft.createUnique({
+  collectionType: CollectionType.GENERIC,
+  chain: SubstrateChain.UNIQUE,
+  name: 'UniqueArtworks',
+  symbol: 'UA',
+  description: 'A collection of one-of-a-kind digital artworks.',
+  isRevokable: false,
+  isSoulbound: false,
+  metadata: {
+    '1': {
+      name: 'Unique NFT 1',
+      description: 'Description for Unique NFT 1',
+      image: 'https://example.com/nft1.png',
+      attributes: {
+        trait_type: 'color',
+        value: 'red',
+        display_type: 'string',
+      },
+    },
+    '2': {
+      name: 'Unique NFT 2',
+      description: 'Description for Unique NFT 2',
+      image: 'https://example.com/nft2.png',
+      attributes: {
+        trait_type: 'color',
+        value: 'blue',
+        display_type: 'string',
+      },
+    },
+  },
+});
+
 // check if collection is deployed - available on chain
 if (collection.collectionStatus == CollectionStatus.DEPLOYED) {
   console.log('Collection deployed: ', collection.transactionHash);
