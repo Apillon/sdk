@@ -7,6 +7,7 @@ import {
   ICreateCollection,
   ICreateSubstrateCollection,
   ICreateCollectionBase,
+  ICreateUniqueCollection,
 } from '../../types/nfts';
 import { NftCollection } from './nft-collection';
 
@@ -52,7 +53,7 @@ export class Nft extends ApillonModule {
    * @returns A NftCollection instance.
    */
   public async create(data: ICreateCollection) {
-    return await this.createNft(data, true);
+    return await this.createNft(data, 'evm');
   }
 
   /**
@@ -61,17 +62,26 @@ export class Nft extends ApillonModule {
    * @returns A NftCollection instance.
    */
   public async createSubstrate(data: ICreateSubstrateCollection) {
-    return await this.createNft(data, false);
+    return await this.createNft(data, 'substrate');
   }
 
-  private async createNft(data: ICreateCollectionBase, isEvm: boolean) {
+  /**
+   * Deploys a new Unique NftCollection smart contract.
+   * @param data NFT collection data.
+   * @returns A NftCollection instance.
+   */
+  public async createUnique(data: ICreateUniqueCollection) {
+    return await this.createNft(data, 'unique');
+  }
+
+  private async createNft(data: ICreateCollectionBase, type: string) {
     // If not drop, set drop properties to default 0
     if (!data.drop) {
       data.dropStart = data.dropPrice = data.dropReserve = 0;
     }
     const response = await ApillonApi.post<
       NftCollection & { collectionUuid: string }
-    >(`${this.API_PREFIX}/${isEvm ? 'evm' : 'substrate'}`, data);
+    >(`${this.API_PREFIX}/${type}`, data);
     return new NftCollection(response.collectionUuid, response);
   }
 }
