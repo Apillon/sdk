@@ -2,7 +2,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-import * as ipfsHash from 'ipfs-only-hash';
+import { importer, type UserImporterOptions } from 'ipfs-unixfs-importer';
+
 
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
@@ -88,7 +89,7 @@ export async function uploadFiles(uploadParams: {
 
         fg.content = readContent;
 
-        const cid = await ipfsHash.of(readContent, {
+        const cid = await calculateCID(readContent, {
           cidVersion: 1,
         });
 
@@ -247,3 +248,22 @@ function uuidv4() {
     16,
   )}-${uuid.substring(16, 20)}-${uuid.substring(20)}`;
 }
+
+export const calculateCID = async (content: any, options: UserImporterOptions) => {
+  options.onlyHash = true;
+  if (typeof content === 'string') {
+    content = new TextEncoder().encode(content);
+  }
+  let lastCid;
+  for await (const { cid } of importer([{ content }], {
+    get: async cid => {
+      throw new Error(`unexpected block API get for ${cid}`);
+    },
+    put: async () => {
+      throw new Error('unexpected block API put');
+    },
+  }, options)) {
+    lastCid = cid;
+  }
+  return `${lastCid}`;
+};

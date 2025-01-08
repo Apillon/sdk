@@ -1,7 +1,7 @@
 {
   "name": "@apillon/sdk",
   "description": "▶◀ Apillon SDK for NodeJS ▶◀",
-  "version": "3.8.0",
+  "version": "3.10.0",
   "author": "Apillon",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -47,9 +47,9 @@
     "@polkadot/util-crypto": "^12.6.2",
     "axios": "^1.6.8",
     "ethereumjs-util": "^7.1.5",
+    "ipfs-unixfs-importer": "7.0.1",
     "glob": "^11.0.0",
     "ignore": "^6.0.2",
-    "ipfs-only-hash": "^4.0.0",
     "targz": "^1.0.1"
   },
   "devDependencies": {
