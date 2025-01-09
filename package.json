@@ -8,26 +8,26 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "npx turbo run test",
-    "cli-install": "npx turbo run cli-install",
-    "dev": "npx turbo run dev",
-    "publish-beta": "npx turbo run publish-beta",
-    "build": "npx turbo run build",
-    "lint": "npx turbo run lint"
+    "test": "turbo run test",
+    "cli-install": "turbo run cli-install",
+    "dev": "turbo run dev",
+    "publish-beta": "turbo run publish-beta",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
   },
   "engines": {
-    "npm": ">=8.4.0",
-    "node": ">=16.17.0"
+    "npm": ">=10.0.0",
+    "node": ">=20.0.0"
   },
-  "packageManager": "npm@8.4.0",
+  "packageManager": "npm@10.0.0",
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "eslint-config-common": "*",
     "jest": "29.7.0",
     "prettier": "latest",
-    "rimraf": "^5.0.5",
-    "ts-jest": "29.1.2",
-    "turbo": "latest"
+    "rimraf": "^6.0.1",
+    "ts-jest": "29.2.5",
+    "turbo": "^2.3.3"
   },
   "jest": {
     "testTimeout": 1800000,

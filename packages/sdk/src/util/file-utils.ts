@@ -4,7 +4,6 @@ import * as path from 'path';
 import axios from 'axios';
 import { importer, type UserImporterOptions } from 'ipfs-unixfs-importer';
 
-
 import { ApillonLogger } from '../lib/apillon-logger';
 import { ApillonApi } from '../lib/apillon-api';
 import {
@@ -252,20 +251,27 @@ function uuidv4() {
   )}-${uuid.substring(16, 20)}-${uuid.substring(20)}`;
 }
 
-export const calculateCID = async (content: any, options: UserImporterOptions) => {
+export const calculateCID = async (
+  content: any,
+  options: UserImporterOptions,
+) => {
   options.onlyHash = true;
   if (typeof content === 'string') {
     content = new TextEncoder().encode(content);
   }
   let lastCid;
-  for await (const { cid } of importer([{ content }], {
-    get: async cid => {
-      throw new Error(`unexpected block API get for ${cid}`);
+  for await (const { cid } of importer(
+    [{ content }],
+    {
+      get: async (cid) => {
+        throw new Error(`unexpected block API get for ${cid}`);
+      },
+      put: async () => {
+        throw new Error('unexpected block API put');
+      },
     },
-    put: async () => {
-      throw new Error('unexpected block API put');
-    },
-  }, options)) {
+    options,
+  )) {
     lastCid = cid;
   }
   return `${lastCid}`;
