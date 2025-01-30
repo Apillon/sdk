@@ -67,7 +67,7 @@ describe('Nft tests', () => {
     expect(collection.isSoulbound).toEqual(false);
   });
 
-  test.only('creates a new unique collection', async () => {
+  test('creates a new unique collection', async () => {
     const uniqueCollectionData = {
       ...nftData,
       maxSupply: 1000,
@@ -107,7 +107,7 @@ describe('Nft tests', () => {
     expect(collection.isRevokable).toEqual(true);
     expect(collection.isSoulbound).toEqual(false);
 
-    collectionUuid = collection.uuid;
+    // collectionUuid = collection.uuid;
   });
 
   test('mints a new nft', async () => {
