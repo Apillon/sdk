@@ -113,7 +113,8 @@ export async function uploadFiles(uploadParams: {
       const sortedFiles = metadata.files.map((metaFile) =>
         files.find(
           (file) =>
-            file.fileName === metaFile.fileName && file.path === metaFile.path,
+            file.fileName === metaFile.fileName &&
+            (!file.path || file.path === metaFile.path),
         ),
       );
 
@@ -200,7 +201,6 @@ async function uploadFilesToS3(
   const uploadWorkers = [];
 
   for (const link of uploadLinks) {
-    // console.log(link.url);
     const file = files.find(
       (x) => x.fileName === link.fileName && (!x.path || x.path === link.path),
     );
