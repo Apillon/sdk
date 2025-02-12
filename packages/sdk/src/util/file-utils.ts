@@ -109,18 +109,9 @@ export async function uploadFiles(uploadParams: {
         },
       );
 
-      // Upload doesn't return files in the same order as sent
-      const sortedFiles = metadata.files.map((metaFile) =>
-        files.find(
-          (file) =>
-            file.fileName === metaFile.fileName &&
-            (!file.path || file.path === metaFile.path),
-        ),
-      );
+      await uploadFilesToS3(files, fileGroup);
 
-      await uploadFilesToS3(sortedFiles, fileGroup);
-
-      const filesWithUrl = sortedFiles.map((file, index) => ({
+      const filesWithUrl = files.map((file, index) => ({
         ...file,
         CID: metadata.cids[index],
         url: metadata.urls[index],
