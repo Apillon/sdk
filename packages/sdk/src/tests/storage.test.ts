@@ -105,6 +105,9 @@ describe('Storage tests', () => {
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
+    const css2 = fs.readFileSync(
+      resolve(__dirname, './helpers/website/style2.css'),
+    );
     console.time('File upload complete');
     const files = await storage.bucket(bucketUuid).uploadFiles(
       [
@@ -114,15 +117,34 @@ describe('Storage tests', () => {
           path: null,
           content: css,
         },
+        {
+          fileName: 'style2.css',
+          contentType: 'text/css',
+          path: null,
+          content: css2,
+        },
       ],
       { directoryPath: 'main/subdir' },
     );
 
-    expect(files.length).toBe(1);
-    expect(files[0].CID).toBeDefined();
+    expect(files.length).toBe(2);
+    expect(files[0].CID).toBe(
+      'bafybeibjawzowog5hmybfo6i7yaowsgwnmgdy6m3665da7xxpu2lwqjmia',
+    );
     expect(files[0].fileUuid).toBeDefined();
     expect(files[0].path).toBeNull();
-    expect(files[0].url).toBeDefined();
+    expect(files[0].url).toContain(
+      'https://bafybeibjawzowog5hmybfo6i7yaowsgwnmgdy6m3665da7xxpu2lwqjmia',
+    );
+
+    expect(files[1].CID).toBe(
+      'bafybeihvpgcpq4cvhuhx7lobnv4zirzhk2ftgbf7hoqsphszabz7dxvwkq',
+    );
+    expect(files[1].fileUuid).toBeDefined();
+    expect(files[1].path).toBeNull();
+    expect(files[1].url).toContain(
+      'https://bafybeihvpgcpq4cvhuhx7lobnv4zirzhk2ftgbf7hoqsphszabz7dxvwkq',
+    );
 
     console.timeEnd('File upload complete');
   });
@@ -131,6 +153,7 @@ describe('Storage tests', () => {
     const css = fs.readFileSync(
       resolve(__dirname, './helpers/website/style.css'),
     );
+
     console.time('File upload complete');
     const files = await storage.bucket(bucketUuid).uploadFiles(
       [
