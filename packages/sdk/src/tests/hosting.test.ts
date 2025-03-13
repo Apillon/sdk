@@ -29,13 +29,17 @@ describe('Hosting tests', () => {
     expect(website.uuid).toBeTruthy();
   });
 
-  test('upload website from folder', async () => {
+  test.only('upload website from folder', async () => {
     const website = hosting.website(websiteUuid);
 
     const uploadDir = resolve(__dirname, './helpers/website/');
     await website.uploadFromFolder(uploadDir, { ignoreFiles: false });
-    const deployment = await website.deploy(DeployToEnvironment.TO_STAGING);
-    expect(deployment.environment).toEqual(DeployToEnvironment.TO_STAGING);
+    const deployment = await website.deploy(
+      DeployToEnvironment.STAGING_TO_PRODUCTION,
+    );
+    expect(deployment.environment).toEqual(
+      DeployToEnvironment.STAGING_TO_PRODUCTION,
+    );
     deploymentUuid = deployment.uuid;
 
     await website.get();
