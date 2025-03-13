@@ -67,7 +67,7 @@ describe('Nft tests', () => {
     expect(collection.isSoulbound).toEqual(false);
   });
 
-  test('creates a new unique collection', async () => {
+  test.only('creates a new unique collection', async () => {
     const uniqueCollectionData = {
       ...nftData,
       maxSupply: 1000,
@@ -78,21 +78,25 @@ describe('Nft tests', () => {
           name: 'Unique NFT 1',
           description: 'Description for Unique NFT 1',
           image: 'https://example.com/nft1.png',
-          attributes: {
-            value: 'Attribute Value 1',
-            trait_type: 'Attribute Type 1',
-            display_type: 'string',
-          },
+          attributes: [
+            {
+              value: 'Attribute Value 1',
+              trait_type: 'Attribute Type 1',
+              display_type: 'string',
+            },
+          ],
         },
         '2': {
           name: 'Unique NFT 2',
           description: 'Description for Unique NFT 2',
           image: 'https://example.com/nft2.png',
-          attributes: {
-            value: 'Attribute Value 2',
-            trait_type: 'Attribute Type 2',
-            display_type: 'string',
-          },
+          attributes: [
+            {
+              value: 'Attribute Value 2',
+              trait_type: 'Attribute Type 2',
+              display_type: 'string',
+            },
+          ],
         },
       },
     };

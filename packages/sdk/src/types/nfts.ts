@@ -111,7 +111,7 @@ export interface IMetadata {
   /**
    * Array of NFT attributes.
    */
-  attributes: IMetadataAttributes;
+  attributes: IMetadataAttributes[];
 }
 
 export interface ICreateUniqueCollection extends ICreateCollectionBase {
