@@ -71,11 +71,15 @@ export class Storage extends ApillonModule {
    * Apillon IPFS gateways are private and can only be accessible with a token.
    * @docs [Generate an IPFS link](https://wiki.apillon.io/build/2-storage-api.html#get-or-generate-link-for-ipfs)
    * @param {string} cid The CID or IPNS address of the fie
+   * @param {string} type The type of the link to generate based on the gateway. Can be 'ipfs' or 'ipns'.
    * @returns {Promise<string>} The IPFS link where the requested content can be accessed.
    */
-  public async generateIpfsLink(cid: string): Promise<string> {
+  public async generateIpfsLink(
+    cid: string,
+    type: 'ipfs' | 'ipns' = 'ipfs',
+  ): Promise<string> {
     const { link } = await ApillonApi.get<{ link: string }>(
-      `${this.API_PREFIX}/link-on-ipfs/${cid}`,
+      `${this.API_PREFIX}/link-on-ipfs/${cid}?type=${type}`,
     );
     return link;
   }
