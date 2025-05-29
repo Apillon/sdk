@@ -1,13 +1,8 @@
+import * as fs from 'fs';
 import { resolve } from 'path';
 import { Storage } from '../modules/storage/storage';
-import { StorageContentType } from '../types/storage';
-import {
-  getBucketUUID,
-  getConfig,
-  getDirectoryUUID,
-  getFileUUID,
-} from './helpers/helper';
-import * as fs from 'fs';
+import { BucketType, StorageContentType } from '../types/storage';
+import { getConfig, getDirectoryUUID, getFileUUID } from './helpers/helper';
 
 describe('Storage tests', () => {
   let storage: Storage;
@@ -18,9 +13,24 @@ describe('Storage tests', () => {
 
   beforeAll(async () => {
     storage = new Storage(getConfig());
-    bucketUuid = getBucketUUID();
     directoryUuid = getDirectoryUUID();
     fileUuid = getFileUUID();
+  });
+
+  test('Create bucket', async () => {
+    const bucketName = 'SDK Test Bucket';
+    const bucket = await storage.createBucket({
+      name: bucketName,
+      description: 'SDK Test Bucket Description',
+    });
+    expect(bucket).toBeDefined();
+    expect(bucket.uuid).toBeTruthy();
+    expect(bucket.name).toEqual(bucketName);
+    expect(bucket.description).toEqual('SDK Test Bucket Description');
+    expect(bucket.size).toEqual(0);
+    expect(bucket.bucketType).toEqual(BucketType.STORAGE);
+
+    bucketUuid = bucket.uuid;
   });
 
   test('List buckets', async () => {
@@ -33,7 +43,7 @@ describe('Storage tests', () => {
     const bucket = await storage.bucket(bucketUuid).get();
     expect(bucket.uuid).toEqual(bucketUuid);
     expect(bucket.name).toBeTruthy();
-    expect(bucket.size).toBeGreaterThan(0);
+    expect(bucket.size).toEqual(0);
   });
 
   test('get bucket content', async () => {

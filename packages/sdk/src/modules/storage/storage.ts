@@ -1,4 +1,8 @@
-import { IpfsClusterInfo, StorageInfo } from '../../docs-index';
+import {
+  ICreateStorageBucket,
+  IpfsClusterInfo,
+  StorageInfo,
+} from '../../docs-index';
 import { ApillonModule } from '../../lib/apillon';
 import { ApillonApi } from '../../lib/apillon-api';
 import { constructUrlWithQueryParams } from '../../lib/common';
@@ -10,6 +14,18 @@ export class Storage extends ApillonModule {
    * API url for storage.
    */
   private API_PREFIX = '/storage';
+
+  /**
+   * Creates a new storage bucket.
+   * @param data Data for creating the bucket.
+   * @returns A StorageBucket instance.
+   */
+  public async createBucket(data: ICreateStorageBucket) {
+    const response = await ApillonApi.post<
+      StorageBucket & { bucketUuid: string }
+    >(`${this.API_PREFIX}/buckets`, data);
+    return new StorageBucket(response.bucketUuid, response);
+  }
 
   /**
    * Lists all buckets.

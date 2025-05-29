@@ -1,4 +1,8 @@
-import { Directory } from './directory';
+import { ApillonModel } from '../../lib/apillon';
+import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
+import { constructUrlWithQueryParams } from '../../lib/common';
+import { IApillonList, LogLevel } from '../../types/apillon';
 import {
   BucketType,
   FileMetadata,
@@ -10,14 +14,10 @@ import {
   IStorageBucketContentRequest,
   StorageContentType,
 } from '../../types/storage';
-import { File } from './file';
-import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList, LogLevel } from '../../types/apillon';
-import { ApillonApi } from '../../lib/apillon-api';
 import { uploadFiles } from '../../util/file-utils';
-import { ApillonModel } from '../../lib/apillon';
+import { Directory } from './directory';
+import { File } from './file';
 import { Ipns } from './ipns';
-import { ApillonLogger } from '../../lib/apillon-logger';
 
 export class StorageBucket extends ApillonModel {
   /**
@@ -38,7 +38,7 @@ export class StorageBucket extends ApillonModel {
   /**
    * Type of bucket (storage, hosting or NFT metadata)
    */
-  public bucketType: number = null;
+  public bucketType: BucketType = null;
 
   /**
    * Bucket content which are files and directories.
