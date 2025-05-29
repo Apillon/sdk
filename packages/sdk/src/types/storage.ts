@@ -18,6 +18,11 @@ export enum BucketType {
   NFT_METADATA = 3,
 }
 
+export interface ICreateStorageBucket {
+  name: string;
+  description?: string;
+}
+
 export interface IStorageBucketContentRequest extends IApillonPagination {
   directoryUuid?: string;
   markedForDeletion?: boolean;
