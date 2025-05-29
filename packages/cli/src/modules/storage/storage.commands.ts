@@ -1,17 +1,18 @@
+import { FileStatus } from '@apillon/sdk';
 import { Command, Option } from 'commander';
 import { addPaginationOptions } from '../../lib/options';
-import {
-  listBuckets,
-  listObjects,
-  listFiles,
-  uploadFromFolder,
-  getFile,
-  deleteFile,
-  deleteDirectory,
-} from './storage.service';
-import { FileStatus } from '@apillon/sdk';
 import { enumValues } from '../../lib/utils';
 import { createIpnsCommands } from './ipns.commands';
+import {
+  createBucket,
+  deleteDirectory,
+  deleteFile,
+  getFile,
+  listBuckets,
+  listFiles,
+  listObjects,
+  uploadFromFolder,
+} from './storage.service';
 
 export function createStorageCommands(cli: Command) {
   const storage = cli
@@ -21,6 +22,15 @@ export function createStorageCommands(cli: Command) {
     );
 
   createIpnsCommands(storage);
+
+  storage
+    .command('create-bucket')
+    .description('Create a new storage bucket')
+    .requiredOption('-n, --name <name>', 'Name of the bucket')
+    .option('-d, --description <description>', 'Description of the bucket')
+    .action(async function () {
+      await createBucket(this.optsWithGlobals());
+    });
 
   const listBucketsCommand = storage
     .command('list-buckets')

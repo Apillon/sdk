@@ -1,8 +1,18 @@
 import { Storage, toInteger } from '@apillon/sdk';
-import { GlobalOptions } from '../../lib/types';
 import { paginate } from '../../lib/options';
+import { GlobalOptions } from '../../lib/types';
 import { withErrorHandler } from '../../lib/utils';
 
+export async function createBucket(optsWithGlobals: GlobalOptions) {
+  await withErrorHandler(async () => {
+    const bucket = await new Storage(optsWithGlobals).createBucket({
+      name: optsWithGlobals.name,
+      description: optsWithGlobals.description,
+    });
+    console.log('Bucket created successfully');
+    console.log(bucket.serialize());
+  });
+}
 export async function listBuckets(optsWithGlobals: GlobalOptions) {
   await withErrorHandler(async () => {
     const data = await new Storage(optsWithGlobals).listBuckets(
