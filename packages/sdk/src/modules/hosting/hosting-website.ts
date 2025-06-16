@@ -10,7 +10,7 @@ import { ApillonApi } from '../../lib/apillon-api';
 import { ApillonLogger } from '../../lib/apillon-logger';
 import { uploadFiles } from '../../util/file-utils';
 import { ApillonModel } from '../../lib/apillon';
-import { FileMetadata, IFileUploadRequest } from '../../types/storage';
+import { FileMetadata, IDeployRequest, IFileUploadRequest } from '../../types/storage';
 
 export class HostingWebsite extends ApillonModel {
   /**
@@ -114,7 +114,7 @@ export class HostingWebsite extends ApillonModel {
    * @param {DeployToEnvironment} toEnvironment The environment to deploy to
    * @returns Newly created deployment
    */
-  public async deploy(toEnvironment: DeployToEnvironment) {
+  public async deploy(toEnvironment: DeployToEnvironment, params?: IDeployRequest) {
     ApillonLogger.log(
       `Deploying website ${this.uuid} to IPFS (${
         toEnvironment === DeployToEnvironment.TO_STAGING
@@ -126,7 +126,7 @@ export class HostingWebsite extends ApillonModel {
     ApillonLogger.logWithTime('Initiating deployment');
     const data = await ApillonApi.post<Deployment & { deploymentUuid: string }>(
       `${this.API_PREFIX}/deploy`,
-      { environment: toEnvironment },
+      { environment: toEnvironment, ...params },
     );
 
     ApillonLogger.logWithTime('Deployment in progress');

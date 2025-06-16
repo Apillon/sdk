@@ -25,6 +25,7 @@ export function createHostingCommands(cli: Command) {
     .argument('<path>', 'path to folder with website files')
     .requiredOption('--uuid <website uuid>', 'UUID of website to deploy')
     .option('-p, --preview', 'deploys to staging environment')
+    .option('--name <deployment name>', 'Name of the deployment')
     .action(async function (path) {
       await deployWebsite(path, this.optsWithGlobals());
     });
