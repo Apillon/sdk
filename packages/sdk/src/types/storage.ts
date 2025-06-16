@@ -97,6 +97,13 @@ export interface IFileUploadRequest {
   ignoreFiles?: boolean;
 }
 
+export interface IDeployRequest {
+  /**
+   * Name of the deployment.
+   */
+  name?: string;
+}
+
 export interface IFileUploadResponse {
   files: FileMetadata[];
   sessionUuid: string;
