@@ -67,7 +67,7 @@ describe('Nft tests', () => {
     expect(collection.isSoulbound).toEqual(false);
   });
 
-  test.only('creates a new unique collection', async () => {
+  test('creates a new unique collection', async () => {
     const uniqueCollectionData = {
       ...nftData,
       maxSupply: 1000,

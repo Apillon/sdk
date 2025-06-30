@@ -1,22 +1,22 @@
+import { ApillonModel } from '../../lib/apillon';
+import { ApillonApi } from '../../lib/apillon-api';
+import { ApillonLogger } from '../../lib/apillon-logger';
+import { constructUrlWithQueryParams } from '../../lib/common';
+import { IApillonList } from '../../types/apillon';
+import {
+  CollectionStatus,
+  CollectionType,
+  EvmChain,
+  ITransaction,
+  ITransactionFilters,
+  TransactionType,
+} from '../../types/nfts';
 import {
   IMintNftData,
   INftActionResponse,
   SubstrateChain,
   TransactionStatus,
 } from './../../types/nfts';
-import { ApillonApi } from '../../lib/apillon-api';
-import { ApillonLogger } from '../../lib/apillon-logger';
-import { constructUrlWithQueryParams } from '../../lib/common';
-import { IApillonList } from '../../types/apillon';
-import {
-  ITransactionFilters,
-  ITransaction,
-  CollectionType,
-  CollectionStatus,
-  EvmChain,
-  TransactionType,
-} from '../../types/nfts';
-import { ApillonModel } from '../../lib/apillon';
 
 export class NftCollection extends ApillonModel {
   /**
@@ -126,6 +126,16 @@ export class NftCollection extends ApillonModel {
    * Chain on which the smart contract was deployed.
    */
   public chain: EvmChain | SubstrateChain = null;
+
+  /**
+   * Logo URL of the collection (on IPFS)
+   */
+  public logoUrl: string = null;
+
+  /**
+   * Banner URL of the collection (on IPFS)
+   */
+  public bannerUrl: string = null;
 
   /**
    * Constructor which should only be called via Nft class.
